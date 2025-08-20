@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_3688_Pd4Pt4
+_symmetry_space_group_name_H-M   'Imma'
+_cell_length_a   3.95348081
+_cell_length_b   8.39260088
+_cell_length_c   3.97667537
+_cell_angle_alpha   103.70454349
+_cell_angle_beta   89.99999996
+_cell_angle_gamma   76.37693627
+_chemical_formula_structural   Pd4Pt4
+_chemical_formula_sum   'Pd4 Pt4'
+_cell_volume   124.36536703
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Pd
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pd  Pd0  1  0.00071293  0.99857414  0.99928707  1
+  Pd  Pd1  1  0.37580211  0.24839577  0.12419789  1
+  Pd  Pd2  1  0.74919789  0.50160423  0.25080211  1
+  Pd  Pd3  1  0.12428707  0.75142586  0.37571293  1
+  Pt  Pt0  1  0.49916619  0.00166762  0.50083381  1
+  Pt  Pt1  1  0.87410379  0.25179242  0.62589621  1
+  Pt  Pt2  1  0.25089621  0.49820758  0.74910379  1
+  Pt  Pt3  1  0.62583381  0.74833238  0.87416619  1

@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_789_AuP3
+_symmetry_space_group_name_H-M   'Imm2'
+_cell_length_a   5.56154746
+_cell_length_b   5.56154746
+_cell_length_c   5.56154746
+_cell_angle_alpha   145.67489832
+_cell_angle_beta   135.24808978
+_cell_angle_gamma   57.58734742
+_chemical_formula_structural   AuP3
+_chemical_formula_sum   'Au1 P3'
+_cell_volume   67.73875857
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Au
+  P
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Au  Au0  1  0.07472994  1.00000000  0.07472994  1
+  P  P0  1  0.56032298  0.50000000  0.06032298  1
+  P  P1  1  0.78219888  0.18305867  0.59914021  1
+  P  P2  1  0.41608153  0.81694133  0.59914021  1

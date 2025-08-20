@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_2971_Ca5Sb4
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   8.03871171
+_cell_length_b   8.03871171
+_cell_length_c   8.03871171
+_cell_angle_alpha   95.60416768
+_cell_angle_beta   95.60416768
+_cell_angle_gamma   143.58027116
+_chemical_formula_structural   Ca5Sb4
+_chemical_formula_sum   'Ca5 Sb4'
+_cell_volume   292.96094345
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ca
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ca  Ca0  1  0.00000000  0.00000000  0.00000000  1
+  Ca  Ca1  1  0.67926489  0.32073511  0.00000000  1
+  Ca  Ca2  1  0.32073511  0.67926489  0.00000000  1
+  Ca  Ca3  1  0.32073511  0.32073511  0.64147022  1
+  Ca  Ca4  1  0.67926489  0.67926489  0.35852978  1
+  Sb  Sb0  1  0.71721372  0.00000000  0.71721372  1
+  Sb  Sb1  1  0.28278628  0.00000000  0.28278628  1
+  Sb  Sb2  1  1.00000000  0.28278628  0.28278628  1
+  Sb  Sb3  1  1.00000000  0.71721372  0.71721372  1

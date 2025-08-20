@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_4957_IrTa5
+_symmetry_space_group_name_H-M   'Cmmm'
+_cell_length_a   3.29479649
+_cell_length_b   7.06748766
+_cell_length_c   4.62393184
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   76.52062551
+_chemical_formula_structural   IrTa5
+_chemical_formula_sum   'Ir1 Ta5'
+_cell_volume   104.70660940
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ir
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ir  Ir0  1  0.02778157  0.94443685  0.00000000  1
+  Ta  Ta0  1  0.19447095  0.61105809  0.50000000  1
+  Ta  Ta1  1  0.36446983  0.27106033  0.00000000  1
+  Ta  Ta2  1  0.52778023  0.94443953  0.50000000  1
+  Ta  Ta3  1  0.69109519  0.61780961  0.00000000  1
+  Ta  Ta4  1  0.86106888  0.27786225  0.50000000  1

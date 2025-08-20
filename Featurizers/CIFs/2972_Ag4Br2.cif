@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2972_Ag4Br2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   9.24475288
+_cell_length_b   9.24475288
+_cell_length_c   4.26583871
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   155.43658662
+_chemical_formula_structural   Ag4Br2
+_chemical_formula_sum   'Ag4 Br2'
+_cell_volume   151.55671452
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ag
+  Br
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ag  Ag0  1  0.94958142  0.05041858  0.00000000  1
+  Ag  Ag1  1  0.33193572  0.66806428  0.00000000  1
+  Ag  Ag2  1  0.44584206  0.55415794  0.50000000  1
+  Ag  Ag3  1  0.82819636  0.17180364  0.50000000  1
+  Br  Br0  1  0.72324176  0.27675824  0.00000000  1
+  Br  Br1  1  0.05453602  0.94546398  0.50000000  1

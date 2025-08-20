@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_1579_Nb4V8
+_symmetry_space_group_name_H-M   'I4_1/amd'
+_cell_length_a   14.06471858
+_cell_length_b   14.06471858
+_cell_length_c   14.06471858
+_cell_angle_alpha   165.14156313
+_cell_angle_beta   165.14156313
+_cell_angle_gamma   21.07274033
+_chemical_formula_structural   Nb4V8
+_chemical_formula_sum   'Nb4 V8'
+_cell_volume   182.92530457
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Nb
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Nb  Nb0  1  0.91800990  0.91800991  0.00000000  1
+  Nb  Nb1  1  0.08199010  0.08199009  0.00000000  1
+  Nb  Nb2  1  0.16800990  0.66800991  0.50000000  1
+  Nb  Nb3  1  0.33199010  0.83199009  0.50000000  1
+  V  V0  1  0.75039208  0.75039208  0.00000000  1
+  V  V1  1  0.24960792  0.24960792  0.00000000  1
+  V  V2  1  0.00039208  0.50039208  0.50000000  1
+  V  V3  1  0.49960792  0.99960792  0.50000000  1
+  V  V4  1  0.58098968  0.58098969  0.00000000  1
+  V  V5  1  0.41901032  0.41901031  0.00000000  1
+  V  V6  1  0.83098968  0.33098969  0.50000000  1
+  V  V7  1  0.66901032  0.16901031  0.50000000  1

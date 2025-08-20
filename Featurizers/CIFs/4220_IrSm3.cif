@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_4220_IrSm3
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   6.16170866
+_cell_length_b   6.16170866
+_cell_length_c   6.16170866
+_cell_angle_alpha   138.71011515
+_cell_angle_beta   138.71011515
+_cell_angle_gamma   59.81714638
+_chemical_formula_structural   IrSm3
+_chemical_formula_sum   'Ir1 Sm3'
+_cell_volume   100.83200890
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ir
+  Sm
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ir  Ir0  1  0.00000000  0.00000000  0.00000000  1
+  Sm  Sm0  1  0.50000028  0.50000028  0.00000000  1
+  Sm  Sm1  1  0.74999963  0.25000014  0.49999949  1
+  Sm  Sm2  1  0.25000014  0.74999963  0.49999949  1

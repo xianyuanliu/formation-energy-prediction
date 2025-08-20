@@ -10,8 +10,8 @@ from matminer.featurizers.structure.symmetry import GlobalSymmetryFeatures
 
 # --- 1. Configuration --- 🔧
 CIF_FOLDER = "CIFs"
-PLOT_FOLDER = "XRD_Patterns"
-OUTPUT_CSV_FILE = "crystal_features.csv"
+PLOT_FOLDER = "XRD_Images"
+OUTPUT_CSV_FILE = "CIF2XRD.csv"
 
 # --- 2. Setup Paths and Find Files --- 📁
 base_dir = os.path.dirname(os.path.abspath(__file__))

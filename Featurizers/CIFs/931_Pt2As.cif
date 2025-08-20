@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_931_Pt2As
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   5.32502806
+_cell_length_b   5.32502806
+_cell_length_c   5.32502806
+_cell_angle_alpha   145.32147582
+_cell_angle_beta   145.32147582
+_cell_angle_gamma   49.85571006
+_chemical_formula_structural   Pt2As
+_chemical_formula_sum   'As1 Pt2'
+_cell_volume   48.64891989
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  As
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  As  As0  1  0.00000000  0.00000000  0.00000000  1
+  Pt  Pt0  1  0.65483714  0.65483714  0.00000000  1
+  Pt  Pt1  1  0.34516286  0.34516286  0.00000000  1

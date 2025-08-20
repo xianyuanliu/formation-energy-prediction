@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_3315_K4Sr8
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   4.69741889
+_cell_length_b   10.00657705
+_cell_length_c   15.02659634
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   K4Sr8
+_chemical_formula_sum   'K4 Sr8'
+_cell_volume   706.32642408
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  K
+  Sr
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  K  K0  1  0.25000000  0.61759931  0.41897597  1
+  K  K1  1  0.75000000  0.88240069  0.91897597  1
+  K  K2  1  0.25000000  0.11759931  0.08102403  1
+  K  K3  1  0.75000000  0.38240069  0.58102403  1
+  Sr  Sr0  1  0.25000000  0.13294669  0.74528965  1
+  Sr  Sr1  1  0.75000000  0.36705331  0.24528965  1
+  Sr  Sr2  1  0.25000000  0.63294669  0.75471035  1
+  Sr  Sr3  1  0.75000000  0.86705331  0.25471035  1
+  Sr  Sr4  1  0.25000000  0.11991070  0.41598538  1
+  Sr  Sr5  1  0.75000000  0.38008930  0.91598538  1
+  Sr  Sr6  1  0.25000000  0.61991070  0.08401462  1
+  Sr  Sr7  1  0.75000000  0.88008930  0.58401462  1

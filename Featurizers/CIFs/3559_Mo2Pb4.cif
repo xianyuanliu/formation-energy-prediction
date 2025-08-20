@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3559_Mo2Pb4
+_symmetry_space_group_name_H-M   'Cm'
+_cell_length_a   6.29415047
+_cell_length_b   6.29415047
+_cell_length_c   8.07613539
+_cell_angle_alpha   74.79145267
+_cell_angle_beta   74.79145267
+_cell_angle_gamma   31.08395508
+_chemical_formula_structural   Mo2Pb4
+_chemical_formula_sum   'Mo2 Pb4'
+_cell_volume   158.94497144
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mo
+  Pb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mo  Mo0  1  0.96880043  0.96880043  0.11686977  1
+  Mo  Mo1  1  0.33899525  0.33899525  0.28850599  1
+  Pb  Pb0  1  0.62393105  0.62393105  0.73443345  1
+  Pb  Pb1  1  0.63936628  0.63936628  0.23898223  1
+  Pb  Pb2  1  0.92800197  0.92800197  0.53521966  1
+  Pb  Pb3  1  0.33423835  0.33423835  0.91932224  1

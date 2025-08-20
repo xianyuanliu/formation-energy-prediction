@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_982_Cr2Na2
+_symmetry_space_group_name_H-M   'Cmme'
+_cell_length_a   2.83425491
+_cell_length_b   2.83425491
+_cell_length_c   10.25099553
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   116.41230028
+_chemical_formula_structural   Cr2Na2
+_chemical_formula_sum   'Cr2 Na2'
+_cell_volume   73.75064816
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cr
+  Na
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cr  Cr0  1  0.00000000  0.00000000  0.95036550  1
+  Cr  Cr1  1  0.50000000  0.50000000  0.79963450  1
+  Na  Na0  1  0.00000000  0.00000000  0.53229550  1
+  Na  Na1  1  0.50000000  0.50000000  0.21770450  1

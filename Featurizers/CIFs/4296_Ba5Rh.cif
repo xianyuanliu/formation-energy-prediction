@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_4296_Ba5Rh
+_symmetry_space_group_name_H-M   'Cmmm'
+_cell_length_a   10.20810157
+_cell_length_b   10.20810157
+_cell_length_c   6.67897365
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   154.63045145
+_chemical_formula_structural   Ba5Rh
+_chemical_formula_sum   'Ba5 Rh1'
+_cell_volume   298.19810544
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ba
+  Rh
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.80613175  0.19386825  0.50000000  1
+  Ba  Ba1  1  0.57938412  0.42061588  0.00000000  1
+  Ba  Ba2  1  0.47222747  0.52777253  0.50000000  1
+  Ba  Ba3  1  0.36501333  0.63498667  0.00000000  1
+  Ba  Ba4  1  0.13835807  0.86164193  0.50000000  1
+  Rh  Rh0  1  0.97221860  0.02778140  0.00000000  1

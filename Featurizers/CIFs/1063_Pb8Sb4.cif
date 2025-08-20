@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_1063_Pb8Sb4
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   5.39505239
+_cell_length_b   6.81941910
+_cell_length_c   10.09127606
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Pb8Sb4
+_chemical_formula_sum   'Pb8 Sb4'
+_cell_volume   371.26938192
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Pb
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pb  Pb0  1  0.25000000  0.05339911  0.79020312  1
+  Pb  Pb1  1  0.75000000  0.44660089  0.29020312  1
+  Pb  Pb2  1  0.25000000  0.55339911  0.70979688  1
+  Pb  Pb3  1  0.75000000  0.94660089  0.20979688  1
+  Pb  Pb4  1  0.25000000  0.18031595  0.42949919  1
+  Pb  Pb5  1  0.75000000  0.31968405  0.92949919  1
+  Pb  Pb6  1  0.25000000  0.68031595  0.07050081  1
+  Pb  Pb7  1  0.75000000  0.81968405  0.57050081  1
+  Sb  Sb0  1  0.25000000  0.71044034  0.39633620  1
+  Sb  Sb1  1  0.75000000  0.78955966  0.89633620  1
+  Sb  Sb2  1  0.25000000  0.21044034  0.10366380  1
+  Sb  Sb3  1  0.75000000  0.28955966  0.60366380  1

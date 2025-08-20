@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2978_Mo2P4
+_symmetry_space_group_name_H-M   'I4/mcm'
+_cell_length_a   4.85330049
+_cell_length_b   4.85330049
+_cell_length_c   4.85330049
+_cell_angle_alpha   110.46208440
+_cell_angle_beta   110.46208440
+_cell_angle_gamma   107.50716609
+_chemical_formula_structural   Mo2P4
+_chemical_formula_sum   'Mo2 P4'
+_cell_volume   87.92418843
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mo
+  P
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mo  Mo0  1  0.75000000  0.75000000  0.00000000  1
+  Mo  Mo1  1  0.25000000  0.25000000  0.00000000  1
+  P  P0  1  0.35744023  0.14255977  0.50000000  1
+  P  P1  1  0.64255977  0.85744023  0.50000000  1
+  P  P2  1  0.14255977  0.64255977  0.78511953  1
+  P  P3  1  0.85744023  0.35744023  0.21488047  1

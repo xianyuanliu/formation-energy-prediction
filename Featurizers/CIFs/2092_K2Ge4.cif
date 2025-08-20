@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2092_K2Ge4
+_symmetry_space_group_name_H-M   'Pnnm'
+_cell_length_a   6.29326958
+_cell_length_b   4.04260278
+_cell_length_c   7.89289519
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   K2Ge4
+_chemical_formula_sum   'Ge4 K2'
+_cell_volume   200.80463907
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ge
+  K
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ge  Ge0  1  0.00000000  0.24535722  0.58329592  1
+  Ge  Ge1  1  0.00000000  0.75464278  0.41670408  1
+  Ge  Ge2  1  0.50000000  0.74535722  0.91670408  1
+  Ge  Ge3  1  0.50000000  0.25464278  0.08329592  1
+  K  K0  1  0.00000000  0.00000000  0.00000000  1
+  K  K1  1  0.50000000  0.50000000  0.50000000  1

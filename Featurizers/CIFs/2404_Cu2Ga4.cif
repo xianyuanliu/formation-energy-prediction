@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2404_Cu2Ga4
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   6.82636605
+_cell_length_b   6.82636605
+_cell_length_c   4.69930142
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   154.82356682
+_chemical_formula_structural   Cu2Ga4
+_chemical_formula_sum   'Cu2 Ga4'
+_cell_volume   93.15735823
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Ga
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.00900885  0.99099115  0.00000000  1
+  Cu  Cu1  1  0.43543560  0.56456440  0.50000000  1
+  Ga  Ga0  1  0.35173266  0.64826734  0.00000000  1
+  Ga  Ga1  1  0.66764568  0.33235432  0.00000000  1
+  Ga  Ga2  1  0.77679876  0.22320124  0.50000000  1
+  Ga  Ga3  1  0.09271178  0.90728822  0.50000000  1

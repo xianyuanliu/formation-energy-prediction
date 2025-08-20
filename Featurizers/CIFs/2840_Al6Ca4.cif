@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_2840_Al6Ca4
+_symmetry_space_group_name_H-M   'Fdd2'
+_cell_length_a   9.37433298
+_cell_length_b   8.42507187
+_cell_length_c   5.99770482
+_cell_angle_alpha   79.11975579
+_cell_angle_beta   61.95546657
+_cell_angle_gamma   38.92477764
+_chemical_formula_structural   Al6Ca4
+_chemical_formula_sum   'Al6 Ca4'
+_cell_volume   248.93390674
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Ca
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.82835134  0.40816370  0.31218752  1
+  Al  Al1  1  0.45129745  0.31218752  0.40816370  1
+  Al  Al2  1  0.84183630  0.42164866  0.79870255  1
+  Al  Al3  1  0.93781248  0.79870255  0.42164866  1
+  Al  Al4  1  0.93585852  0.06414148  0.06414148  1
+  Al  Al5  1  0.18585852  0.31414148  0.31414148  1
+  Ca  Ca0  1  0.26644033  0.83891334  0.37659397  1
+  Ca  Ca1  1  0.51805236  0.37659397  0.83891334  1
+  Ca  Ca2  1  0.41108666  0.98355967  0.73194764  1
+  Ca  Ca3  1  0.87340603  0.73194764  0.98355967  1

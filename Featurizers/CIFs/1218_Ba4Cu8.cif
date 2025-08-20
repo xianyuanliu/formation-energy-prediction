@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_1218_Ba4Cu8
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   5.58827813
+_cell_length_b   6.06659387
+_cell_length_c   8.80283479
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Ba4Cu8
+_chemical_formula_sum   'Ba4 Cu8'
+_cell_volume   298.43206638
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ba
+  Cu
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.25000000  0.70625404  0.40219400  1
+  Ba  Ba1  1  0.75000000  0.79374596  0.90219400  1
+  Ba  Ba2  1  0.25000000  0.20625404  0.09780600  1
+  Ba  Ba3  1  0.75000000  0.29374596  0.59780600  1
+  Cu  Cu0  1  0.25000000  0.05416885  0.75046956  1
+  Cu  Cu1  1  0.75000000  0.44583115  0.25046956  1
+  Cu  Cu2  1  0.25000000  0.55416885  0.74953044  1
+  Cu  Cu3  1  0.75000000  0.94583115  0.24953044  1
+  Cu  Cu4  1  0.25000000  0.18943208  0.44646746  1
+  Cu  Cu5  1  0.75000000  0.31056792  0.94646746  1
+  Cu  Cu6  1  0.25000000  0.68943208  0.05353254  1
+  Cu  Cu7  1  0.75000000  0.81056792  0.55353254  1

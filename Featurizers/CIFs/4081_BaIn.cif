@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_4081_BaIn
+_symmetry_space_group_name_H-M   'Pm -3 m'
+_cell_length_a   6.04662720
+_cell_length_b   6.06658731
+_cell_length_c   4.31494542
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   BaIn
+_chemical_formula_sum   'Ba2 In2'
+_cell_volume   158.28251866
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ba
+  In
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.00000000  0.00000000  0.91569304  1
+  Ba  Ba1  1  0.50000000  0.50000000  0.91764030  1
+  In  In0  1  0.50000000  0.00000000  0.41469678  1
+  In  In1  1  0.00000000  0.50000000  0.41863655  1

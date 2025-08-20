@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3019_Ir3Ta3
+_symmetry_space_group_name_H-M   'Cm'
+_cell_length_a   2.91683450
+_cell_length_b   5.43243093
+_cell_length_c   6.71942758
+_cell_angle_alpha   73.92309872
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   105.57294231
+_chemical_formula_structural   Ir3Ta3
+_chemical_formula_sum   'Ir3 Ta3'
+_cell_volume   98.23443273
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ir
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ir  Ir0  1  0.01498139  0.02996279  0.99331809  1
+  Ir  Ir1  1  0.39257827  0.78515654  0.72687793  1
+  Ir  Ir2  1  0.31976012  0.63952025  0.33570323  1
+  Ta  Ta0  1  0.67450390  0.34900780  0.66507510  1
+  Ta  Ta1  1  0.03031308  0.06062616  0.38347259  1
+  Ta  Ta2  1  0.73452990  0.46905981  0.06221973  1

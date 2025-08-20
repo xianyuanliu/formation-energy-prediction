@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_1267_Al2Rh2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   4.85245873
+_cell_length_b   4.85245873
+_cell_length_c   4.13936850
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   144.14672466
+_chemical_formula_structural   Al2Rh2
+_chemical_formula_sum   'Al2 Rh2'
+_cell_volume   57.08757516
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Rh
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.90331451  0.09668549  0.75000000  1
+  Al  Al1  1  0.09668549  0.90331451  0.25000000  1
+  Rh  Rh0  1  0.63435186  0.36564814  0.75000000  1
+  Rh  Rh1  1  0.36564814  0.63435186  0.25000000  1

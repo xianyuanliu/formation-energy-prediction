@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_967_Ga2K
+_symmetry_space_group_name_H-M   'Immm'
+_cell_length_a   6.59367719
+_cell_length_b   6.59367719
+_cell_length_c   6.59367719
+_cell_angle_alpha   153.26964788
+_cell_angle_beta   142.91261742
+_cell_angle_gamma   46.30256982
+_chemical_formula_structural   Ga2K
+_chemical_formula_sum   'Ga2 K1'
+_cell_volume   77.50895323
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ga
+  K
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ga  Ga0  1  0.29536985  0.29536985  0.00000000  1
+  Ga  Ga1  1  0.70463015  0.70463015  1.00000000  1
+  K  K0  1  0.00000000  0.00000000  0.00000000  1

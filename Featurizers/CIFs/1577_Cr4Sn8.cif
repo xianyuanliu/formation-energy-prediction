@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_1577_Cr4Sn8
+_symmetry_space_group_name_H-M   'Fddd'
+_cell_length_a   5.40732800
+_cell_length_b   5.39209883
+_cell_length_c   9.58961089
+_cell_angle_alpha   98.12692934
+_cell_angle_beta   106.37583176
+_cell_angle_gamma   59.90652723
+_chemical_formula_structural   Cr4Sn8
+_chemical_formula_sum   'Cr4 Sn8'
+_cell_volume   232.10098841
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cr
+  Sn
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cr  Cr0  1  0.25170066  0.75000056  0.00340196  1
+  Cr  Cr1  1  0.99829770  0.75000056  0.49659758  1
+  Cr  Cr2  1  0.00170082  0.24999947  0.50340258  1
+  Cr  Cr3  1  0.74829971  0.24999947  0.99659820  1
+  Sn  Sn0  1  0.29362608  0.24999947  0.08725094  1
+  Sn  Sn1  1  0.71023210  0.57953527  0.25000031  1
+  Sn  Sn2  1  0.03976865  0.92046371  0.25000031  1
+  Sn  Sn3  1  0.45637545  0.24999947  0.41274968  1
+  Sn  Sn4  1  0.54362492  0.75000056  0.58725047  1
+  Sn  Sn5  1  0.96023172  0.07953632  0.74999985  1
+  Sn  Sn6  1  0.28976827  0.42046477  0.74999985  1
+  Sn  Sn7  1  0.70637429  0.75000056  0.91274922  1

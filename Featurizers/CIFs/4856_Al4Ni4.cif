@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_4856_Al4Ni4
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   4.14090755
+_cell_length_b   4.99677579
+_cell_length_c   4.73249216
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Al4Ni4
+_chemical_formula_sum   'Al4 Ni4'
+_cell_volume   97.92087834
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Ni
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.75000000  0.87576421  0.12562129  1
+  Al  Al1  1  0.25000000  0.37576421  0.37437871  1
+  Al  Al2  1  0.75000000  0.62423579  0.62562129  1
+  Al  Al3  1  0.25000000  0.12423579  0.87437871  1
+  Ni  Ni0  1  0.75000000  0.36768297  0.09216201  1
+  Ni  Ni1  1  0.25000000  0.86768297  0.40783799  1
+  Ni  Ni2  1  0.75000000  0.13231703  0.59216201  1
+  Ni  Ni3  1  0.25000000  0.63231703  0.90783799  1

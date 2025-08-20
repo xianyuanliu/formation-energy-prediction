@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_2763_Pd2V2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   2.67612741
+_cell_length_b   5.23602269
+_cell_length_c   4.33459809
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   104.80615618
+_chemical_formula_structural   Pd2V2
+_chemical_formula_sum   'Pd2 V2'
+_cell_volume   58.72079920
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Pd
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pd  Pd0  1  0.42016720  0.84033440  0.25000000  1
+  Pd  Pd1  1  0.57983280  0.15966560  0.75000000  1
+  V  V0  1  0.16398661  0.32797322  0.25000000  1
+  V  V1  1  0.83601339  0.67202678  0.75000000  1

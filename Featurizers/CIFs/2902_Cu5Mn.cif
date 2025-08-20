@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2902_Cu5Mn
+_symmetry_space_group_name_H-M   'Amm2'
+_cell_length_a   2.45240476
+_cell_length_b   6.83161102
+_cell_length_c   4.21029544
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   79.65997452
+_chemical_formula_structural   Cu5Mn
+_chemical_formula_sum   'Cu5 Mn1'
+_cell_volume   69.39320787
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Mn
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.99905178  0.00189644  0.00000000  1
+  Cu  Cu1  1  0.66617790  0.66764419  0.00000000  1
+  Cu  Cu2  1  0.33362403  0.33275195  0.00000000  1
+  Cu  Cu3  1  0.55550768  0.88898463  0.50000000  1
+  Cu  Cu4  1  0.22324501  0.55350999  0.50000000  1
+  Mn  Mn0  1  0.88906027  0.22187947  0.50000000  1

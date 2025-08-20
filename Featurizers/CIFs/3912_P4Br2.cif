@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3912_P4Br2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   9.99306148
+_cell_length_b   9.99306148
+_cell_length_c   5.23158799
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   160.77733802
+_chemical_formula_structural   P4Br2
+_chemical_formula_sum   'Br2 P4'
+_cell_volume   172.00593779
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Br
+  P
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Br  Br0  1  0.68122688  0.31877312  0.00000000  1
+  Br  Br1  1  0.42988423  0.57011577  0.50000000  1
+  P  P0  1  0.97004662  0.02995338  0.00000000  1
+  P  P1  1  0.39666313  0.60333687  0.00000000  1
+  P  P2  1  0.71444798  0.28555202  0.50000000  1
+  P  P3  1  0.14106450  0.85893550  0.50000000  1

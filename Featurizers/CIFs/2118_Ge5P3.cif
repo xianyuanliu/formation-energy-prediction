@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_2118_Ge5P3
+_symmetry_space_group_name_H-M   'Cmmm'
+_cell_length_a   5.75135047
+_cell_length_b   5.75135047
+_cell_length_c   4.44395981
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   105.85900697
+_chemical_formula_structural   Ge5P3
+_chemical_formula_sum   'Ge5 P3'
+_cell_volume   141.40229237
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ge
+  P
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ge  Ge0  1  0.00000000  0.00000000  0.00000000  1
+  Ge  Ge1  1  0.00000000  0.50000000  0.00000000  1
+  Ge  Ge2  1  0.50000000  1.00000000  0.00000000  1
+  Ge  Ge3  1  0.28194056  0.28194056  0.50000000  1
+  Ge  Ge4  1  0.71805944  0.71805944  0.50000000  1
+  P  P0  1  0.50000000  0.50000000  0.00000000  1
+  P  P1  1  0.74671688  0.25328312  0.50000000  1
+  P  P2  1  0.25328312  0.74671688  0.50000000  1

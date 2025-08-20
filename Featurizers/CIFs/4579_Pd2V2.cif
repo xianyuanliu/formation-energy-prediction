@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_4579_Pd2V2
+_symmetry_space_group_name_H-M   'Pmma'
+_cell_length_a   2.69495131
+_cell_length_b   4.38378537
+_cell_length_c   4.83513775
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   89.78121573
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Pd2V2
+_chemical_formula_sum   'Pd2 V2'
+_cell_volume   57.12232686
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Pd
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pd  Pd0  1  0.12311868  0.00000000  0.94950493  1
+  Pd  Pd1  1  0.12688132  0.50000000  0.30049507  1
+  V  V0  1  0.63252322  0.50000000  0.79339716  1
+  V  V1  1  0.61747678  0.00000000  0.45660284  1

@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_544_Mn4Sb5
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   6.49591100
+_cell_length_b   6.49591100
+_cell_length_c   6.49591100
+_cell_angle_alpha   98.36565838
+_cell_angle_beta   98.36565838
+_cell_angle_gamma   135.15522628
+_chemical_formula_structural   Mn4Sb5
+_chemical_formula_sum   'Mn4 Sb5'
+_cell_volume   178.68330283
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mn
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mn  Mn0  1  0.61380360  1.00000000  0.61380360  1
+  Mn  Mn1  1  0.38619640  1.00000000  0.38619640  1
+  Mn  Mn2  1  0.00000000  0.38619640  0.38619640  1
+  Mn  Mn3  1  1.00000000  0.61380360  0.61380360  1
+  Sb  Sb0  1  0.00000000  0.00000000  0.00000000  1
+  Sb  Sb1  1  0.68381576  0.31618424  0.00000000  1
+  Sb  Sb2  1  0.31618424  0.68381576  0.00000000  1
+  Sb  Sb3  1  0.31618424  0.31618424  0.63236848  1
+  Sb  Sb4  1  0.68381576  0.68381576  0.36763152  1

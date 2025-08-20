@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_3429_Al4Pd6
+_symmetry_space_group_name_H-M   'R -3 c'
+_cell_length_a   6.37986000
+_cell_length_b   6.37986151
+_cell_length_c   5.68943283
+_cell_angle_alpha   124.10258719
+_cell_angle_beta   55.89740831
+_cell_angle_gamma   120.00000254
+_chemical_formula_structural   Al4Pd6
+_chemical_formula_sum   'Al4 Pd6'
+_cell_volume   152.84675268
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Pd
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.60463327  0.39536753  0.18610104  1
+  Al  Al1  1  0.89536697  0.10463303  0.31389906  1
+  Al  Al2  1  0.10463260  0.89536625  0.68610111  1
+  Al  Al3  1  0.39536721  0.60463356  0.81389913  1
+  Pd  Pd0  1  0.51604505  0.74999885  0.24999889  1
+  Pd  Pd1  1  0.25000078  0.01604395  0.24999889  1
+  Pd  Pd2  1  0.98395429  0.48395403  0.24999890  1
+  Pd  Pd3  1  0.01604448  0.51604448  0.74999896  1
+  Pd  Pd4  1  0.74999955  0.98395456  0.74999897  1
+  Pd  Pd5  1  0.48395529  0.24999966  0.74999897  1

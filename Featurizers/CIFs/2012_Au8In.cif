@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_2012_Au8In
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   6.62849765
+_cell_length_b   6.62849765
+_cell_length_c   6.62849765
+_cell_angle_alpha   95.74231160
+_cell_angle_beta   95.74231160
+_cell_angle_gamma   143.11968573
+_chemical_formula_structural   Au8In
+_chemical_formula_sum   'Au8 In1'
+_cell_volume   165.80969466
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Au
+  In
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Au  Au0  1  0.33320842  0.66679158  0.00000000  1
+  Au  Au1  1  0.66679158  0.33320842  0.00000000  1
+  Au  Au2  1  0.00000000  0.33350337  0.33350337  1
+  Au  Au3  1  0.66679158  0.66679158  0.33358316  1
+  Au  Au4  1  0.33350337  1.00000000  0.33350337  1
+  Au  Au5  1  0.33320842  0.33320842  0.66641684  1
+  Au  Au6  1  0.00000000  0.66649663  0.66649663  1
+  Au  Au7  1  0.66649663  1.00000000  0.66649663  1
+  In  In0  1  0.00000000  0.00000000  0.00000000  1

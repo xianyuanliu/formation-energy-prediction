@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3571_Fe5Mn
+_symmetry_space_group_name_H-M   'Amm2'
+_cell_length_a   2.46320688
+_cell_length_b   6.55078013
+_cell_length_c   3.92814798
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   79.16340497
+_chemical_formula_structural   Fe5Mn
+_chemical_formula_sum   'Fe5 Mn1'
+_cell_volume   62.25399889
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  Mn
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.99977667  0.00044667  0.00000000  1
+  Fe  Fe1  1  0.66661619  0.66676762  0.00000000  1
+  Fe  Fe2  1  0.33266442  0.33467116  0.00000000  1
+  Fe  Fe3  1  0.55589278  0.88821445  0.50000000  1
+  Fe  Fe4  1  0.22193664  0.55612672  0.50000000  1
+  Mn  Mn0  1  0.88977997  0.22044005  0.50000000  1

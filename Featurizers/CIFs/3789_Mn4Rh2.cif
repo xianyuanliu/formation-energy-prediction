@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3789_Mn4Rh2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   6.83594381
+_cell_length_b   6.83594381
+_cell_length_c   4.09453710
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   158.11226173
+_chemical_formula_structural   Mn4Rh2
+_chemical_formula_sum   'Mn4 Rh2'
+_cell_volume   71.32883207
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mn
+  Rh
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mn  Mn0  1  0.99951336  0.00048664  0.00000000  1
+  Mn  Mn1  1  0.22208737  0.77791263  0.50000000  1
+  Mn  Mn2  1  0.33346819  0.66653181  0.00000000  1
+  Mn  Mn3  1  0.55604219  0.44395781  0.50000000  1
+  Rh  Rh0  1  0.66693809  0.33306191  0.00000000  1
+  Rh  Rh1  1  0.88861747  0.11138253  0.50000000  1
