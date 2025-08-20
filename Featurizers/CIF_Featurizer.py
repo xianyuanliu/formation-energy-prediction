@@ -11,7 +11,7 @@ from matminer.featurizers.structure.symmetry import GlobalSymmetryFeatures
 # --- 1. Configuration --- 🔧
 CIF_FOLDER = "CIFs"
 PLOT_FOLDER = "XRD_Images"
-OUTPUT_CSV_FILE = "CIF2XRD.csv"
+OUTPUT_CSV_FILE = "XRD_data.csv"
 
 # --- 2. Setup Paths and Find Files --- 📁
 base_dir = os.path.dirname(os.path.abspath(__file__))
