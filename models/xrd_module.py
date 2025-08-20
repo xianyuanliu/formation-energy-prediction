@@ -1,20 +1,60 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.utils.data import Dataset, DataLoader
 from typing import Optional
+import pandas as pd
+
+class XRDDataset(Dataset):
+    """
+    A custom PyTorch Dataset to load XRD feature data from a CSV file.
+
+    This dataset is designed for an unsupervised or multi-modal setup.
+    It robustly finds the 'xrd_0' column and then automatically determines
+    the number of consecutive 'xrd_n' columns to use as the feature set.
+    """
+    def __init__(self, csv_path: str):
+        """
+        Args:
+            csv_path (str): The path to the XRD_data.csv file.
+        """
+        df = pd.read_csv(csv_path)
+
+        try:
+            xrd_start_col_index = df.columns.get_loc('xrd_0')
+        except KeyError:
+            raise KeyError("The required column 'xrd_0' was not found in the CSV file.")
+
+        remaining_columns = df.columns[xrd_start_col_index:]
+        is_xrd_col = remaining_columns.str.startswith('xrd_')
+        consecutive_mask = is_xrd_col.cumprod().astype(bool)
+        
+        self.num_xrd_features = consecutive_mask.sum()
+
+        if self.num_xrd_features == 0:
+            raise ValueError("Found 'xrd_0' but no subsequent 'xrd_n' columns to form a feature set.")
+
+        xrd_end_col_index = xrd_start_col_index + self.num_xrd_features
+        xrd_features = df.iloc[:, xrd_start_col_index:xrd_end_col_index].values
+        self.xrd_features = torch.tensor(xrd_features, dtype=torch.float32)
+
+    def __len__(self) -> int:
+        """Returns the total number of samples in the dataset."""
+        return len(self.xrd_features)
+
+    def __getitem__(self, idx: int) -> torch.Tensor:
+        """Retrieves a single sample of XRD features from the dataset at the given index."""
+        return self.xrd_features[idx]
 
 class XRDFeatureExtractor(nn.Module):
     """
     Converts raw XRD data (Feature Vector) to an input vector for the 
     bridge layer via an MLP.
-
-    This module operates as part of the overall pipeline and updates its 
-    parameters via backpropagated gradients from the final loss.
     """
-    def __init__(self, input_dim: int = 128, output_dim: int = 128, hidden_dim: Optional[int] = None):
+    def __init__(self, input_dim: int, output_dim: int = 128, hidden_dim: Optional[int] = None):
         """
         Args:
-            input_dim (int): Dimension of the input XRD vector.
+            input_dim (int): Dimension of the input XRD vector. Should match the number of features from the dataset.
             output_dim (int): Dimension of the output feature vector (to be passed to the bridge).
             hidden_dim (Optional[int]): Dimension of the MLP's hidden layer. 
                                         If None, it defaults to output_dim * 2.
@@ -24,7 +64,6 @@ class XRDFeatureExtractor(nn.Module):
         if hidden_dim is None:
             hidden_dim = output_dim * 2
         
-        # Define the feature extractor with a simple MLP structure.
         self.extractor = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
             nn.ReLU(),
@@ -40,42 +79,47 @@ class XRDFeatureExtractor(nn.Module):
         Returns:
             torch.Tensor: The final feature vector with shape (batch_size, output_dim).
         """
-        # L2 normalization helps stabilize training by scaling the input vectors.
         normalized_x = F.normalize(x, p=2, dim=1)
-        
-        # Generate the final feature vector by passing through the MLP.
         features = self.extractor(normalized_x)
-        
         return features
 
 # --- Code for independent testing ---
-# This file can be executed directly to verify that the module works correctly.
-# (e.g., `python models/xrd_extractor.py`)
 if __name__ == '__main__':
-    # Test configurations
-    batch_size = 32
-    feature_dim = 128
-    
-    # 1. Create an instance of the model
-    print("1. Creating an instance of the XRDFeatureExtractor model.")
-    model = XRDFeatureExtractor(input_dim=feature_dim, output_dim=feature_dim)
-    print(model)
-    
-    # 2. Create dummy input data
-    print("\n2. Creating dummy data for testing.")
-    dummy_input = torch.randn(batch_size, feature_dim)
-    
-    # 3. Perform a forward pass
-    print("\n3. Passing data through the model to check the output.")
-    output = model(dummy_input)
-    
-    # 4. Check the input and output shapes
-    print(f"\n--- Test Results ---")
-    print(f"Input Data Shape: {dummy_input.shape}")
-    print(f"Output Data Shape: {output.shape}")
-    
-    # 5. Final verification
-    if output.shape == (batch_size, feature_dim):
-        print("\n✅ Test Successful: Input and output shapes match.")
-    else:
-        print("\n❌ Test Failed: Input and output shapes do not match.")
+    try:
+        # 1. Load data using the Dataset.
+        print("1. Loading data using XRDDataset...")
+        # Make sure the path is correct for your project structure.
+        dataset = XRDDataset(csv_path='data/XRD_data.csv')
+        
+        # Get the dynamically detected feature dimension from the dataset.
+        detected_feature_dim = dataset.num_xrd_features
+        print(f"   ...Successfully loaded {len(dataset)} samples.")
+        print(f"   ...Detected {detected_feature_dim} features per sample.")
+
+        # 2. Create an instance of the model with the correct input dimension.
+        print("\n2. Creating an instance of the XRDFeatureExtractor model.")
+        model = XRDFeatureExtractor(input_dim=detected_feature_dim, output_dim=128)
+        print(model)
+        
+        # 3. Use DataLoader to create a batch of real data for testing.
+        print("\n3. Creating a DataLoader to batch the real data.")
+        data_loader = DataLoader(dataset, batch_size=32, shuffle=False)
+        real_data_batch = next(iter(data_loader)) # Get one batch
+        
+        # 4. Perform a forward pass with the real data batch.
+        print("\n4. Passing a batch of real data through the model.")
+        output = model(real_data_batch)
+        
+        # 5. Check the input and output shapes.
+        print(f"\n--- Test Results ---")
+        print(f"Input Data Shape: {real_data_batch.shape}")
+        print(f"Output Data Shape: {output.shape}")
+        
+        # 6. Final verification.
+        if output.shape == (real_data_batch.shape[0], 128):
+            print("\n✅ Test Successful: Model processed the data and produced the correct output shape.")
+        else:
+            print("\n❌ Test Failed: Output shape is incorrect.")
+
+    except (FileNotFoundError, KeyError, ValueError) as e:
+        print(f"\n❌ An error occurred during testing: {e}")
