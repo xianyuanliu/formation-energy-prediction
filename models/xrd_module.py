@@ -103,7 +103,7 @@ if __name__ == '__main__':
         
         # 3. Use DataLoader to create a batch of real data for testing.
         print("\n3. Creating a DataLoader to batch the real data.")
-        data_loader = DataLoader(dataset, batch_size=32, shuffle=False)
+        data_loader = DataLoader(dataset, batch_size=32, shuffle=False, num_workers=0)
         real_data_batch = next(iter(data_loader)) # Get one batch
         
         # 4. Perform a forward pass with the real data batch.
