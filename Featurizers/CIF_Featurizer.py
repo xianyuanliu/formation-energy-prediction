@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from pymatgen.core.structure import Structure
-from pymatgen.analysis.diffraction.xrd import XRDCalculator  # XRD 플롯용
+from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from matminer.featurizers.structure import XRDPowderPattern
 from matminer.featurizers.structure.symmetry import GlobalSymmetryFeatures
 
@@ -12,7 +12,6 @@ from matminer.featurizers.structure.symmetry import GlobalSymmetryFeatures
 CIF_FOLDER = "CIFs"
 PLOT_FOLDER = "XRD_Patterns"
 OUTPUT_CSV_FILE = "crystal_features.csv"
-VECTOR_LENGTH = 256
 
 # --- 2. Setup Paths and Find Files --- 📁
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -30,10 +29,10 @@ if not cif_files:
 
 # --- 3. Initialize Featurizers --- ✨
 gsf_featurizer = GlobalSymmetryFeatures()
-xrd_vector_featurizer = XRDPowderPattern(pattern_length=VECTOR_LENGTH)
+xrd_vector_featurizer = XRDPowderPattern(two_theta_range=(0, 127), wavelength='CuKa')
 
 # XRD Calculator for generating plots (pymatgen)
-xrd_calculator = XRDCalculator()
+xrd_calculator = XRDCalculator(wavelength='CuKa')
 
 # --- 4. Main Processing Loop --- 🚀
 all_results = []
@@ -60,7 +59,7 @@ for cif_path in tqdm(cif_files, desc="Processing CIFs"):
         all_results.append(result_dict)
         
         # (2) Generate and save XRD pattern plot using pymatgen
-        xrd_pattern = xrd_calculator.get_pattern(structure)
+        xrd_pattern = xrd_calculator.get_pattern(structure, two_theta_range=(0, 127))
         
         # Create the plot
         plt.figure(figsize=(10, 6))
@@ -69,7 +68,7 @@ for cif_path in tqdm(cif_files, desc="Processing CIFs"):
         plt.ylabel('Intensity (a.u.)')
         plt.title(f'XRD Pattern - {filename_no_ext}')
         plt.grid(True, alpha=0.3)
-        plt.xlim(10, 80)
+        plt.xlim(0, 130)
         
         # Save the plot
         plot_filename = f"{filename_no_ext}.png"
