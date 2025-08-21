@@ -26,8 +26,8 @@ def arg_parse():
     # Basic parameters
     parser.add_argument('--data_path', default='data/cifs', help='dataset path')
     parser.add_argument('--task', default='regression')
-    parser.add_argument('--xrg', default=False, help='use xrd features')
-    parser.add_argument('--text', default=False, help='use text features')
+    parser.add_argument('--xrd', default=True, help='use xrd features')
+    parser.add_argument('--text', default=True, help='use text features')
     parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
     parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', help='number of data loading workers (default: 0)')
     parser.add_argument('--epochs', default=30, type=int, metavar='N', help='number of total epochs to run (default: 30)')
@@ -114,7 +114,7 @@ def main():
                                 n_conv=args.n_conv,
                                 h_fea_len=args.h_fea_len,
                                 n_h=args.n_h,
-                                xrd=args.xrg,
+                                xrd=args.xrd,
                                 text=args.text,
                                 graph_type=args.graph_type)
     if args.cuda:

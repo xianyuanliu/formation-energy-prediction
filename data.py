@@ -157,6 +157,7 @@ def collate_pool(dataset_list):
         torch.stack(batch_text_fea, dim=0)
 
 
+
 class GaussianDistance(object):
     """
     Expands the distance by Gaussian basis.
@@ -318,8 +319,8 @@ class CIFData(Dataset):
         random.shuffle(self.id_prop_data)
         atom_init_file = os.path.join(self.root_dir, 'atom_init.json')
         assert os.path.exists(atom_init_file), 'atom_init.json does not exist!'
-        xrd_data_file = os.path.join(self.root_dir, 'XRD_data.csv')
-        text_data_file = os.path.join(self.root_dir, 'SG_text_data.csv')
+        xrd_data_file = os.path.join(self.root_dir, '../XRD_data.csv')
+        text_data_file = os.path.join(self.root_dir, '../SG_text_data.csv')
         assert os.path.exists(xrd_data_file), 'XRD_data.csv does not exist!'
         assert os.path.exists(text_data_file), 'SG_text_data.csv does not exist!'
         self.xrd_data = XRDDataset(csv_path=xrd_data_file)
@@ -335,7 +336,7 @@ class CIFData(Dataset):
         # cif_id, target = self.id_prop_data[idx]
         row  = self.id_prop_data[idx]
         cif_id = row[0]
-        space_groups = row[2]
+        space_group = row[2]
         target = row[3]
 
         crystal = Structure.from_file(os.path.join(self.root_dir, cif_id+'.cif'))
@@ -366,5 +367,5 @@ class CIFData(Dataset):
         nbr_fea_idx = torch.LongTensor(nbr_fea_idx)
         target = torch.Tensor([float(target)])
         xrd_fea = self.xrd_data[cif_id]
-        text_fea = self.text_data[cif_id]
-        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_groups, xrd_fea, text_fea
+        text_fea = self.text_data[space_group]
+        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea, text_fea
