@@ -20,6 +20,9 @@ class XRDDataset(Dataset):
         """
         df = pd.read_csv(csv_path)
 
+        if 'Composition' not in df.columns:
+            raise KeyError("The required column 'Composition' was not found in the CSV file.")
+
         try:
             xrd_start_col_index = df.columns.get_loc('xrd_0')
         except KeyError:
@@ -35,16 +38,21 @@ class XRDDataset(Dataset):
             raise ValueError("Found 'xrd_0' but no subsequent 'xrd_n' columns to form a feature set.")
 
         xrd_end_col_index = xrd_start_col_index + self.num_xrd_features
-        xrd_features = df.iloc[:, xrd_start_col_index:xrd_end_col_index].values
-        self.xrd_features = torch.tensor(xrd_features, dtype=torch.float32)
+        xrd_values = df.iloc[:, xrd_start_col_index:xrd_end_col_index].values
+        compositions = df['Composition'].astype(str).values 
+        self.xrd_features = {
+            comp: torch.tensor(feat, dtype=torch.float32)
+            for comp, feat in zip(compositions, xrd_values)
+        }
+        #self.xrd_features = torch.tensor(xrd_features, dtype=torch.float32)
 
     def __len__(self) -> int:
         """Returns the total number of samples in the dataset."""
         return len(self.xrd_features)
 
-    def __getitem__(self, idx: int) -> torch.Tensor:
+    def __getitem__(self, key: str) -> torch.Tensor:
         """Retrieves a single sample of XRD features from the dataset at the given index."""
-        return self.xrd_features[idx]
+        return self.xrd_features[key]
 
 class XRDFeatureExtractor(nn.Module):
     """
