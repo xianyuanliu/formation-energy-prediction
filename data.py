@@ -133,8 +133,9 @@ def collate_pool(dataset_list):
     crystal_atom_idx, batch_target = [], []
     batch_cif_ids = []
     batch_xrd_fea = []
+    batch_text_fea = []
     base_idx = 0
-    for i, ((atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea) in enumerate(dataset_list):
+    for i, ((atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea, text_fea) in enumerate(dataset_list):
         n_i = atom_fea.shape[0]  # number of atoms for this crystal
         batch_atom_fea.append(atom_fea)
         batch_nbr_fea.append(nbr_fea)
@@ -144,6 +145,7 @@ def collate_pool(dataset_list):
         batch_target.append(target)
         batch_cif_ids.append(cif_id)
         batch_xrd_fea.append(xrd_fea)
+        batch_text_fea.append(text_fea)
         base_idx += n_i
     return (torch.cat(batch_atom_fea, dim=0),
             torch.cat(batch_nbr_fea, dim=0),
@@ -151,7 +153,8 @@ def collate_pool(dataset_list):
             crystal_atom_idx),\
         torch.stack(batch_target, dim=0),\
         batch_cif_ids,\
-        torch.stack(batch_xrd_fea, dim=0)
+        torch.stack(batch_xrd_fea, dim=0), \
+        torch.stack(batch_text_fea, dim=0)
 
 
 class GaussianDistance(object):
@@ -322,7 +325,7 @@ class CIFData(Dataset):
         self.xrd_data = XRDDataset(csv_path=xrd_data_file)
         self.ari = AtomCustomJSONInitializer(atom_init_file)
         self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
-        self.text = TextEmbeddingDataset(csv_path=text_data_file)
+        self.text_data = TextEmbeddingDataset(csv_path=text_data_file)
 
     def __len__(self):
         return len(self.id_prop_data)

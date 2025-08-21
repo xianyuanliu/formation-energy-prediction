@@ -204,7 +204,7 @@ class CrystalGraphConvNet(nn.Module):
         # Text feature extraction
         if hasattr(self, 'text_model'):
             text_fea = self.text_model(text_feature)
-            atom_fea = torch.cat((atom_fea, text_fea), dim=1)
+            crys_fea = torch.cat((crys_fea, text_fea), dim=1)
 
         #crys_fea = self.pooling(atom_fea, crystal_atom_idx)
         crys_fea = self.conv_to_fc(self.conv_to_fc_softplus(crys_fea))
