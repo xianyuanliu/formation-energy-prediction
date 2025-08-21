@@ -52,20 +52,13 @@ def arg_parse():
     test_group.add_argument('--test-size', default=None, type=int, metavar='N', help='number of test data to be loaded (default 1000)')
 
     # model parameters
-    parser.add_argument('--optim', default='SGD', type=str, metavar='SGD',
-                        help='choose an optimizer, SGD or Adam, (default: SGD)')
-    parser.add_argument('--atom-fea-len', default=64, type=int, metavar='N',
-                        help='number of hidden atom features in conv layers')
-    parser.add_argument('--h-fea-len', default=128, type=int, metavar='N',
-                        help='number of hidden features after pooling')
-    parser.add_argument('--n-conv', default=3, type=int, metavar='N',
-                        help='number of conv layers')
-    parser.add_argument('--n-h', default=1, type=int, metavar='N',
-                        help='number of hidden layers after pooling')
-    parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N',
-                        help='best mae error (default: 1e10)')
-    parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH",
-                        help='type of graph convolutional network (cgcnn or mpnn)')
+    parser.add_argument('--optim', default='SGD', type=str, metavar='SGD', help='choose an optimizer, SGD or Adam, (default: SGD)')
+    parser.add_argument('--atom-fea-len', default=64, type=int, metavar='N', help='number of hidden atom features in conv layers')
+    parser.add_argument('--h-fea-len', default=128, type=int, metavar='N', help='number of hidden features after pooling')
+    parser.add_argument('--n-conv', default=3, type=int, metavar='N', help='number of conv layers')
+    parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
+    parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
+    parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (cgcnn or mpnn)')
     args = parser.parse_args(sys.argv[1:])
     return args
 
