@@ -58,14 +58,19 @@ def arg_parse():
                         help='number of hidden atom features in conv layers')
     parser.add_argument('--h-fea-len', default=128, type=int, metavar='N',
                         help='number of hidden features after pooling')
-    parser.add_argument('--n-conv', default=3, type=int, metavar='N', help='number of conv layers')
-    parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
-    parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
-
+    parser.add_argument('--n-conv', default=3, type=int, metavar='N',
+                        help='number of conv layers')
+    parser.add_argument('--n-h', default=1, type=int, metavar='N',
+                        help='number of hidden layers after pooling')
+    parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N',
+                        help='best mae error (default: 1e10)')
+    parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH",
+                        help='type of graph convolutional network (cgcnn or mpnn)')
     args = parser.parse_args(sys.argv[1:])
     return args
 
 best_mae_error = 1e10
+
 
 def main():
     global best_mae_error
@@ -114,7 +119,8 @@ def main():
                                 n_conv=args.n_conv,
                                 h_fea_len=args.h_fea_len,
                                 n_h=args.n_h,
-                                classification=True if args.task == 'classification' else False)
+                                classification=True if args.task == 'classification' else False,
+                                graph_type=args.graph_type)
     if args.cuda:
         model.cuda()
 
