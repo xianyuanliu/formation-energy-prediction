@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 import time
-import warnings
 from random import sample
 
 import torch
@@ -14,7 +13,7 @@ from torch.optim.lr_scheduler import MultiStepLR
 from data import CIFData
 from data import collate_pool, get_train_val_test_loader
 from models.cgcnn import CrystalGraphConvNet
-from utils import Normalizer, mae, save_checkpoint, AverageMeter
+from utils.utils import Normalizer, mae, save_checkpoint, AverageMeter
 
 import warnings
 warnings.filterwarnings("ignore", message=".*fractional coordinates rounded.*")
