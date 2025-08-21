@@ -28,8 +28,8 @@ class TextEmbeddingDataset(Dataset):
         df = pd.read_csv(csv_path)
 
         # Check for required 'Composition' column (same as XRDDataset)
-        if 'Composition' not in df.columns:
-            raise KeyError("The required column 'Composition' was not found in the CSV file.")
+        if 'space_group' not in df.columns:
+            raise KeyError("The required column 'space_group' was not found in the CSV file.")
 
         try:
             # Find the starting column index for embeddings (equivalent to 'xrd_0' in XRDDataset)
@@ -51,23 +51,13 @@ class TextEmbeddingDataset(Dataset):
         # Extract embedding values and compositions (same logic as XRDDataset)
         emb_end_col_index = emb_start_col_index + self.num_text_features
         emb_values = df.iloc[:, emb_start_col_index:emb_end_col_index].values
-        compositions = df['Composition'].astype(str).values 
         
-        # Store embeddings as composition-keyed dictionary (identical to XRDDataset structure)
-        self.text_embeddings = {
-            comp: torch.tensor(feat, dtype=torch.float32)
-            for comp, feat in zip(compositions, emb_values)
-        }
-        
-        # Also store space group information for additional functionality
+        space_groups = df.get('space_group', pd.Series(dtype=str)).astype(str).values
         if 'space_group' in df.columns:
-            space_groups = df['space_group'].astype(str).values
-            self.space_groups = {
-                comp: sg
-                for comp, sg in zip(compositions, space_groups)
-            }
-        else:
-            self.space_groups = {}
+            self.text_embeddings = {
+                space_group: torch.tensor(feat, dtype=torch.float32)
+                for space_group, feat in zip(space_groups, emb_values)
+        }
 
     def __len__(self) -> int:
         """Returns the total number of samples in the dataset."""
@@ -85,12 +75,11 @@ class TextEmbeddingDataset(Dataset):
             torch.Tensor: The text embedding tensor for the composition
         """
         if isinstance(key, int):
-            # For DataLoader compatibility - convert index to composition
-            compositions = list(self.text_embeddings.keys())
-            if key >= len(compositions):
-                raise IndexError(f"Index {key} out of range for dataset of size {len(compositions)}")
-            composition = compositions[key]
-            return self.text_embeddings[composition]
+            sgs = list(self.text_embeddings.keys())
+            if key >= len(sgs):
+                raise IndexError(f"Index {key} out of range for dataset of size {len(sgs)}")
+            sg = sgs[key]
+            return self.text_embeddings[sg]
         elif isinstance(key, str):
             # Direct composition lookup
             if key not in self.text_embeddings:
@@ -98,42 +87,7 @@ class TextEmbeddingDataset(Dataset):
             return self.text_embeddings[key]
         else:
             raise TypeError(f"Key must be int or str, got {type(key)}")
-    
-    def get_space_group(self, composition: str) -> str:
-        """
-        Retrieves the space group for a given composition.
-        
-        Args:
-            composition (str): The composition string to lookup
-            
-        Returns:
-            str: The space group for the composition
-        """
-        if composition in self.space_groups:
-            return self.space_groups[composition]
-        else:
-            raise KeyError(f"Space group information not available for composition: {composition}")
-    
-    def get_compositions(self) -> list:
-        """
-        Returns a list of all available compositions in the dataset.
-        
-        Returns:
-            list: List of composition strings
-        """
-        return list(self.text_embeddings.keys())
-    
-    def has_composition(self, composition: str) -> bool:
-        """
-        Checks if a composition exists in the dataset.
-        
-        Args:
-            composition (str): The composition string to check
-            
-        Returns:
-            bool: True if composition exists, False otherwise
-        """
-        return composition in self.text_embeddings
+
 
 class TextFeatureExtractor(nn.Module):
     """
