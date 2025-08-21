@@ -1,4 +1,4 @@
-Formation Energy Prediction
+#  🧪 Formation Energy Prediction
 
 ## Overview
 This repository contains code for predicting the formation energy of materials using multimodal  machine learning techniques. 
