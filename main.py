@@ -77,6 +77,8 @@ def arg_parse():
                         help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N',
                         help='best mae error (default: 1e10)')
+    parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH",
+                        help='type of graph convolutional network (cgcnn or mpnn)') 
     args = parser.parse_args(sys.argv[1:])
     return args
 
@@ -130,7 +132,8 @@ def main():
                                 n_conv=args.n_conv,
                                 h_fea_len=args.h_fea_len,
                                 n_h=args.n_h,
-                                classification=True if args.task == 'classification' else False)
+                                classification=True if args.task == 'classification' else False,
+                                graph_type=args.graph_type)
     if args.cuda:
         model.cuda()
 

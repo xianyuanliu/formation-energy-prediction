@@ -73,6 +73,40 @@ class ConvLayer(nn.Module):
         out = self.softplus2(atom_in_fea + nbr_sumed)
         return out
 
+class MPNNLayer(nn.Module):
+    def __init__(self, atom_fea_len, nbr_fea_len, hidden=128, use_bn=True):
+        super().__init__()
+        self.atom_fea_len = atom_fea_len
+        self.nbr_fea_len = nbr_fea_len
+        self.mlp = nn.Sequential(
+            nn.Linear(2*atom_fea_len + nbr_fea_len, hidden),
+            nn.Softplus(),
+            nn.Linear(hidden, atom_fea_len)
+        )
+        self.use_bn = use_bn
+        if use_bn:
+            self.bn = nn.BatchNorm1d(atom_fea_len)
+        self.act = nn.Softplus()
+
+    def forward(self, atom_in_fea, nbr_fea, nbr_fea_idx):
+        N, M = nbr_fea_idx.shape
+        F = atom_in_fea.size(1)
+
+        src = atom_in_fea.unsqueeze(1).expand(N, M, F)  # (N,M,F)
+        nbr = atom_in_fea[nbr_fea_idx, :]               # (N,M,F)
+        x = torch.cat([src, nbr, nbr_fea], dim=-1)      # (N,M,2F+B)
+
+        msg = self.mlp(x)                               # (N,M,F)
+        # padding mask (최종 합산에서 제거)
+        mask = (nbr_fea_idx == 0).unsqueeze(-1)   # (N,M,1)
+        msg = msg.masked_fill(mask, 0.0)
+        msg = msg.sum(dim=1)                            # (N,F)
+
+        out = atom_in_fea + msg                         # residual
+        if self.use_bn:
+            out = self.bn(out)
+        out = self.act(out)
+        return out
 
 class CrystalGraphConvNet(nn.Module):
     """
@@ -81,7 +115,7 @@ class CrystalGraphConvNet(nn.Module):
     """
     def __init__(self, orig_atom_fea_len, nbr_fea_len,
                  atom_fea_len=64, n_conv=3, h_fea_len=128, n_h=1,
-                 classification=False):
+                 classification=False, graph_type="cgcnn"):
         """
         Initialize CrystalGraphConvNet.
 
@@ -104,9 +138,16 @@ class CrystalGraphConvNet(nn.Module):
         super(CrystalGraphConvNet, self).__init__()
         self.classification = classification
         self.embedding = nn.Linear(orig_atom_fea_len, atom_fea_len)
-        self.convs = nn.ModuleList([ConvLayer(atom_fea_len=atom_fea_len,
+        if graph_type == "cgcnn":
+          self.convs = nn.ModuleList([ConvLayer(atom_fea_len=atom_fea_len,
                                     nbr_fea_len=nbr_fea_len)
                                     for _ in range(n_conv)])
+        elif graph_type == "mpnn":
+          self.convs = nn.ModuleList([MPNNLayer(atom_fea_len=atom_fea_len,
+                                    nbr_fea_len=nbr_fea_len)
+                                    for _ in range(n_conv)])
+        else:
+          raise ValueError("Unknown graph type: {}".format(graph_type))
         self.conv_to_fc = nn.Linear(atom_fea_len, h_fea_len)
         self.conv_to_fc_softplus = nn.Softplus()
         if n_h > 1:
