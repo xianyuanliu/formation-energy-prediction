@@ -132,6 +132,7 @@ def collate_pool(dataset_list):
     batch_atom_fea, batch_nbr_fea, batch_nbr_fea_idx = [], [], []
     crystal_atom_idx, batch_target = [], []
     batch_cif_ids = []
+    batch_xrd_fea = []
     base_idx = 0
     for i, ((atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea) in enumerate(dataset_list):
         n_i = atom_fea.shape[0]  # number of atoms for this crystal
@@ -142,13 +143,15 @@ def collate_pool(dataset_list):
         crystal_atom_idx.append(new_idx)
         batch_target.append(target)
         batch_cif_ids.append(cif_id)
+        batch_xrd_fea.append(xrd_fea)
         base_idx += n_i
     return (torch.cat(batch_atom_fea, dim=0),
             torch.cat(batch_nbr_fea, dim=0),
             torch.cat(batch_nbr_fea_idx, dim=0),
             crystal_atom_idx),\
         torch.stack(batch_target, dim=0),\
-        batch_cif_ids
+        batch_cif_ids,\
+        torch.stack(batch_xrd_fea, dim=0)
 
 
 class GaussianDistance(object):
