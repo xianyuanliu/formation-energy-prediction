@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_3247_GaPb8
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   7.87491886
+_cell_length_b   7.87491886
+_cell_length_c   7.87491886
+_cell_angle_alpha   95.72289813
+_cell_angle_beta   95.72289813
+_cell_angle_gamma   143.18410633
+_chemical_formula_structural   GaPb8
+_chemical_formula_sum   'Ga1 Pb8'
+_cell_volume   277.67233457
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ga
+  Pb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ga  Ga0  1  0.00000000  0.00000000  0.00000000  1
+  Pb  Pb0  1  0.33381926  0.66618074  0.00000000  1
+  Pb  Pb1  1  0.66618074  0.33381926  0.00000000  1
+  Pb  Pb2  1  1.00000000  0.33276447  0.33276447  1
+  Pb  Pb3  1  0.66618074  0.66618074  0.33236147  1
+  Pb  Pb4  1  0.33276447  0.00000000  0.33276447  1
+  Pb  Pb5  1  0.33381926  0.33381926  0.66763853  1
+  Pb  Pb6  1  0.00000000  0.66723553  0.66723553  1
+  Pb  Pb7  1  0.66723553  1.00000000  0.66723553  1

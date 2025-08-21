@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2345_KP5
+_symmetry_space_group_name_H-M   'Cmmm'
+_cell_length_a   7.25646648
+_cell_length_b   7.25646648
+_cell_length_c   3.28064568
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   134.21647590
+_chemical_formula_structural   KP5
+_chemical_formula_sum   'K1 P5'
+_cell_volume   123.80929204
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  K
+  P
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  K  K0  1  0.97274172  0.02725828  0.00000000  1
+  P  P0  1  0.71507532  0.28492468  0.50000000  1
+  P  P1  1  0.60279611  0.39720389  0.00000000  1
+  P  P2  1  0.47177785  0.52822215  0.50000000  1
+  P  P3  1  0.34165792  0.65834208  0.00000000  1
+  P  P4  1  0.22928441  0.77071559  0.50000000  1

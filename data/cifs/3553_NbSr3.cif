@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_3553_NbSr3
+_symmetry_space_group_name_H-M   'Immm'
+_cell_length_a   7.27701661
+_cell_length_b   7.27701661
+_cell_length_c   7.27701661
+_cell_angle_alpha   145.77978666
+_cell_angle_beta   129.29743170
+_cell_angle_gamma   62.59815262
+_chemical_formula_structural   NbSr3
+_chemical_formula_sum   'Nb1 Sr3'
+_cell_volume   165.91453276
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Nb
+  Sr
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Nb  Nb0  1  0.00000000  0.00000000  0.00000000  1
+  Sr  Sr0  1  0.78786503  0.28786503  0.50000000  1
+  Sr  Sr1  1  0.50000000  0.50000000  0.00000000  1
+  Sr  Sr2  1  0.21213497  0.71213497  0.50000000  1

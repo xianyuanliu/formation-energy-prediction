@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_3990_TaV3
+_symmetry_space_group_name_H-M   'Fm -3 m'
+_cell_length_a   4.35097652
+_cell_length_b   4.35097652
+_cell_length_c   4.35097652
+_cell_angle_alpha   60.00000000
+_cell_angle_beta   60.00000000
+_cell_angle_gamma   60.00000000
+_chemical_formula_structural   TaV3
+_chemical_formula_sum   'Ta1 V3'
+_cell_volume   58.24319895
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ta
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ta  Ta0  1  0.75000031  0.75000031  0.75000031  1
+  V  V0  1  0.00000000  0.00000000  0.00000000  1
+  V  V1  1  0.24999956  0.24999956  0.24999956  1
+  V  V2  1  0.50000075  0.50000075  0.50000075  1

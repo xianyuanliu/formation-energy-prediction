@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_1944_Th6Ge4
+_symmetry_space_group_name_H-M   'P4/mbm'
+_cell_length_a   7.98865700
+_cell_length_b   7.98865700
+_cell_length_c   4.15773600
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Th6Ge4
+_chemical_formula_sum   'Ge4 Th6'
+_cell_volume   265.34105976
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ge
+  Th
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ge  Ge0  1  0.62065004  0.12065107  0.00000000  1
+  Ge  Ge1  1  0.12065107  0.37934914  0.00000000  1
+  Ge  Ge2  1  0.87934935  0.62065004  0.00000000  1
+  Ge  Ge3  1  0.37934914  0.87934935  0.00000000  1
+  Th  Th0  1  0.00000000  0.00000000  0.00000000  1
+  Th  Th1  1  0.50000021  0.50000021  0.00000000  1
+  Th  Th2  1  0.32253483  0.17746538  0.50000046  1
+  Th  Th3  1  0.82253505  0.32253483  0.50000046  1
+  Th  Th4  1  0.17746538  0.67746435  0.50000046  1
+  Th  Th5  1  0.67746435  0.82253505  0.50000046  1

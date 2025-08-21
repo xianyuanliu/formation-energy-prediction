@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_1123_Au8Mn4
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   5.74586672
+_cell_length_b   4.23064842
+_cell_length_c   8.48479684
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Au8Mn4
+_chemical_formula_sum   'Au8 Mn4'
+_cell_volume   206.25473697
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Au
+  Mn
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Au  Au0  1  0.08264144  0.25000000  0.23331761  1
+  Au  Au1  1  0.15866628  0.25000000  0.57420370  1
+  Au  Au2  1  0.34133372  0.75000000  0.07420370  1
+  Au  Au3  1  0.41735856  0.75000000  0.73331761  1
+  Au  Au4  1  0.58264144  0.25000000  0.26668239  1
+  Au  Au5  1  0.65866628  0.25000000  0.92579630  1
+  Au  Au6  1  0.84133372  0.75000000  0.42579630  1
+  Au  Au7  1  0.91735856  0.75000000  0.76668239  1
+  Mn  Mn0  1  0.15729744  0.25000000  0.90658689  1
+  Mn  Mn1  1  0.34270256  0.75000000  0.40658689  1
+  Mn  Mn2  1  0.65729744  0.25000000  0.59341311  1
+  Mn  Mn3  1  0.84270256  0.75000000  0.09341311  1

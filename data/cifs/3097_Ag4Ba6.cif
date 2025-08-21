@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_3097_Ag4Ba6
+_symmetry_space_group_name_H-M   'Fdd2'
+_cell_length_a   10.65309312
+_cell_length_b   9.18226662
+_cell_length_c   7.52684233
+_cell_angle_alpha   78.53343084
+_cell_angle_beta   57.64311127
+_cell_angle_gamma   43.82345789
+_chemical_formula_structural   Ag4Ba6
+_chemical_formula_sum   'Ag4 Ba6'
+_cell_volume   407.97929966
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ag
+  Ba
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ag  Ag0  1  0.23377190  0.87143351  0.37619447  1
+  Ag  Ag1  1  0.51860012  0.37619447  0.87143351  1
+  Ag  Ag2  1  0.37856649  0.01622810  0.73139988  1
+  Ag  Ag3  1  0.87380553  0.73139988  0.01622810  1
+  Ba  Ba0  1  0.74696543  0.49064686  0.36475602  1
+  Ba  Ba1  1  0.39763169  0.36475602  0.49064686  1
+  Ba  Ba2  1  0.75935314  0.50303457  0.85236831  1
+  Ba  Ba3  1  0.88524398  0.85236831  0.50303457  1
+  Ba  Ba4  1  0.10303087  0.89696913  0.89696913  1
+  Ba  Ba5  1  0.35303087  0.14696913  0.14696913  1

@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_787_Al3I
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   5.95352008
+_cell_length_b   5.95352008
+_cell_length_c   5.95352008
+_cell_angle_alpha   137.64413830
+_cell_angle_beta   137.64413830
+_cell_angle_gamma   61.44845664
+_chemical_formula_structural   Al3I
+_chemical_formula_sum   'Al3 I1'
+_cell_volume   94.69979132
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  I
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.49999983  0.49999983  0.00000000  1
+  Al  Al1  1  0.74999967  0.24999991  0.49999976  1
+  Al  Al2  1  0.24999991  0.74999967  0.49999976  1
+  I  I0  1  0.00000000  0.00000000  0.00000000  1

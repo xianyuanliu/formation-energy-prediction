@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_2886_CaNa3
+_symmetry_space_group_name_H-M   'Imm2'
+_cell_length_a   7.20501002
+_cell_length_b   7.20501002
+_cell_length_c   7.20501002
+_cell_angle_alpha   149.35909611
+_cell_angle_beta   126.64394061
+_cell_angle_gamma   62.79221404
+_chemical_formula_structural   CaNa3
+_chemical_formula_sum   'Ca1 Na3'
+_cell_volume   151.49418465
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ca
+  Na
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ca  Ca0  1  0.00665606  1.00000000  0.00665606  1
+  Na  Na0  1  0.50042639  0.50000000  0.00042639  1
+  Na  Na1  1  0.90740789  0.24428245  0.66312544  1
+  Na  Na2  1  0.41884299  0.75571755  0.66312544  1

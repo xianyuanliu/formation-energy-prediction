@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_3775_Cu2I2
+_symmetry_space_group_name_H-M   'P6_3mc'
+_cell_length_a   4.27305869
+_cell_length_b   4.27305869
+_cell_length_c   6.98645600
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   119.99997973
+_chemical_formula_structural   Cu2I2
+_chemical_formula_sum   'Cu2 I2'
+_cell_volume   110.47534449
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  I
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.00000000  0.00000000  0.00003149  1
+  Cu  Cu1  1  0.33333269  0.66666721  0.50003177  1
+  I  I0  1  0.00000000  0.00000000  0.37496836  1
+  I  I1  1  0.33333269  0.66666721  0.87496865  1

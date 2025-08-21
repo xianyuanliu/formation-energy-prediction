@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_3327_Pt2W2
+_symmetry_space_group_name_H-M   'Fd -3 m'
+_cell_length_a   4.47848381
+_cell_length_b   4.47848381
+_cell_length_c   11.01212583
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   119.99999989
+_chemical_formula_structural   Pt2W2
+_chemical_formula_sum   'Pt6 W6'
+_cell_volume   191.27746833
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Pt
+  W
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pt  Pt0  1  0.00000000  0.00000000  0.12461310  1
+  Pt  Pt1  1  0.00000000  0.00000000  0.87538690  1
+  Pt  Pt2  1  0.33333333  0.66666667  0.45784043  1
+  Pt  Pt3  1  0.33333333  0.66666667  0.20860960  1
+  Pt  Pt4  1  0.66666667  0.33333333  0.79139040  1
+  Pt  Pt5  1  0.66666667  0.33333333  0.54215957  1
+  W  W0  1  0.00000000  0.00000000  0.37573971  1
+  W  W1  1  0.00000000  0.00000000  0.62426029  1
+  W  W2  1  0.33333333  0.66666667  0.70906705  1
+  W  W3  1  0.33333333  0.66666667  0.95757623  1
+  W  W4  1  0.66666667  0.33333333  0.04242377  1
+  W  W5  1  0.66666667  0.33333333  0.29093295  1

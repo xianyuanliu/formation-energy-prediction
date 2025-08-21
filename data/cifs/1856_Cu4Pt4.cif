@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_1856_Cu4Pt4
+_symmetry_space_group_name_H-M   'P-1'
+_cell_length_a   4.70538832
+_cell_length_b   5.36035072
+_cell_length_c   4.69439804
+_cell_angle_alpha   90.06648129
+_cell_angle_beta   99.30386422
+_cell_angle_gamma   72.75547489
+_chemical_formula_structural   Cu4Pt4
+_chemical_formula_sum   'Cu4 Pt4'
+_cell_volume   111.45702567
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.99705528  0.00154471  0.99948113  1
+  Cu  Cu1  1  0.49982353  0.12481288  0.25003363  1
+  Cu  Cu2  1  0.00017647  0.25018712  0.49996637  1
+  Cu  Cu3  1  0.50294472  0.37345529  0.75051887  1
+  Pt  Pt0  1  0.00524640  0.48339879  0.99784306  1
+  Pt  Pt1  1  0.50179385  0.61653534  0.25351992  1
+  Pt  Pt2  1  0.99820615  0.75846466  0.49648008  1
+  Pt  Pt3  1  0.49475360  0.89160121  0.75215694  1

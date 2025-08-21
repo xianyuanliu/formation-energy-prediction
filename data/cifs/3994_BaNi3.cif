@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_3994_BaNi3
+_symmetry_space_group_name_H-M   'P4mm'
+_cell_length_a   3.96306659
+_cell_length_b   3.96342571
+_cell_length_c   5.27495832
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   BaNi3
+_chemical_formula_sum   'Ba1 Ni3'
+_cell_volume   82.85545839
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ba
+  Ni
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.00000000  0.00000000  0.99334707  1
+  Ni  Ni0  1  0.50000000  0.00000000  0.49304926  1
+  Ni  Ni1  1  0.50000000  0.50000000  0.69019985  1
+  Ni  Ni2  1  0.00000000  0.50000000  0.49007049  1

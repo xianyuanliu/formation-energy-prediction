@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_3623_Ga2P
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   5.00130813
+_cell_length_b   5.00130813
+_cell_length_c   5.00130813
+_cell_angle_alpha   138.94930771
+_cell_angle_beta   138.94930771
+_cell_angle_gamma   59.45215599
+_chemical_formula_structural   Ga2P
+_chemical_formula_sum   'Ga2 P1'
+_cell_volume   53.42089997
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ga
+  P
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ga  Ga0  1  0.65516304  0.65516304  0.00000000  1
+  Ga  Ga1  1  0.34483696  0.34483696  0.00000000  1
+  P  P0  1  0.00000000  0.00000000  0.00000000  1

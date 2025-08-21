@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_1519_Cr2Ta4
+_symmetry_space_group_name_H-M   'Pnnm'
+_cell_length_a   6.43009406
+_cell_length_b   5.04590588
+_cell_length_c   3.14349930
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Cr2Ta4
+_chemical_formula_sum   'Cr2 Ta4'
+_cell_volume   101.99287626
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cr
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cr  Cr0  1  0.00000000  0.00000000  0.00000000  1
+  Cr  Cr1  1  0.50000000  0.50000000  0.50000000  1
+  Ta  Ta0  1  0.20464481  0.44792156  0.00000000  1
+  Ta  Ta1  1  0.29535519  0.94792156  0.50000000  1
+  Ta  Ta2  1  0.70464481  0.05207844  0.50000000  1
+  Ta  Ta3  1  0.79535519  0.55207844  0.00000000  1

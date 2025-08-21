@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_583_InBr5
+_symmetry_space_group_name_H-M   'Amm2'
+_cell_length_a   7.07153250
+_cell_length_b   7.07153250
+_cell_length_c   6.96807942
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   147.95116341
+_chemical_formula_structural   InBr5
+_chemical_formula_sum   'Br5 In1'
+_cell_volume   184.90204996
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Br
+  In
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Br  Br0  1  0.99115468  0.00884532  0.00000000  1
+  Br  Br1  1  0.32635315  0.67364685  0.00000000  1
+  Br  Br2  1  0.65997176  0.34002824  0.00000000  1
+  Br  Br3  1  0.47748072  0.52251928  0.50000000  1
+  Br  Br4  1  0.76024911  0.23975089  0.50000000  1
+  In  In0  1  0.11812392  0.88187608  0.50000000  1

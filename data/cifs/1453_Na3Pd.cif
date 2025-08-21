@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_1453_Na3Pd
+_symmetry_space_group_name_H-M   'Imm2'
+_cell_length_a   6.26684467
+_cell_length_b   6.26684467
+_cell_length_c   6.26684467
+_cell_angle_alpha   148.76706389
+_cell_angle_beta   129.08893103
+_cell_angle_gamma   60.94872060
+_chemical_formula_structural   Na3Pd
+_chemical_formula_sum   'Na3 Pd1'
+_cell_volume   98.17213826
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Na
+  Pd
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Na  Na0  1  0.75353029  0.71115591  0.04237438  1
+  Na  Na1  1  0.33121847  0.28884409  0.04237438  1
+  Na  Na2  1  0.10755241  0.50000000  0.60755241  1
+  Pd  Pd0  1  0.64102882  1.00000000  0.64102882  1

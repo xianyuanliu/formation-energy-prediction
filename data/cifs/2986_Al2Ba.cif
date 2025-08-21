@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_2986_Al2Ba
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   6.81284782
+_cell_length_b   6.81284782
+_cell_length_c   6.81284782
+_cell_angle_alpha   148.97964075
+_cell_angle_beta   148.97964075
+_cell_angle_gamma   44.44127479
+_chemical_formula_structural   Al2Ba
+_chemical_formula_sum   'Al2 Ba1'
+_cell_volume   83.73102137
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Ba
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.03381315  0.03381315  0.00000000  1
+  Al  Al1  1  0.63285351  0.63285351  0.00000000  1
+  Ba  Ba0  1  0.33333333  0.33333333  0.00000000  1

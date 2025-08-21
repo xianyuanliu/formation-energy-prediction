@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_4973_Pb4V4
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   4.16955153
+_cell_length_b   5.70496557
+_cell_length_c   6.90266755
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Pb4V4
+_chemical_formula_sum   'Pb4 V4'
+_cell_volume   164.19477406
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Pb
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pb  Pb0  1  0.75000000  0.87007353  0.17192148  1
+  Pb  Pb1  1  0.25000000  0.37007353  0.32807852  1
+  Pb  Pb2  1  0.75000000  0.62992647  0.67192148  1
+  Pb  Pb3  1  0.25000000  0.12992647  0.82807852  1
+  V  V0  1  0.75000000  0.37714058  0.01934981  1
+  V  V1  1  0.25000000  0.87714058  0.48065019  1
+  V  V2  1  0.75000000  0.12285942  0.51934981  1
+  V  V3  1  0.25000000  0.62285942  0.98065019  1

@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_1659_Cu2Fe2
+_symmetry_space_group_name_H-M   'Fd -3 m'
+_cell_length_a   4.06270108
+_cell_length_b   4.06270108
+_cell_length_c   9.95518306
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   60.00000005
+_chemical_formula_structural   Cu2Fe2
+_chemical_formula_sum   'Cu6 Fe6'
+_cell_volume   142.30154680
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Fe
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.00000000  0.00000000  0.12531423  1
+  Cu  Cu1  1  0.00000000  0.00000000  0.87467661  1
+  Cu  Cu2  1  0.66666667  0.66666667  0.45865093  1
+  Cu  Cu3  1  0.66666667  0.66666667  0.20809693  1
+  Cu  Cu4  1  0.33333333  0.33333333  0.79186178  1
+  Cu  Cu5  1  0.33333333  0.33333333  0.54137236  1
+  Fe  Fe0  1  0.00000000  0.00000000  0.37497914  1
+  Fe  Fe1  1  0.00000000  0.00000000  0.62506083  1
+  Fe  Fe2  1  0.66666667  0.66666667  0.70831524  1
+  Fe  Fe3  1  0.66666667  0.66666667  0.95837262  1
+  Fe  Fe4  1  0.33333333  0.33333333  0.04162673  1
+  Fe  Fe5  1  0.33333333  0.33333333  0.29168260  1

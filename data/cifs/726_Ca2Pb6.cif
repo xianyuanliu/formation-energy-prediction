@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_726_Ca2Pb6
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   7.82488437
+_cell_length_b   7.82488437
+_cell_length_c   6.76293189
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   118.02270455
+_chemical_formula_structural   Ca2Pb6
+_chemical_formula_sum   'Ca2 Pb6'
+_cell_volume   365.53944536
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ca
+  Pb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ca  Ca0  1  0.63825527  0.36174473  0.75000000  1
+  Ca  Ca1  1  0.36174473  0.63825527  0.25000000  1
+  Pb  Pb0  1  0.16291023  0.83708977  0.75000000  1
+  Pb  Pb1  1  0.83708977  0.16291023  0.25000000  1
+  Pb  Pb2  1  0.71719232  0.89368159  0.75000000  1
+  Pb  Pb3  1  0.28280768  0.10631841  0.25000000  1
+  Pb  Pb4  1  0.89368159  0.71719232  0.25000000  1
+  Pb  Pb5  1  0.10631841  0.28280768  0.75000000  1

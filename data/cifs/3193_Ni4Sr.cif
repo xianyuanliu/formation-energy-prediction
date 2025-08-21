@@ -1,0 +1,33 @@
+# generated using pymatgen
+data_3193_Ni4Sr
+_symmetry_space_group_name_H-M   'I4/m'
+_cell_length_a   4.82341467
+_cell_length_b   4.82341467
+_cell_length_c   4.82341467
+_cell_angle_alpha   99.46186277
+_cell_angle_beta   99.46186277
+_cell_angle_gamma   132.16112835
+_chemical_formula_structural   Ni4Sr
+_chemical_formula_sum   'Ni4 Sr1'
+_cell_volume   76.03892817
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ni
+  Sr
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ni  Ni0  1  0.82981755  0.43125277  0.26107032  1
+  Ni  Ni1  1  0.43125277  0.17018245  0.60143522  1
+  Ni  Ni2  1  0.17018245  0.56874723  0.73892968  1
+  Ni  Ni3  1  0.56874723  0.82981755  0.39856478  1
+  Sr  Sr0  1  0.00000000  0.00000000  0.00000000  1

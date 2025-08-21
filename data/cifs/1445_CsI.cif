@@ -1,0 +1,30 @@
+# generated using pymatgen
+data_1445_CsI
+_symmetry_space_group_name_H-M   'P-6m2'
+_cell_length_a   5.41238187
+_cell_length_b   5.41231643
+_cell_length_c   4.76916114
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   120.00040638
+_chemical_formula_structural   CsI
+_chemical_formula_sum   'Cs1 I1'
+_cell_volume   120.98804518
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cs
+  I
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cs  Cs0  1  0.66666959  0.33333663  0.74999949  1
+  I  I0  1  0.33333191  0.66666366  0.25000052  1

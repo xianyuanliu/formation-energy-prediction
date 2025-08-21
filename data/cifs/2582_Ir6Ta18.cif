@@ -1,0 +1,52 @@
+# generated using pymatgen
+data_2582_Ir6Ta18
+_symmetry_space_group_name_H-M   'Pmmn'
+_cell_length_a   5.49491116
+_cell_length_b   5.32940476
+_cell_length_c   14.27418652
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Ir6Ta18
+_chemical_formula_sum   'Ir6 Ta18'
+_cell_volume   418.01392381
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ir
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ir  Ir0  1  0.25000000  0.05776758  0.25000000  1
+  Ir  Ir1  1  0.25000000  0.63979505  0.58386445  1
+  Ir  Ir2  1  0.25000000  0.63979505  0.91613555  1
+  Ir  Ir3  1  0.75000000  0.94223242  0.75000000  1
+  Ir  Ir4  1  0.75000000  0.36020495  0.08386445  1
+  Ir  Ir5  1  0.75000000  0.36020495  0.41613555  1
+  Ta  Ta0  1  0.00102357  0.14694057  0.57999931  1
+  Ta  Ta1  1  0.00102357  0.14694057  0.92000069  1
+  Ta  Ta2  1  0.00360779  0.58868569  0.25000000  1
+  Ta  Ta3  1  0.99639221  0.41131431  0.75000000  1
+  Ta  Ta4  1  0.99897643  0.85305943  0.07999931  1
+  Ta  Ta5  1  0.99897643  0.85305943  0.42000069  1
+  Ta  Ta6  1  0.25000000  0.89235170  0.75000000  1
+  Ta  Ta7  1  0.25000000  0.34839331  0.09136132  1
+  Ta  Ta8  1  0.25000000  0.34839331  0.40863868  1
+  Ta  Ta9  1  0.49897643  0.14694057  0.57999931  1
+  Ta  Ta10  1  0.49897643  0.14694057  0.92000069  1
+  Ta  Ta11  1  0.49639221  0.58868569  0.25000000  1
+  Ta  Ta12  1  0.50360779  0.41131431  0.75000000  1
+  Ta  Ta13  1  0.50102357  0.85305943  0.07999931  1
+  Ta  Ta14  1  0.50102357  0.85305943  0.42000069  1
+  Ta  Ta15  1  0.75000000  0.10764830  0.25000000  1
+  Ta  Ta16  1  0.75000000  0.65160669  0.59136132  1
+  Ta  Ta17  1  0.75000000  0.65160669  0.90863868  1

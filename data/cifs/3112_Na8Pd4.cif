@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_3112_Na8Pd4
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   6.11744459
+_cell_length_b   4.78856558
+_cell_length_c   9.12860115
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Na8Pd4
+_chemical_formula_sum   'Na8 Pd4'
+_cell_volume   267.41127580
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Na
+  Pd
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Na  Na0  1  0.05863851  0.25000000  0.21061220  1
+  Na  Na1  1  0.18143941  0.25000000  0.56393632  1
+  Na  Na2  1  0.31856059  0.75000000  0.06393632  1
+  Na  Na3  1  0.44136149  0.75000000  0.71061220  1
+  Na  Na4  1  0.55863851  0.25000000  0.28938780  1
+  Na  Na5  1  0.68143941  0.25000000  0.93606368  1
+  Na  Na6  1  0.81856059  0.75000000  0.43606368  1
+  Na  Na7  1  0.94136149  0.75000000  0.78938780  1
+  Pd  Pd0  1  0.18623678  0.25000000  0.88600882  1
+  Pd  Pd1  1  0.31376322  0.75000000  0.38600882  1
+  Pd  Pd2  1  0.68623678  0.25000000  0.61399118  1
+  Pd  Pd3  1  0.81376322  0.75000000  0.11399118  1

@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_3379_K4Na8
+_symmetry_space_group_name_H-M   'P6_3/mmc'
+_cell_length_a   7.26142719
+_cell_length_b   7.26135666
+_cell_length_c   11.92720052
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   120.00032124
+_chemical_formula_structural   K4Na8
+_chemical_formula_sum   'K4 Na8'
+_cell_volume   544.63745232
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  K
+  Na
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  K  K0  1  0.33330261  0.66660522  0.06267181  1
+  K  K1  1  0.33330261  0.66660522  0.43732819  1
+  K  K2  1  0.66669739  0.33339478  0.56267181  1
+  K  K3  1  0.66669739  0.33339478  0.93732819  1
+  Na  Na0  1  0.00000000  0.00000000  0.00000000  1
+  Na  Na1  1  0.33415668  0.16707665  0.25000000  1
+  Na  Na2  1  0.83291996  0.16707665  0.25000000  1
+  Na  Na3  1  0.83292197  0.66584393  0.25000000  1
+  Na  Na4  1  0.00000000  0.00000000  0.50000000  1
+  Na  Na5  1  0.16707803  0.33415607  0.75000000  1
+  Na  Na6  1  0.16708004  0.83292335  0.75000000  1
+  Na  Na7  1  0.66584332  0.83292335  0.75000000  1

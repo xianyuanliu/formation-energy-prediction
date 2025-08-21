@@ -1,0 +1,30 @@
+# generated using pymatgen
+data_580_SmBi
+_symmetry_space_group_name_H-M   'P-6m2'
+_cell_length_a   4.23532800
+_cell_length_b   4.23499923
+_cell_length_c   4.15933500
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   120.00256811
+_chemical_formula_structural   SmBi
+_chemical_formula_sum   'Bi1 Sm1'
+_cell_volume   64.60761030
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Bi
+  Sm
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Bi  Bi0  1  0.66668117  0.33336409  0.74999963  1
+  Sm  Sm0  1  0.33331646  0.66663273  0.25000148  1

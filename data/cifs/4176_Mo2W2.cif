@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_4176_Mo2W2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   2.62364959
+_cell_length_b   5.48932873
+_cell_length_c   4.69177469
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   103.82618583
+_chemical_formula_structural   Mo2W2
+_chemical_formula_sum   'Mo2 W2'
+_cell_volume   65.61342409
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mo
+  W
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mo  Mo0  1  0.17432566  0.34865133  0.25000000  1
+  Mo  Mo1  1  0.82567434  0.65134867  0.75000000  1
+  W  W0  1  0.42810177  0.85620354  0.25000000  1
+  W  W1  1  0.57189823  0.14379646  0.75000000  1

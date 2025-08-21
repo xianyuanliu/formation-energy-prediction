@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_1037_AlCa3
+_symmetry_space_group_name_H-M   'Immm'
+_cell_length_a   6.93275815
+_cell_length_b   6.93275815
+_cell_length_c   6.93275815
+_cell_angle_alpha   147.29711277
+_cell_angle_beta   130.88994452
+_cell_angle_gamma   60.25823543
+_chemical_formula_structural   AlCa3
+_chemical_formula_sum   'Al1 Ca3'
+_cell_volume   134.86692549
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Ca
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.08066364  0.00000000  0.08066364  1
+  Ca  Ca0  1  0.58315660  0.50000000  0.08315660  1
+  Ca  Ca1  1  0.87675620  0.29199965  0.58475655  1
+  Ca  Ca2  1  0.29275690  0.70800035  0.58475655  1

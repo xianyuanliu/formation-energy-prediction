@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_1132_FePt3
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   3.92582516
+_cell_length_b   4.80631207
+_cell_length_c   3.88589973
+_cell_angle_alpha   66.15588645
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   114.10455730
+_chemical_formula_structural   FePt3
+_chemical_formula_sum   'Fe1 Pt3'
+_cell_volume   60.00722884
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.00000000  0.00000000  0.00000000  1
+  Pt  Pt0  1  0.24997201  0.49994402  0.25002799  1
+  Pt  Pt1  1  0.50000000  0.00000000  0.50000000  1
+  Pt  Pt2  1  0.75002799  0.50005598  0.74997201  1

@@ -1,0 +1,33 @@
+# generated using pymatgen
+data_1220_Ba4As
+_symmetry_space_group_name_H-M   'I4/m'
+_cell_length_a   8.07290586
+_cell_length_b   8.07290586
+_cell_length_c   8.07290586
+_cell_angle_alpha   93.96170930
+_cell_angle_beta   93.96170930
+_cell_angle_gamma   149.52159871
+_chemical_formula_structural   Ba4As
+_chemical_formula_sum   'As1 Ba4'
+_cell_volume   257.47459481
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  As
+  Ba
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  As  As0  1  0.00000000  0.00000000  0.00000000  1
+  Ba  Ba0  1  0.73570721  0.44522314  0.18093035  1
+  Ba  Ba1  1  0.44522314  0.26429279  0.70951594  1
+  Ba  Ba2  1  0.26429279  0.55477686  0.81906965  1
+  Ba  Ba3  1  0.55477686  0.73570721  0.29048406  1

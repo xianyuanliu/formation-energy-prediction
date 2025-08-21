@@ -1,0 +1,30 @@
+# generated using pymatgen
+data_4612_IrK
+_symmetry_space_group_name_H-M   'Fm -3 m'
+_cell_length_a   4.77389425
+_cell_length_b   4.77389425
+_cell_length_c   4.77389425
+_cell_angle_alpha   60.00000000
+_cell_angle_beta   60.00000000
+_cell_angle_gamma   60.00000000
+_chemical_formula_structural   IrK
+_chemical_formula_sum   'Ir1 K1'
+_cell_volume   76.93135585
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ir
+  K
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ir  Ir0  1  0.00000000  0.00000000  0.00000000  1
+  K  K0  1  0.49999956  0.49999956  0.49999956  1

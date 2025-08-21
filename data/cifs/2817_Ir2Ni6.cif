@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_2817_Ir2Ni6
+_symmetry_space_group_name_H-M   'Pmmn'
+_cell_length_a   5.11629068
+_cell_length_b   4.17765611
+_cell_length_c   4.45188119
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Ir2Ni6
+_chemical_formula_sum   'Ir2 Ni6'
+_cell_volume   95.15496719
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ir
+  Ni
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ir  Ir0  1  0.00000000  0.00000000  0.66566836  1
+  Ir  Ir1  1  0.50000000  0.50000000  0.33433164  1
+  Ni  Ni0  1  0.00000000  0.50000000  0.33397112  1
+  Ni  Ni1  1  0.50000000  0.00000000  0.66602888  1
+  Ni  Ni2  1  0.24998432  0.00000000  0.16161253  1
+  Ni  Ni3  1  0.75001568  0.00000000  0.16161253  1
+  Ni  Ni4  1  0.74998432  0.50000000  0.83838747  1
+  Ni  Ni5  1  0.25001568  0.50000000  0.83838747  1

@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_2152_Fe5Ir4
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   3.77476999
+_cell_length_b   5.88143424
+_cell_length_c   5.88143424
+_cell_angle_alpha   95.91082021
+_cell_angle_beta   108.71769857
+_cell_angle_gamma   71.28230143
+_chemical_formula_structural   Fe5Ir4
+_chemical_formula_sum   'Fe5 Ir4'
+_cell_volume   117.12751416
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  Ir
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.00000000  0.00000000  0.00000000  1
+  Fe  Fe1  1  0.33387674  1.00000000  0.66775348  1
+  Fe  Fe2  1  0.66612326  0.00000000  0.33224652  1
+  Fe  Fe3  1  0.66612326  0.66775348  0.00000000  1
+  Fe  Fe4  1  0.33387674  0.33224652  0.00000000  1
+  Ir  Ir0  1  0.32664946  0.67335054  0.32664946  1
+  Ir  Ir1  1  0.67335054  0.32664946  0.67335054  1
+  Ir  Ir2  1  1.00000000  0.32664946  0.32664946  1
+  Ir  Ir3  1  0.00000000  0.67335054  0.67335054  1

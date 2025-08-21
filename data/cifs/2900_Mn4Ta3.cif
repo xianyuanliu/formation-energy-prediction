@@ -1,0 +1,35 @@
+# generated using pymatgen
+data_2900_Mn4Ta3
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   3.06524847
+_cell_length_b   10.82841996
+_cell_length_c   3.06524847
+_cell_angle_alpha   81.86319285
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   98.13680715
+_chemical_formula_structural   Mn4Ta3
+_chemical_formula_sum   'Mn4 Ta3'
+_cell_volume   99.68211558
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mn
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mn  Mn0  1  0.13823451  0.27646902  0.86176549  1
+  Mn  Mn1  1  0.43000207  0.86000415  0.56999793  1
+  Mn  Mn2  1  0.56999793  0.13999585  0.43000207  1
+  Mn  Mn3  1  0.86176549  0.72353098  0.13823451  1
+  Ta  Ta0  1  0.00000000  0.00000000  0.00000000  1
+  Ta  Ta1  1  0.29406938  0.58813875  0.70593062  1
+  Ta  Ta2  1  0.70593062  0.41186125  0.29406938  1

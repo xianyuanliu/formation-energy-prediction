@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_3280_Cu2Mn
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   2.69838957
+_cell_length_b   5.57664930
+_cell_length_c   2.69838957
+_cell_angle_alpha   75.99913997
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   104.00086003
+_chemical_formula_structural   Cu2Mn
+_chemical_formula_sum   'Cu2 Mn1'
+_cell_volume   38.15457582
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Mn
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.33011882  0.66023764  0.66988118  1
+  Cu  Cu1  1  0.66988118  0.33976236  0.33011882  1
+  Mn  Mn0  1  0.00000000  0.00000000  0.00000000  1

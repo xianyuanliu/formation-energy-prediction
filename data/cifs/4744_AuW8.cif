@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_4744_AuW8
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   6.38123452
+_cell_length_b   6.38123452
+_cell_length_c   8.56307066
+_cell_angle_alpha   47.85901396
+_cell_angle_beta   47.85901396
+_cell_angle_gamma   84.28197208
+_chemical_formula_structural   AuW8
+_chemical_formula_sum   'Au1 W8'
+_cell_volume   147.69473235
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Au
+  W
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Au  Au0  1  0.00000000  0.00000000  0.00000000  1
+  W  W0  1  1.00000000  1.00000000  0.32859553  1
+  W  W1  1  1.00000000  1.00000000  0.67140447  1
+  W  W2  1  0.32859553  0.67140447  0.00000000  1
+  W  W3  1  0.33639682  0.66360318  0.33639682  1
+  W  W4  1  0.33639682  0.66360318  0.66360318  1
+  W  W5  1  0.67140447  0.32859553  0.00000000  1
+  W  W6  1  0.66360318  0.33639682  0.33639682  1
+  W  W7  1  0.66360318  0.33639682  0.66360318  1

@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_4498_Mo6V2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   5.41429149
+_cell_length_b   5.41429149
+_cell_length_c   4.41144373
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   70.44031970
+_chemical_formula_structural   Mo6V2
+_chemical_formula_sum   'Mo6 V2'
+_cell_volume   121.85689395
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mo
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mo  Mo0  1  0.12813124  0.62222984  0.75000000  1
+  Mo  Mo1  1  0.12694770  0.12694770  0.75000000  1
+  Mo  Mo2  1  0.37777016  0.87186876  0.25000000  1
+  Mo  Mo3  1  0.62222984  0.12813124  0.75000000  1
+  Mo  Mo4  1  0.87305230  0.87305230  0.25000000  1
+  Mo  Mo5  1  0.87186876  0.37777016  0.25000000  1
+  V  V0  1  0.37728820  0.37728820  0.25000000  1
+  V  V1  1  0.62271180  0.62271180  0.75000000  1

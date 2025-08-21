@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_3179_Ge3As5
+_symmetry_space_group_name_H-M   'Cmmm'
+_cell_length_a   5.85024780
+_cell_length_b   5.85024780
+_cell_length_c   4.76050340
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   109.83766442
+_chemical_formula_structural   Ge3As5
+_chemical_formula_sum   'As5 Ge3'
+_cell_volume   153.26151193
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  As
+  Ge
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  As  As0  1  0.00000000  0.00000000  0.00000000  1
+  As  As1  1  0.00000000  0.50000000  0.00000000  1
+  As  As2  1  0.50000000  1.00000000  0.00000000  1
+  As  As3  1  0.24462593  0.24462593  0.50000000  1
+  As  As4  1  0.75537407  0.75537407  0.50000000  1
+  Ge  Ge0  1  0.50000000  0.50000000  0.00000000  1
+  Ge  Ge1  1  0.74485291  0.25514709  0.50000000  1
+  Ge  Ge2  1  0.25514709  0.74485291  0.50000000  1

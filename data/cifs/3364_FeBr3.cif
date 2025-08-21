@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_3364_FeBr3
+_symmetry_space_group_name_H-M   'Imm2'
+_cell_length_a   6.39016854
+_cell_length_b   6.39016854
+_cell_length_c   6.39016854
+_cell_angle_alpha   150.58107788
+_cell_angle_beta   117.23888890
+_cell_angle_gamma   70.80688609
+_chemical_formula_structural   FeBr3
+_chemical_formula_sum   'Br3 Fe1'
+_cell_volume   112.48670571
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Br
+  Fe
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Br  Br0  1  0.16914916  0.09732480  0.07182436  1
+  Br  Br1  1  0.47449955  0.40267520  0.07182436  1
+  Br  Br2  1  0.73308662  0.25000000  0.48308662  1
+  Fe  Fe0  1  0.45659799  0.75000000  0.70659799  1

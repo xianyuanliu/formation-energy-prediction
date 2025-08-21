@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_3545_Ga2Sr2
+_symmetry_space_group_name_H-M   'Imma'
+_cell_length_a   6.42014367
+_cell_length_b   6.42014367
+_cell_length_c   5.35983898
+_cell_angle_alpha   65.49828548
+_cell_angle_beta   65.49828548
+_cell_angle_gamma   35.62453193
+_chemical_formula_structural   Ga2Sr2
+_chemical_formula_sum   'Ga2 Sr2'
+_cell_volume   115.83117548
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ga
+  Sr
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ga  Ga0  1  0.95460212  0.95460212  0.04789148  1
+  Ga  Ga1  1  0.29539788  0.29539788  0.20210852  1
+  Sr  Sr0  1  0.72669626  0.72669626  0.77251438  1
+  Sr  Sr1  1  0.52330374  0.52330374  0.47748562  1

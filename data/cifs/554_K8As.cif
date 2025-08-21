@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_554_K8As
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   10.70249387
+_cell_length_b   10.70249387
+_cell_length_c   10.70249387
+_cell_angle_alpha   93.00368166
+_cell_angle_beta   93.00368166
+_cell_angle_gamma   153.53409857
+_chemical_formula_structural   K8As
+_chemical_formula_sum   'As1 K8'
+_cell_volume   531.83402141
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  As
+  K
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  As  As0  1  0.00000000  0.00000000  0.00000000  1
+  K  K0  1  0.37842739  0.62157261  0.00000000  1
+  K  K1  1  0.62157261  0.37842739  0.00000000  1
+  K  K2  1  1.00000000  0.32510807  0.32510807  1
+  K  K3  1  0.62157261  0.62157261  0.24314523  1
+  K  K4  1  0.32510807  0.00000000  0.32510807  1
+  K  K5  1  0.37842739  0.37842739  0.75685477  1
+  K  K6  1  1.00000000  0.67489193  0.67489193  1
+  K  K7  1  0.67489193  0.00000000  0.67489193  1

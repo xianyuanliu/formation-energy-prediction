@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_2564_In2I2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   4.76479309
+_cell_length_b   4.86098020
+_cell_length_c   6.81907284
+_cell_angle_alpha   69.11918612
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   In2I2
+_chemical_formula_sum   'I2 In2'
+_cell_volume   147.56748542
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  I
+  In
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  I  I0  1  0.25000063  0.85456582  0.29086857  1
+  I  I1  1  0.74999974  0.14543285  0.70913247  1
+  In  In0  1  0.74999974  0.40154943  0.19689920  1
+  In  In1  1  0.25000063  0.59845004  0.80310024  1

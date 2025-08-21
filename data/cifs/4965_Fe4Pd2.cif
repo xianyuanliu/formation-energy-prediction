@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_4965_Fe4Pd2
+_symmetry_space_group_name_H-M   'Pnnm'
+_cell_length_a   2.57877646
+_cell_length_b   6.69236953
+_cell_length_c   4.07567918
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Fe4Pd2
+_chemical_formula_sum   'Fe4 Pd2'
+_cell_volume   70.33858077
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  Pd
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.19808076  0.34578283  0.00000000  1
+  Fe  Fe1  1  0.30191924  0.84578283  0.50000000  1
+  Fe  Fe2  1  0.69808076  0.15421717  0.50000000  1
+  Fe  Fe3  1  0.80191924  0.65421717  0.00000000  1
+  Pd  Pd0  1  0.00000000  0.00000000  0.00000000  1
+  Pd  Pd1  1  0.50000000  0.50000000  0.50000000  1

@@ -1,0 +1,44 @@
+# generated using pymatgen
+data_4758_Mo4Nb12
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   5.64433905
+_cell_length_b   9.46187732
+_cell_length_c   5.35422500
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Mo4Nb12
+_chemical_formula_sum   'Mo4 Nb12'
+_cell_volume   285.94797403
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mo
+  Nb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mo  Mo0  1  0.02940472  0.75000000  0.64499690  1
+  Mo  Mo1  1  0.47059528  0.25000000  0.14499690  1
+  Mo  Mo2  1  0.52940472  0.75000000  0.85500310  1
+  Mo  Mo3  1  0.97059528  0.25000000  0.35500310  1
+  Nb  Nb0  1  0.01402698  0.25000000  0.85902588  1
+  Nb  Nb1  1  0.24213893  0.01558533  0.37532765  1
+  Nb  Nb2  1  0.24213893  0.48441467  0.37532765  1
+  Nb  Nb3  1  0.25786107  0.51558533  0.87532765  1
+  Nb  Nb4  1  0.25786107  0.98441467  0.87532765  1
+  Nb  Nb5  1  0.48597302  0.75000000  0.35902588  1
+  Nb  Nb6  1  0.51402698  0.25000000  0.64097412  1
+  Nb  Nb7  1  0.74213893  0.01558533  0.12467235  1
+  Nb  Nb8  1  0.74213893  0.48441467  0.12467235  1
+  Nb  Nb9  1  0.75786107  0.51558533  0.62467235  1
+  Nb  Nb10  1  0.75786107  0.98441467  0.62467235  1
+  Nb  Nb11  1  0.98597302  0.75000000  0.14097412  1

@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_4535_In2Mn6
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   8.35592761
+_cell_length_b   8.35592761
+_cell_length_c   8.35592761
+_cell_angle_alpha   152.63271304
+_cell_angle_beta   152.63271304
+_cell_angle_gamma   39.09004413
+_chemical_formula_structural   In2Mn6
+_chemical_formula_sum   'In2 Mn6'
+_cell_volume   123.07080761
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  In
+  Mn
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  In  In0  1  0.62606747  0.62606747  0.00000000  1
+  In  In1  1  0.37393253  0.37393253  0.00000000  1
+  Mn  Mn0  1  0.50000000  0.00000000  0.50000000  1
+  Mn  Mn1  1  0.00000000  0.50000000  0.50000000  1
+  Mn  Mn2  1  0.25000000  0.75000000  0.50000000  1
+  Mn  Mn3  1  0.75000000  0.25000000  0.50000000  1
+  Mn  Mn4  1  0.87469323  0.87469323  0.00000000  1
+  Mn  Mn5  1  0.12530677  0.12530677  0.00000000  1

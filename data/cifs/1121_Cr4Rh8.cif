@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_1121_Cr4Rh8
+_symmetry_space_group_name_H-M   'I4_1/amd'
+_cell_length_a   3.77577593
+_cell_length_b   3.77577593
+_cell_length_c   11.80570983
+_cell_angle_alpha   99.20185381
+_cell_angle_beta   99.20185381
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Cr4Rh8
+_chemical_formula_sum   'Cr4 Rh8'
+_cell_volume   163.94742151
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cr
+  Rh
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cr  Cr0  1  0.08113082  0.08113082  0.16226163  1
+  Cr  Cr1  1  0.91886918  0.91886918  0.83773837  1
+  Cr  Cr2  1  0.33113082  0.83113082  0.66226163  1
+  Cr  Cr3  1  0.16886918  0.66886918  0.33773837  1
+  Rh  Rh0  1  0.25016152  0.25016152  0.50032305  1
+  Rh  Rh1  1  0.74983848  0.74983848  0.49967695  1
+  Rh  Rh2  1  0.50016152  0.00016152  0.00032305  1
+  Rh  Rh3  1  0.99983848  0.49983848  0.99967695  1
+  Rh  Rh4  1  0.41573876  0.41573876  0.83147750  1
+  Rh  Rh5  1  0.58426124  0.58426124  0.16852250  1
+  Rh  Rh6  1  0.66573876  0.16573876  0.33147750  1
+  Rh  Rh7  1  0.83426124  0.33426124  0.66852250  1

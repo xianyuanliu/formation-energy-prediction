@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_3155_CuNi2
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   5.64371800
+_cell_length_b   5.64371800
+_cell_length_c   5.64371800
+_cell_angle_alpha   154.48853808
+_cell_angle_beta   154.48853808
+_cell_angle_gamma   36.38991015
+_chemical_formula_structural   CuNi2
+_chemical_formula_sum   'Cu1 Ni2'
+_cell_volume   33.30103590
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Ni
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.50000000  0.50000000  0.00000000  1
+  Ni  Ni0  1  0.82948526  0.82948526  0.00000000  1
+  Ni  Ni1  1  0.17051474  0.17051474  0.00000000  1

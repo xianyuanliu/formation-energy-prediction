@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_4086_Sn8W4
+_symmetry_space_group_name_H-M   'I4_1/amd'
+_cell_length_a   16.99940648
+_cell_length_b   16.99940648
+_cell_length_c   16.99940648
+_cell_angle_alpha   165.98629414
+_cell_angle_beta   165.98629414
+_cell_angle_gamma   19.86840942
+_chemical_formula_structural   Sn8W4
+_chemical_formula_sum   'Sn8 W4'
+_cell_volume   288.02819195
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Sn
+  W
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Sn  Sn0  1  0.72623238  0.72623238  0.00000000  1
+  Sn  Sn1  1  0.27376762  0.27376762  0.00000000  1
+  Sn  Sn2  1  0.97623238  0.47623238  0.50000000  1
+  Sn  Sn3  1  0.52376762  0.02376762  0.50000000  1
+  Sn  Sn4  1  0.58670524  0.58670525  0.00000000  1
+  Sn  Sn5  1  0.41329476  0.41329475  0.00000000  1
+  Sn  Sn6  1  0.83670524  0.33670525  0.50000000  1
+  Sn  Sn7  1  0.66329476  0.16329475  0.50000000  1
+  W  W0  1  0.89815088  0.89815089  0.00000000  1
+  W  W1  1  0.10184912  0.10184911  0.00000000  1
+  W  W2  1  0.14815088  0.64815089  0.50000000  1
+  W  W3  1  0.35184912  0.85184911  0.50000000  1

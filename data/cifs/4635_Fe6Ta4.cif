@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_4635_Fe6Ta4
+_symmetry_space_group_name_H-M   'Fdd2'
+_cell_length_a   4.96612207
+_cell_length_b   4.96612207
+_cell_length_c   6.71442341
+_cell_angle_alpha   78.47512041
+_cell_angle_beta   78.47512041
+_cell_angle_gamma   117.37035426
+_chemical_formula_structural   Fe6Ta4
+_chemical_formula_sum   'Fe6 Ta4'
+_cell_volume   135.75651345
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.17940008  0.30961551  0.23329381  1
+  Fe  Fe1  1  0.54290932  0.41269389  0.76670619  1
+  Fe  Fe2  1  0.16269389  0.79290932  0.26670619  1
+  Fe  Fe3  1  0.05961551  0.42940008  0.73329381  1
+  Fe  Fe4  1  0.03569622  0.03569622  0.00000000  1
+  Fe  Fe5  1  0.78569622  0.28569622  0.50000000  1
+  Ta  Ta0  1  0.74007459  0.40374662  0.09817318  1
+  Ta  Ta1  1  0.50191979  0.83824776  0.90182682  1
+  Ta  Ta2  1  0.58824776  0.75191979  0.40182682  1
+  Ta  Ta3  1  0.15374662  0.99007459  0.59817318  1

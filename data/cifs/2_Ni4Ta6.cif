@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_2_Ni4Ta6
+_symmetry_space_group_name_H-M   'R -3 c'
+_cell_length_a   6.91014300
+_cell_length_b   6.91014465
+_cell_length_c   5.53687734
+_cell_angle_alpha   128.60964233
+_cell_angle_beta   51.39037057
+_cell_angle_gamma   119.99999688
+_chemical_formula_structural   Ni4Ta6
+_chemical_formula_sum   'Ni4 Ta6'
+_cell_volume   158.76622258
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ni
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ni  Ni0  1  0.59764189  0.40236015  0.20707883  1
+  Ni  Ni1  1  0.90236106  0.09763996  0.29291977  1
+  Ni  Ni2  1  0.09763887  0.90236032  0.70708262  1
+  Ni  Ni3  1  0.40236206  0.59764005  0.79291835  1
+  Ta  Ta0  1  0.52705892  0.74999959  0.25000059  1
+  Ta  Ta1  1  0.97294041  0.47294075  0.25000059  1
+  Ta  Ta2  1  0.24999987  0.02706022  0.25000061  1
+  Ta  Ta3  1  0.02706085  0.52705864  0.74999919  1
+  Ta  Ta4  1  0.47294043  0.24999981  0.74999920  1
+  Ta  Ta5  1  0.74999922  0.97293931  0.74999922  1

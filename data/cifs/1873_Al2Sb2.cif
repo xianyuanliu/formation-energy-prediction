@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_1873_Al2Sb2
+_symmetry_space_group_name_H-M   'Imma'
+_cell_length_a   6.69737366
+_cell_length_b   6.69737366
+_cell_length_c   6.69737366
+_cell_angle_alpha   145.42730267
+_cell_angle_beta   145.53724060
+_cell_angle_gamma   49.61646539
+_chemical_formula_structural   Al2Sb2
+_chemical_formula_sum   'Al2 Sb2'
+_cell_volume   96.01229287
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.95516764  0.95516764  1.00000000  1
+  Al  Al1  1  0.79483236  0.29483236  0.50000000  1
+  Sb  Sb0  1  0.52000085  0.52000085  0.00000000  1
+  Sb  Sb1  1  0.22999915  0.72999915  0.50000000  1
