@@ -3,6 +3,8 @@ from __future__ import print_function, division
 import torch
 import torch.nn as nn
 
+from models.xrd_module import XRDFeatureExtractor
+
 
 class ConvLayer(nn.Module):
     """
@@ -136,8 +138,8 @@ class CrystalGraphConvNet(nn.Module):
           Number of hidden layers after pooling
         """
         super(CrystalGraphConvNet, self).__init__()
-        self.classification = classification
         self.embedding = nn.Linear(orig_atom_fea_len, atom_fea_len)
+        self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
         if graph_type == "cgcnn":
           self.convs = nn.ModuleList([ConvLayer(atom_fea_len=atom_fea_len,
                                     nbr_fea_len=nbr_fea_len)
@@ -155,13 +157,7 @@ class CrystalGraphConvNet(nn.Module):
                                       for _ in range(n_h-1)])
             self.softpluses = nn.ModuleList([nn.Softplus()
                                              for _ in range(n_h-1)])
-        if self.classification:
-            self.fc_out = nn.Linear(h_fea_len, 2)
-        else:
-            self.fc_out = nn.Linear(h_fea_len, 1)
-        if self.classification:
-            self.logsoftmax = nn.LogSoftmax(dim=1)
-            self.dropout = nn.Dropout()
+        self.fc_out = nn.Linear(h_fea_len, 1)
 
     def forward(self, atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx):
         """
@@ -193,17 +189,18 @@ class CrystalGraphConvNet(nn.Module):
         atom_fea = self.embedding(atom_fea)
         for conv_func in self.convs:
             atom_fea = conv_func(atom_fea, nbr_fea, nbr_fea_idx)
+
+        # XRD feature extraction
+        # xrd_fea = self.xrd_model(xrd_feature)
+        # atom_fea = torch.cat((atom_fea, xrd_fea), dim=1)
+
         crys_fea = self.pooling(atom_fea, crystal_atom_idx)
         crys_fea = self.conv_to_fc(self.conv_to_fc_softplus(crys_fea))
         crys_fea = self.conv_to_fc_softplus(crys_fea)
-        if self.classification:
-            crys_fea = self.dropout(crys_fea)
         if hasattr(self, 'fcs') and hasattr(self, 'softpluses'):
             for fc, softplus in zip(self.fcs, self.softpluses):
                 crys_fea = softplus(fc(crys_fea))
         out = self.fc_out(crys_fea)
-        if self.classification:
-            out = self.logsoftmax(out)
         return out
 
     def pooling(self, atom_fea, crystal_atom_idx):
