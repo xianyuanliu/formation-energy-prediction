@@ -138,11 +138,14 @@ class CrystalGraphConvNet(nn.Module):
           Number of hidden layers after pooling
         """
         super(CrystalGraphConvNet, self).__init__()
+        conv_to_fc_input_dim = atom_fea_len
         self.embedding = nn.Linear(orig_atom_fea_len, atom_fea_len)
         if xrd:
             self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
+            conv_to_fc_input_dim += 64
         if text:
             self.text_model = TextFeatureExtractor(input_dim=384, output_dim=64, hidden_dim=128)
+            conv_to_fc_input_dim += 64
         if graph_type == "cgcnn":
           self.convs = nn.ModuleList([ConvLayer(atom_fea_len=atom_fea_len,
                                     nbr_fea_len=nbr_fea_len)
@@ -153,7 +156,7 @@ class CrystalGraphConvNet(nn.Module):
                                     for _ in range(n_conv)])
         else:
           raise ValueError("Unknown graph type: {}".format(graph_type))
-        self.conv_to_fc = nn.Linear(atom_fea_len, h_fea_len)
+        self.conv_to_fc = nn.Linear(conv_to_fc_input_dim, h_fea_len)
         self.conv_to_fc_softplus = nn.Softplus()
         if n_h > 1:
             self.fcs = nn.ModuleList([nn.Linear(h_fea_len, h_fea_len)

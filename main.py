@@ -30,9 +30,9 @@ def arg_parse():
     parser.add_argument('--text', default=False, help='use text features')
     parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
     parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', help='number of data loading workers (default: 0)')
-    parser.add_argument('--epochs', default=3, type=int, metavar='N', help='number of total epochs to run (default: 30)')
+    parser.add_argument('--epochs', default=30, type=int, metavar='N', help='number of total epochs to run (default: 30)')
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N', help='manual epoch number (useful on restarts)')
-    parser.add_argument('-b', '--batch-size', default=4, type=int, metavar='N', help='mini-batch size (default: 256)')
+    parser.add_argument('-b', '--batch-size', default=256, type=int, metavar='N', help='mini-batch size (default: 256)')
     parser.add_argument('--lr', '--learning-rate', default=0.01, type=float, metavar='LR', help='initial learning rate (default: 0.01)')
     parser.add_argument('--lr-milestones', default=[100], nargs='+', type=int, metavar='N', help='milestones for scheduler (default: [100])')
     parser.add_argument('--momentum', default=0.9, type=float, metavar='M', help='momentum')
@@ -263,19 +263,21 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
     model.eval()
 
     end = time.time()
-    for i, (input, target, batch_cif_ids) in enumerate(val_loader):
+    for i, (input, target, batch_cif_ids, xrd_fea) in enumerate(val_loader):
         if args.cuda:
             with torch.no_grad():
                 input_var = (Variable(input[0].cuda(non_blocking=True)),
                              Variable(input[1].cuda(non_blocking=True)),
                              input[2].cuda(non_blocking=True),
-                             [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]])
+                             [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
+                            xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None)
         else:
             with torch.no_grad():
                 input_var = (Variable(input[0]),
                              Variable(input[1]),
                              input[2],
-                             input[3])
+                             input[3],
+                             xrd_fea)
         if args.task == 'regression':
             target_normed = normalizer.norm(target)
         else:
