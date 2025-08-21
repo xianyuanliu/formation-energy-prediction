@@ -1,9 +1,7 @@
 import json
 import numpy as np
+import pandas as pd
 import os
-from pathlib import Path
-import pickle
-from datetime import datetime
 
 class SentenceBERTEmbedder:
     def __init__(self):
@@ -29,27 +27,17 @@ class SentenceBERTEmbedder:
             return False
     
     def load_fingerprints(self, json_file: str = "spacegroup_fingerprints.json"):
-        """Load space group fingerprints from JSON file in current directory"""
+        """Load space group fingerprints from JSON file"""
         try:
-            # Check if file exists in current directory
             if not os.path.exists(json_file):
                 raise FileNotFoundError(f"File '{json_file}' not found in current directory")
             
             with open(json_file, 'r', encoding='utf-8') as f:
                 fingerprints = json.load(f)
             
-            print(f"📁 Loaded {len(fingerprints)} space group descriptions from '{json_file}'")
-            
-            # Verify we have 230 entries
-            if len(fingerprints) != 230:
-                print(f"⚠️  Warning: Expected 230 space groups, found {len(fingerprints)}")
-            
+            print(f"📁 Loaded {len(fingerprints)} space group descriptions")
             return fingerprints
             
-        except FileNotFoundError as e:
-            print(f"❌ {e}")
-            print("   Make sure 'spacegroup_fingerprints.json' exists in the current directory")
-            return None
         except Exception as e:
             print(f"❌ Error loading JSON file: {e}")
             return None
@@ -57,26 +45,20 @@ class SentenceBERTEmbedder:
     def generate_embeddings(self, fingerprints):
         """Generate 384-dimensional embeddings using Sentence-BERT"""
         if self.model is None:
-            print("❌ Model not loaded. Call load_sentence_transformer() first.")
+            print("❌ Model not loaded")
             return None, None
         
         # Extract symbols and texts
         symbols = list(fingerprints.keys())
         texts = list(fingerprints.values())
         
-        print(f"🔢 Generating 384-dimensional embeddings for {len(texts)} texts...")
-        print("   This may take a few moments...")
+        print(f"🔢 Generating embeddings for {len(texts)} texts...")
         
         try:
-            # Generate embeddings with progress bar
-            embeddings = self.model.encode(
-                texts, 
-                show_progress_bar=True, 
-                convert_to_numpy=True,
-                batch_size=32  # Process in batches for efficiency
-            )
+            # Generate embeddings
+            embeddings = self.model.encode(texts, show_progress_bar=True, convert_to_numpy=True)
             
-            print(f"✓ Successfully generated embeddings with shape: {embeddings.shape}")
+            print(f"✓ Generated embeddings with shape: {embeddings.shape}")
             
             # Store results
             self.embeddings = embeddings
@@ -88,115 +70,83 @@ class SentenceBERTEmbedder:
             print(f"❌ Error generating embeddings: {e}")
             return None, None
     
-    def create_data_directory(self):
-        """Create ../../data/ directory if it doesn't exist"""
-        try:
-            # Get path to ../../data/
-            current_dir = Path.cwd()
-            data_dir = current_dir.parent.parent / "data"
-            
-            # Create directory if it doesn't exist
-            data_dir.mkdir(parents=True, exist_ok=True)
-            
-            print(f"📁 Data directory: {data_dir}")
-            return data_dir
-            
-        except Exception as e:
-            print(f"❌ Error creating data directory: {e}")
-            return None
-    
-    def save_embeddings(self, data_dir):
-        """Save embeddings for MLP training"""
+    def save_csv(self, output_file: str = "spacegroup_embeddings_384d.csv"):
+        """Save embeddings as CSV with space_group as first column"""
         if self.embeddings is None or self.space_group_symbols is None:
-            print("❌ No embeddings to save. Generate embeddings first.")
+            print("❌ No embeddings to save")
             return False
         
         try:
-            # Save only the embeddings array for MLP training
-            embeddings_file = data_dir / "spacegroup_embeddings_384d.npy"
-            np.save(embeddings_file, self.embeddings)
-            print(f"💾 Saved embeddings for MLP: {embeddings_file}")
+            print(f"💾 Creating CSV file: {output_file}")
             
-            # Save space group mapping for reference (optional)
-            mapping_file = "spacegroup_mapping.txt"
-            with open(mapping_file, 'w', encoding='utf-8') as f:
-                f.write("Space Group Index Mapping\n")
-                f.write("=" * 30 + "\n")
-                f.write("Index | Space Group Symbol\n")
-                f.write("-" * 30 + "\n")
-                for i, symbol in enumerate(self.space_group_symbols):
-                    f.write(f"{i:5d} | {symbol}\n")
+            # Create DataFrame with space_group as first column
+            data = {'space_group': self.space_group_symbols}
             
-            print(f"📄 Saved index mapping: {mapping_file}")
+            # Add embedding columns
+            for i in range(self.embeddings.shape[1]):
+                col_name = f'emb_{i:03d}'
+                data[col_name] = self.embeddings[:, i]
             
-            # Display summary
-            print(f"\n📊 Files for MLP Training:")
-            print(f"   Main file: {embeddings_file.name}")
-            print(f"   Shape: {self.embeddings.shape}")
-            print(f"   Data type: {self.embeddings.dtype}")
-            print(f"   Size: {self.embeddings.nbytes / 1024 / 1024:.2f} MB")
+            df = pd.DataFrame(data)
             
-            return True
+            # Save CSV
+            df.to_csv(output_file, index=False)
+            
+            # Verify and show info
+            if os.path.exists(output_file):
+                file_size = os.path.getsize(output_file) / 1024 / 1024
+                print(f"✓ CSV created: {output_file}")
+                print(f"   Shape: {df.shape}")
+                print(f"   Size: {file_size:.2f} MB")
+                print(f"   Columns: space_group + emb_000 to emb_383")
+                return True
+            else:
+                print(f"❌ Failed to create: {output_file}")
+                return False
             
         except Exception as e:
-            print(f"❌ Error saving embeddings: {e}")
+            print(f"❌ Error saving CSV: {e}")
             return False
     
-    def run_complete_pipeline(self):
-        """Run the complete embedding pipeline"""
-        print("🚀 Starting Space Group Sentence-BERT Embedding Pipeline")
-        print("=" * 60)
+    def run_pipeline(self):
+        """Run the complete pipeline to generate CSV"""
+        print("🚀 Space Group Embeddings → CSV Pipeline")
+        print("=" * 50)
         
-        # Step 1: Load Sentence-BERT model
+        # Load model
         if not self.load_sentence_transformer():
             return False
         
-        # Step 2: Load fingerprints from JSON
+        # Load fingerprints
         fingerprints = self.load_fingerprints()
         if fingerprints is None:
             return False
         
-        # Step 3: Generate embeddings
+        # Generate embeddings
         embeddings, symbols = self.generate_embeddings(fingerprints)
         if embeddings is None:
             return False
         
-        # Step 4: Create data directory
-        data_dir = self.create_data_directory()
-        if data_dir is None:
+        # Save CSV
+        if not self.save_csv():
             return False
         
-        # Step 5: Save embeddings
-        if not self.save_embeddings(data_dir):
-            return False
-        
-        print("\n✅ Pipeline completed successfully!")
-        print(f"   📁 Files saved to: {data_dir}")
-        print(f"   🔢 Ready for MLP training: {embeddings.shape[0]} samples × {embeddings.shape[1]} features")
+        print("\n✅ Pipeline completed!")
+        print("📄 spacegroup_embeddings_384d.csv ready for use")
         
         return True
 
 def main():
-    """Main execution function"""
+    """Main execution"""
     embedder = SentenceBERTEmbedder()
     
-    print("Space Group Sentence-BERT Embedder")
-    print("Converts 230 space group descriptions to 384-dimensional vectors")
-    print()
-    
-    # Check if JSON file exists before starting
+    # Check if JSON exists
     if not os.path.exists("spacegroup_fingerprints.json"):
-        print("❌ Error: 'spacegroup_fingerprints.json' not found in current directory")
-        print("   Please make sure the JSON file is in the same directory as this script")
+        print("❌ spacegroup_fingerprints.json not found")
         return
     
-    # Run the complete pipeline
-    success = embedder.run_complete_pipeline()
-    
-    if success:
-        print("\n🎉 All done! Your space group embeddings are ready for ML training.")
-    else:
-        print("\n❌ Pipeline failed. Please check the error messages above.")
+    # Run pipeline
+    embedder.run_pipeline()
 
 if __name__ == "__main__":
     main()
