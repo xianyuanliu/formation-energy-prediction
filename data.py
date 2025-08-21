@@ -132,8 +132,7 @@ def collate_pool(dataset_list):
     crystal_atom_idx, batch_target = [], []
     batch_cif_ids = []
     base_idx = 0
-    for i, ((atom_fea, nbr_fea, nbr_fea_idx), target, cif_id)\
-            in enumerate(dataset_list):
+    for i, ((atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group) in enumerate(dataset_list):
         n_i = atom_fea.shape[0]  # number of atoms for this crystal
         batch_atom_fea.append(atom_fea)
         batch_nbr_fea.append(nbr_fea)
@@ -302,11 +301,12 @@ class CIFData(Dataset):
         self.root_dir = root_dir
         self.max_num_nbr, self.radius = max_num_nbr, radius
         assert os.path.exists(root_dir), 'root_dir does not exist!'
-        id_prop_file = os.path.join(self.root_dir, 'id_prop.csv')
-        # id_prop_file = os.path.join(self.root_dir, '1_MatDX_EF_modified.csv')
+        # id_prop_file = os.path.join(self.root_dir, 'id_prop.csv')
+        id_prop_file = os.path.join(self.root_dir, '1_MatDX_EF_modified.csv')
         assert os.path.exists(id_prop_file), 'id_prop.csv does not exist!'
         with open(id_prop_file) as f:
             reader = csv.reader(f)
+            next(reader)
             self.id_prop_data = [row for row in reader]
         random.seed(random_seed)
         random.shuffle(self.id_prop_data)
@@ -320,11 +320,14 @@ class CIFData(Dataset):
 
     @functools.lru_cache(maxsize=None)  # Cache loaded structures
     def __getitem__(self, idx):
-        cif_id, target = self.id_prop_data[idx]
-        crystal = Structure.from_file(os.path.join(self.root_dir,
-                                                   cif_id+'.cif'))
-        atom_fea = np.vstack([self.ari.get_atom_fea(crystal[i].specie.number)
-                              for i in range(len(crystal))])
+        # cif_id, target = self.id_prop_data[idx]
+        row  = self.id_prop_data[idx]
+        cif_id = row[0]
+        space_groups = row[2]
+        target = row[3]
+
+        crystal = Structure.from_file(os.path.join(self.root_dir, cif_id+'.cif'))
+        atom_fea = np.vstack([self.ari.get_atom_fea(crystal[i].specie.number) for i in range(len(crystal))])
         atom_fea = torch.Tensor(atom_fea)
         all_nbrs = crystal.get_all_neighbors(self.radius, include_index=True)
         all_nbrs = [sorted(nbrs, key=lambda x: x[1]) for nbrs in all_nbrs]
@@ -350,4 +353,4 @@ class CIFData(Dataset):
         nbr_fea = torch.Tensor(nbr_fea)
         nbr_fea_idx = torch.LongTensor(nbr_fea_idx)
         target = torch.Tensor([float(target)])
-        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id
+        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_groups

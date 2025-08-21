@@ -16,72 +16,56 @@ from data import collate_pool, get_train_val_test_loader
 from models.cgcnn import CrystalGraphConvNet
 from utils import Normalizer, mae, save_checkpoint, AverageMeter
 
+import warnings
+warnings.filterwarnings("ignore", message=".*fractional coordinates rounded.*")
 
 def arg_parse():
     """Parsing arguments"""
     parser = argparse.ArgumentParser(description='Crystal Graph Convolutional Neural Networks')
-    parser.add_argument('--data_path', default='data/test_cifs',
-                        help='dataset path')
-    parser.add_argument('--task', default='regression')
-    parser.add_argument('--disable-cuda', action='store_true',
-                        help='Disable CUDA')
-    parser.add_argument('-j', '--workers', default=0, type=int, metavar='N',
-                        help='number of data loading workers (default: 0)')
-    parser.add_argument('--epochs', default=30, type=int, metavar='N',
-                        help='number of total epochs to run (default: 30)')
-    parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
-                        help='manual epoch number (useful on restarts)')
-    parser.add_argument('-b', '--batch-size', default=256, type=int,
-                        metavar='N', help='mini-batch size (default: 256)')
-    parser.add_argument('--lr', '--learning-rate', default=0.01, type=float,
-                        metavar='LR', help='initial learning rate (default: '
-                                           '0.01)')
-    parser.add_argument('--lr-milestones', default=[100], nargs='+', type=int,
-                        metavar='N', help='milestones for scheduler (default: '
-                                          '[100])')
-    parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
-                        help='momentum')
-    parser.add_argument('--weight-decay', '--wd', default=0, type=float,
-                        metavar='W', help='weight decay (default: 0)')
-    parser.add_argument('--print-freq', '-p', default=10, type=int,
-                        metavar='N', help='print frequency (default: 10)')
-    parser.add_argument('--resume', default='', type=str, metavar='PATH',
-                        help='path to latest checkpoint (default: none)')
-    train_group = parser.add_mutually_exclusive_group()
-    train_group.add_argument('--train-ratio', default=None, type=float, metavar='N',
-                             help='number of training data to be loaded (default none)')
-    train_group.add_argument('--train-size', default=None, type=int, metavar='N',
-                             help='number of training data to be loaded (default none)')
-    valid_group = parser.add_mutually_exclusive_group()
-    valid_group.add_argument('--val-ratio', default=0.1, type=float, metavar='N',
-                             help='percentage of validation data to be loaded (default '
-                                  '0.1)')
-    valid_group.add_argument('--val-size', default=None, type=int, metavar='N',
-                             help='number of validation data to be loaded (default '
-                                  '1000)')
-    test_group = parser.add_mutually_exclusive_group()
-    test_group.add_argument('--test-ratio', default=0.1, type=float, metavar='N',
-                            help='percentage of test data to be loaded (default 0.1)')
-    test_group.add_argument('--test-size', default=None, type=int, metavar='N',
-                            help='number of test data to be loaded (default 1000)')
 
+    # Basic parameters
+    parser.add_argument('--data_path', default='data/cifs', help='dataset path')
+    parser.add_argument('--task', default='regression')
+    parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
+    parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', help='number of data loading workers (default: 0)')
+    parser.add_argument('--epochs', default=3, type=int, metavar='N', help='number of total epochs to run (default: 30)')
+    parser.add_argument('--start-epoch', default=0, type=int, metavar='N', help='manual epoch number (useful on restarts)')
+    parser.add_argument('-b', '--batch-size', default=256, type=int, metavar='N', help='mini-batch size (default: 256)')
+    parser.add_argument('--lr', '--learning-rate', default=0.01, type=float, metavar='LR', help='initial learning rate (default: 0.01)')
+    parser.add_argument('--lr-milestones', default=[100], nargs='+', type=int, metavar='N', help='milestones for scheduler (default: [100])')
+    parser.add_argument('--momentum', default=0.9, type=float, metavar='M', help='momentum')
+    parser.add_argument('--weight-decay', '--wd', default=0, type=float, metavar='W', help='weight decay (default: 0)')
+    parser.add_argument('--print-freq', '-p', default=10, type=int, metavar='N', help='print frequency (default: 10)')
+    parser.add_argument('--resume', default='', type=str, metavar='PATH', help='path to latest checkpoint (default: none)')
+
+    # Data split
+    train_group = parser.add_mutually_exclusive_group()
+    train_group.add_argument('--train-ratio', default=None, type=float, metavar='N', help='number of training data to be loaded (default none)')
+    train_group.add_argument('--train-size', default=None, type=int, metavar='N', help='number of training data to be loaded (default none)')
+
+    valid_group = parser.add_mutually_exclusive_group()
+    valid_group.add_argument('--val-ratio', default=0.1, type=float, metavar='N', help='percentage of validation data to be loaded (default 0.1)')
+    valid_group.add_argument('--val-size', default=None, type=int, metavar='N', help='number of validation data to be loaded (default 1000)')
+
+    test_group = parser.add_mutually_exclusive_group()
+    test_group.add_argument('--test-ratio', default=0.1, type=float, metavar='N', help='percentage of test data to be loaded (default 0.1)')
+    test_group.add_argument('--test-size', default=None, type=int, metavar='N', help='number of test data to be loaded (default 1000)')
+
+    # model parameters
     parser.add_argument('--optim', default='SGD', type=str, metavar='SGD',
                         help='choose an optimizer, SGD or Adam, (default: SGD)')
     parser.add_argument('--atom-fea-len', default=64, type=int, metavar='N',
                         help='number of hidden atom features in conv layers')
     parser.add_argument('--h-fea-len', default=128, type=int, metavar='N',
                         help='number of hidden features after pooling')
-    parser.add_argument('--n-conv', default=3, type=int, metavar='N',
-                        help='number of conv layers')
-    parser.add_argument('--n-h', default=1, type=int, metavar='N',
-                        help='number of hidden layers after pooling')
-    parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N',
-                        help='best mae error (default: 1e10)')
+    parser.add_argument('--n-conv', default=3, type=int, metavar='N', help='number of conv layers')
+    parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
+    parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
+
     args = parser.parse_args(sys.argv[1:])
     return args
 
 best_mae_error = 1e10
-
 
 def main():
     global best_mae_error
@@ -122,7 +106,7 @@ def main():
         normalizer = Normalizer(sample_target)
 
     # build model
-    structures, _, _ = dataset[0]
+    structures, _, _, _ = dataset[0]
     orig_atom_fea_len = structures[0].shape[-1]
     nbr_fea_len = structures[1].shape[-1]
     model = CrystalGraphConvNet(orig_atom_fea_len, nbr_fea_len,
