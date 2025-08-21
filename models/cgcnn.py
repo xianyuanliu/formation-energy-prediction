@@ -192,18 +192,18 @@ class CrystalGraphConvNet(nn.Module):
         atom_fea = self.embedding(atom_fea)
         for conv_func in self.convs:
             atom_fea = conv_func(atom_fea, nbr_fea, nbr_fea_idx)
-
+        crys_fea = self.pooling(atom_fea, crystal_atom_idx)
         # XRD feature extraction
         if hasattr(self, 'xrd_model'):
             xrd_fea = self.xrd_model(xrd_feature)
-            atom_fea = torch.cat((atom_fea, xrd_fea), dim=1)
+            crys_fea = torch.cat((crys_fea, xrd_fea), dim=1)
 
         # Text feature extraction
         if hasattr(self, 'text_model'):
             text_fea = self.text_model(text_feature)
             atom_fea = torch.cat((atom_fea, text_fea), dim=1)
 
-        crys_fea = self.pooling(atom_fea, crystal_atom_idx)
+        #crys_fea = self.pooling(atom_fea, crystal_atom_idx)
         crys_fea = self.conv_to_fc(self.conv_to_fc_softplus(crys_fea))
         crys_fea = self.conv_to_fc_softplus(crys_fea)
         if hasattr(self, 'fcs') and hasattr(self, 'softpluses'):
