@@ -106,7 +106,7 @@ def main():
         normalizer = Normalizer(sample_target)
 
     # build model
-    structures, _, _, _ = dataset[0]
+    structures, _, _, _, _ = dataset[0]
     orig_atom_fea_len = structures[0].shape[-1]
     nbr_fea_len = structures[1].shape[-1]
     model = CrystalGraphConvNet(orig_atom_fea_len, nbr_fea_len,

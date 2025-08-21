@@ -13,7 +13,7 @@ from pymatgen.core.structure import Structure
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataloader import default_collate
 from torch.utils.data.sampler import SubsetRandomSampler
-
+from models.xrd_module import XRDDataset  
 
 def get_train_val_test_loader(dataset, collate_fn=default_collate,
                               batch_size=64, train_ratio=None,
@@ -132,7 +132,7 @@ def collate_pool(dataset_list):
     crystal_atom_idx, batch_target = [], []
     batch_cif_ids = []
     base_idx = 0
-    for i, ((atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group) in enumerate(dataset_list):
+    for i, ((atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea) in enumerate(dataset_list):
         n_i = atom_fea.shape[0]  # number of atoms for this crystal
         batch_atom_fea.append(atom_fea)
         batch_nbr_fea.append(nbr_fea)
@@ -311,6 +311,9 @@ class CIFData(Dataset):
         random.shuffle(self.id_prop_data)
         atom_init_file = os.path.join(self.root_dir, 'atom_init.json')
         assert os.path.exists(atom_init_file), 'atom_init.json does not exist!'
+        xrd_data_file = os.path.join(self.root_dir, 'XRD_data.csv')
+        assert os.path.exists(xrd_data_file), 'XRD_data.csv does not exist!'
+        self.xrd_data = XRDDataset(csv_path=xrd_data_file)
         self.ari = AtomCustomJSONInitializer(atom_init_file)
         self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
 
@@ -352,4 +355,5 @@ class CIFData(Dataset):
         nbr_fea = torch.Tensor(nbr_fea)
         nbr_fea_idx = torch.LongTensor(nbr_fea_idx)
         target = torch.Tensor([float(target)])
-        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_groups
+        xrd_fea = self.xrd_data[cif_id]
+        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_groups, xrd_fea

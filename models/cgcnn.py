@@ -162,7 +162,7 @@ class CrystalGraphConvNet(nn.Module):
                                              for _ in range(n_h-1)])
         self.fc_out = nn.Linear(h_fea_len, 1)
 
-    def forward(self, atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx):
+    def forward(self, atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx, xrd_feature=None, text_feature=None):
         """
         Forward pass
 
@@ -195,12 +195,12 @@ class CrystalGraphConvNet(nn.Module):
 
         # XRD feature extraction
         if hasattr(self, 'xrd_model'):
-            xrd_fea = self.xrd_model(self.xrd_feature)
+            xrd_fea = self.xrd_model(xrd_feature)
             atom_fea = torch.cat((atom_fea, xrd_fea), dim=1)
 
         # Text feature extraction
         if hasattr(self, 'text_model'):
-            text_fea = self.text_model(self.text_feature)
+            text_fea = self.text_model(text_feature)
             atom_fea = torch.cat((atom_fea, text_fea), dim=1)
 
         crys_fea = self.pooling(atom_fea, crystal_atom_idx)
