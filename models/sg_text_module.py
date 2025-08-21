@@ -141,7 +141,7 @@ class TextFeatureExtractor(nn.Module):
 # --- Code for independent testing ---
 if __name__ == '__main__':
     # Prepare output file
-    output_file = "sg_text_module_output.txt"
+    output_file = "../utils/sg_text_module_output.txt"
     output_lines = []
     
     def log_print(message):

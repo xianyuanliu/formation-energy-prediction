@@ -27,7 +27,7 @@ if not cif_files:
     print(f"❌ Error: No CIF files found in the '{cif_dir}' folder. Please check the path.")
     exit()
 
-# --- 3. Initialize Featurizers --- ✨
+# --- 3. Initialize utils --- ✨
 gsf_featurizer = GlobalSymmetryFeatures()
 xrd_vector_featurizer = XRDPowderPattern(two_theta_range=(0, 127), wavelength='CuKa')
 
