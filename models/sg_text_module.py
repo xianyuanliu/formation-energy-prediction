@@ -4,6 +4,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from typing import Optional
 import numpy as np
+import pandas as pd  # Missing import!
 import os
 from pathlib import Path
 
@@ -72,17 +73,31 @@ class TextEmbeddingDataset(Dataset):
         """Returns the total number of samples in the dataset."""
         return len(self.text_embeddings)
 
-    def __getitem__(self, key: str) -> torch.Tensor:
+    def __getitem__(self, key) -> torch.Tensor:
         """
-        Retrieves a single sample of text embeddings from the dataset for the given composition.
+        Retrieves a single sample of text embeddings from the dataset.
         
         Args:
-            key (str): The composition string to lookup (same interface as XRDDataset)
+            key: Can be either int (index) for DataLoader compatibility 
+                 or str (composition) for direct lookup
             
         Returns:
             torch.Tensor: The text embedding tensor for the composition
         """
-        return self.text_embeddings[key]
+        if isinstance(key, int):
+            # For DataLoader compatibility - convert index to composition
+            compositions = list(self.text_embeddings.keys())
+            if key >= len(compositions):
+                raise IndexError(f"Index {key} out of range for dataset of size {len(compositions)}")
+            composition = compositions[key]
+            return self.text_embeddings[composition]
+        elif isinstance(key, str):
+            # Direct composition lookup
+            if key not in self.text_embeddings:
+                raise KeyError(f"Composition '{key}' not found in dataset")
+            return self.text_embeddings[key]
+        else:
+            raise TypeError(f"Key must be int or str, got {type(key)}")
     
     def get_space_group(self, composition: str) -> str:
         """
@@ -139,6 +154,9 @@ class TextFeatureExtractor(nn.Module):
         if hidden_dim is None:
             hidden_dim = output_dim * 2
         
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        
         self.extractor = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
             nn.ReLU(),
@@ -155,6 +173,12 @@ class TextFeatureExtractor(nn.Module):
         Returns:
             torch.Tensor: The final feature vector with shape (batch_size, output_dim).
         """
+        # Validate input shape
+        if x.dim() != 2:
+            raise ValueError(f"Expected 2D input tensor, got {x.dim()}D")
+        if x.size(1) != self.input_dim:
+            raise ValueError(f"Expected input dimension {self.input_dim}, got {x.size(1)}")
+        
         # Text embeddings are already normalized from Sentence-BERT, but we can re-normalize
         normalized_x = F.normalize(x, p=2, dim=1)
         features = self.extractor(normalized_x)
@@ -175,11 +199,22 @@ if __name__ == '__main__':
         # 1. Load data using the Dataset.
         log_print("1. Loading data using TextEmbeddingDataset...")
         
-        # Use only the specified path
-        csv_path = 'data/SG_text_data.csv'
+        # Try multiple possible paths for the CSV file
+        possible_paths = [
+            'data/SG_text_data.csv',
+            'SG_text_data.csv',
+            '../data/SG_text_data.csv',
+            './SG_text_data.csv'
+        ]
         
-        if not os.path.exists(csv_path):
-            raise FileNotFoundError(f"File not found: {csv_path}")
+        csv_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                csv_path = path
+                break
+        
+        if csv_path is None:
+            raise FileNotFoundError(f"SG_text_data.csv not found in any of these paths: {possible_paths}")
         
         log_print(f"   Found embeddings file at: {csv_path}")
         dataset = TextEmbeddingDataset(csv_path=csv_path)
@@ -195,16 +230,17 @@ if __name__ == '__main__':
         
         # Convert model architecture to string for logging
         model_str = str(model)
-        log_print(model_str)
+        log_print(f"Model architecture:\n{model_str}")
         
         # 3. Use DataLoader to create a batch of real data for testing.
         log_print("\n3. Creating a DataLoader to batch the real data.")
-        data_loader = DataLoader(dataset, batch_size=32, shuffle=False, num_workers=0)
+        data_loader = DataLoader(dataset, batch_size=min(32, len(dataset)), shuffle=False, num_workers=0)
         real_data_batch = next(iter(data_loader)) # Get one batch
         
         # 4. Perform a forward pass with the real data batch.
         log_print("\n4. Passing a batch of real data through the model.")
-        output = model(real_data_batch)
+        with torch.no_grad():  # Add no_grad for testing
+            output = model(real_data_batch)
         
         # 5. Check the input and output shapes.
         log_print(f"\n--- Test Results ---")
@@ -221,26 +257,48 @@ if __name__ == '__main__':
         log_print(f"Output Std: {output.std():.4f}")
         
         # 7. Final verification.
-        if output.shape == (real_data_batch.shape[0], 128):
+        expected_output_shape = (real_data_batch.shape[0], 128)
+        if output.shape == expected_output_shape:
             log_print("\n✅ Test Successful: Model processed the text embeddings and produced the correct output shape.")
         else:
-            log_print("\n❌ Test Failed: Output shape is incorrect.")
+            log_print(f"\n❌ Test Failed: Expected output shape {expected_output_shape}, got {output.shape}")
             
         # 8. Test with different batch sizes
         log_print("\n5. Testing with different batch sizes...")
         for batch_size in [1, 16, 64]:
             if batch_size <= len(dataset):
-                test_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+                test_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
                 test_batch = next(iter(test_loader))
-                test_output = model(test_batch)
+                with torch.no_grad():
+                    test_output = model(test_batch)
                 log_print(f"   Batch size {batch_size}: {test_batch.shape} → {test_output.shape} ✅")
+        
+        # 9. Test direct composition access
+        log_print("\n6. Testing direct composition access...")
+        compositions = dataset.get_compositions()
+        if len(compositions) > 0:
+            test_comp = compositions[0]
+            direct_embedding = dataset[test_comp]
+            log_print(f"   Direct access to '{test_comp}': {direct_embedding.shape} ✅")
+            
+            # Test space group access
+            try:
+                space_group = dataset.get_space_group(test_comp)
+                log_print(f"   Space group for '{test_comp}': {space_group} ✅")
+            except KeyError:
+                log_print(f"   Space group info not available for '{test_comp}' ⚠️")
 
-    except (FileNotFoundError, ValueError) as e:
+    except (FileNotFoundError, ValueError, KeyError) as e:
         log_print(f"\n❌ An error occurred during testing: {e}")
         log_print("\n💡 Make sure:")
-        log_print("   1. Run the Sentence-BERT embedding generator first")
-        log_print("   2. Check that '../data/SG_text_data.csv' exists")
-        log_print("   3. Verify the embedding file was generated correctly")
+        log_print("   1. SG_text_data.csv file is available in the working directory")
+        log_print("   2. The CSV file contains 'Composition', 'space_group', and 'emb_000' columns")
+        log_print("   3. Embedding columns are properly formatted (emb_000, emb_001, etc.)")
+    
+    except Exception as e:
+        log_print(f"\n❌ Unexpected error occurred: {e}")
+        import traceback
+        log_print(f"Traceback: {traceback.format_exc()}")
     
     finally:
         # Save output to txt file

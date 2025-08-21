@@ -363,4 +363,5 @@ class CIFData(Dataset):
         nbr_fea_idx = torch.LongTensor(nbr_fea_idx)
         target = torch.Tensor([float(target)])
         xrd_fea = self.xrd_data[cif_id]
-        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_groups, xrd_fea
+        text_fea = self.text_data[cif_id]
+        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_groups, xrd_fea, text_fea
