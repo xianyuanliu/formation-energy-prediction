@@ -1,0 +1,25 @@
+Space Group Fingerprint Generation Statistics
+==================================================
+
+Generation Results:
+   Total fingerprints: 230
+   Unique descriptions: 230
+   Duplicate groups: 0
+   Uniqueness rate: 100.0%
+
+Sentence Statistics:
+   Word count - Min: 16, Max: 69, Avg: 34.8, Median: 32.0
+   Character count - Min: 110, Max: 490, Avg: 249.2
+   Total sentences generated: 230
+
+Length Examples:
+   Shortest (16 words): P1
+   Longest (69 words): I4_1/acd
+
+No duplicate descriptions found - all 230 space groups have unique fingerprints!
+
+All space groups processed successfully!
+
+Analysis Summary:
+   Uniqueness achieved: 230/230 = 100.0%
+   Perfect uniqueness achieved through Hermann-Mauguin symbol parsing!
