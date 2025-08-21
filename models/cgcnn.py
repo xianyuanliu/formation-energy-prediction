@@ -3,8 +3,8 @@ from __future__ import print_function, division
 import torch
 import torch.nn as nn
 
-from models.sg_text_module import TextFeatureExtractor
 from models.xrd_module import XRDFeatureExtractor
+from models.sg_text_module import TextFeatureExtractor
 
 
 class ConvLayer(nn.Module):
@@ -116,8 +116,9 @@ class CrystalGraphConvNet(nn.Module):
     Create a crystal graph convolutional neural network for predicting total
     material properties.
     """
-    def __init__(self, orig_atom_fea_len, nbr_fea_len, atom_fea_len=64, n_conv=3, h_fea_len=128, n_h=1,
-                 xrd=False, text=False, graph_type="cgcnn"):
+    def __init__(self, orig_atom_fea_len, nbr_fea_len,
+                 atom_fea_len=64, n_conv=3, h_fea_len=128, n_h=1,
+                 classification=False, graph_type="cgcnn"):
         """
         Initialize CrystalGraphConvNet.
 
@@ -139,10 +140,9 @@ class CrystalGraphConvNet(nn.Module):
         """
         super(CrystalGraphConvNet, self).__init__()
         self.embedding = nn.Linear(orig_atom_fea_len, atom_fea_len)
-        if xrd:
-            self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
-        if text:
-            self.text_model = TextFeatureExtractor(input_dim=384, output_dim=64, hidden_dim=128)
+        self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
+        self.text_model = TextFeatureExtractor(input_dim=384, output_dim=128, hidden_dim=256) # please check dimension parameters as needed
+
         if graph_type == "cgcnn":
           self.convs = nn.ModuleList([ConvLayer(atom_fea_len=atom_fea_len,
                                     nbr_fea_len=nbr_fea_len)
@@ -162,7 +162,7 @@ class CrystalGraphConvNet(nn.Module):
                                              for _ in range(n_h-1)])
         self.fc_out = nn.Linear(h_fea_len, 1)
 
-    def forward(self, atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx, xrd_feature=None, text_feature=None):
+    def forward(self, atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx):
         """
         Forward pass
 
@@ -194,14 +194,8 @@ class CrystalGraphConvNet(nn.Module):
             atom_fea = conv_func(atom_fea, nbr_fea, nbr_fea_idx)
 
         # XRD feature extraction
-        if hasattr(self, 'xrd_model'):
-            xrd_fea = self.xrd_model(xrd_feature)
-            atom_fea = torch.cat((atom_fea, xrd_fea), dim=1)
-
-        # Text feature extraction
-        if hasattr(self, 'text_model'):
-            text_fea = self.text_model(text_feature)
-            atom_fea = torch.cat((atom_fea, text_fea), dim=1)
+        # xrd_fea = self.xrd_model(xrd_feature)
+        # atom_fea = torch.cat((atom_fea, xrd_fea), dim=1)
 
         crys_fea = self.pooling(atom_fea, crystal_atom_idx)
         crys_fea = self.conv_to_fc(self.conv_to_fc_softplus(crys_fea))
