@@ -32,7 +32,7 @@ def arg_parse():
     parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', help='number of data loading workers (default: 0)')
     parser.add_argument('--epochs', default=3, type=int, metavar='N', help='number of total epochs to run (default: 30)')
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N', help='manual epoch number (useful on restarts)')
-    parser.add_argument('-b', '--batch-size', default=256, type=int, metavar='N', help='mini-batch size (default: 256)')
+    parser.add_argument('-b', '--batch-size', default=4, type=int, metavar='N', help='mini-batch size (default: 256)')
     parser.add_argument('--lr', '--learning-rate', default=0.01, type=float, metavar='LR', help='initial learning rate (default: 0.01)')
     parser.add_argument('--lr-milestones', default=[100], nargs='+', type=int, metavar='N', help='milestones for scheduler (default: [100])')
     parser.add_argument('--momentum', default=0.9, type=float, metavar='M', help='momentum')
@@ -102,7 +102,7 @@ def main():
         else:
             sample_data_list = [dataset[i] for i in
                                 sample(range(len(dataset)), 500)]
-        _, sample_target, _ = collate_pool(sample_data_list)
+        _, sample_target, _, _ = collate_pool(sample_data_list)
         normalizer = Normalizer(sample_target)
 
     # build model
@@ -192,7 +192,7 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
     model.train()
 
     end = time.time()
-    for i, (input, target, _) in enumerate(train_loader):
+    for i, (input, target, _, xrd_fea) in enumerate(train_loader):
         # measure data loading time
         data_time.update(time.time() - end)
 
@@ -200,12 +200,14 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
             input_var = (Variable(input[0].cuda(non_blocking=True)),
                          Variable(input[1].cuda(non_blocking=True)),
                          input[2].cuda(non_blocking=True),
-                         [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]])
+                         [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
+                         xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None)
         else:
             input_var = (Variable(input[0]),
                          Variable(input[1]),
                          input[2],
-                         input[3])
+                         input[3],
+                         xrd_fea)
         # normalize target
         target_normed = normalizer.norm(target)
         if args.cuda:

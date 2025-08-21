@@ -9,22 +9,22 @@ from pathlib import Path
 
 class TextEmbeddingDataset(Dataset):
     """
-    A custom PyTorch Dataset to load space group text embeddings from a .npy file.
+    A custom PyTorch Dataset to load space group text embeddings from a .csv file.
 
     This dataset is designed for an unsupervised or multi-modal setup.
     It loads pre-computed 384-dimensional text embeddings from Sentence-BERT.
     """
-    def __init__(self, npy_path: str):
+    def __init__(self, csv_path: str):
         """
         Args:
-            npy_path (str): The path to the spacegroup_embeddings_384d.npy file.
+            csv_path (str): The path to the spacegroup_embeddings_384d.csv file.
         """
-        if not os.path.exists(npy_path):
-            raise FileNotFoundError(f"The file '{npy_path}' was not found.")
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(f"The file '{csv_path}' was not found.")
         
         try:
             # Load the pre-computed embeddings
-            embeddings = np.load(npy_path)
+            embeddings = np.load(csv_path)
             
             # Convert to PyTorch tensor
             self.text_embeddings = torch.tensor(embeddings, dtype=torch.float32)
@@ -39,7 +39,7 @@ class TextEmbeddingDataset(Dataset):
                 raise ValueError("Text embeddings have 0 features")
                 
         except Exception as e:
-            raise ValueError(f"Error loading embeddings from '{npy_path}': {e}")
+            raise ValueError(f"Error loading embeddings from '{csv_path}': {e}")
 
     def __len__(self) -> int:
         """Returns the total number of samples in the dataset."""
@@ -105,13 +105,13 @@ if __name__ == '__main__':
         log_print("1. Loading data using TextEmbeddingDataset...")
         
         # Use only the specified path
-        npy_path = 'data/spacegroup_embeddings_384d.npy'
+        csv_path = 'data/spacegroup_embeddings_384d.csv'
         
-        if not os.path.exists(npy_path):
-            raise FileNotFoundError(f"File not found: {npy_path}")
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(f"File not found: {csv_path}")
         
-        log_print(f"   Found embeddings file at: {npy_path}")
-        dataset = TextEmbeddingDataset(npy_path=npy_path)
+        log_print(f"   Found embeddings file at: {csv_path}")
+        dataset = TextEmbeddingDataset(csv_path=csv_path)
         
         # Get the dynamically detected feature dimension from the dataset.
         detected_feature_dim = dataset.num_text_features
@@ -168,7 +168,7 @@ if __name__ == '__main__':
         log_print(f"\n❌ An error occurred during testing: {e}")
         log_print("\n💡 Make sure:")
         log_print("   1. Run the Sentence-BERT embedding generator first")
-        log_print("   2. Check that '../data/spacegroup_embeddings_384d.npy' exists")
+        log_print("   2. Check that '../data/spacegroup_embeddings_384d.csv' exists")
         log_print("   3. Verify the embedding file was generated correctly")
     
     finally:
