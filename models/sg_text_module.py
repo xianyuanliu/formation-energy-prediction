@@ -12,42 +12,113 @@ class TextEmbeddingDataset(Dataset):
     A custom PyTorch Dataset to load space group text embeddings from a .csv file.
 
     This dataset is designed for an unsupervised or multi-modal setup.
-    It loads pre-computed 384-dimensional text embeddings from Sentence-BERT.
+    It loads pre-computed 384-dimensional text embeddings from Sentence-BERT
+    and follows the exact same logic as XRDDataset for consistency.
     """
     def __init__(self, csv_path: str):
         """
         Args:
-            csv_path (str): The path to the spacegroup_embeddings_384d.csv file.
+            csv_path (str): The path to the SG_text_data.csv file.
         """
         if not os.path.exists(csv_path):
             raise FileNotFoundError(f"The file '{csv_path}' was not found.")
         
+        # Load CSV file with pandas (same as XRDDataset)
+        df = pd.read_csv(csv_path)
+
+        # Check for required 'Composition' column (same as XRDDataset)
+        if 'Composition' not in df.columns:
+            raise KeyError("The required column 'Composition' was not found in the CSV file.")
+
         try:
-            # Load the pre-computed embeddings
-            embeddings = np.load(csv_path)
-            
-            # Convert to PyTorch tensor
-            self.text_embeddings = torch.tensor(embeddings, dtype=torch.float32)
-            
-            # Store embedding dimension for validation
-            self.num_text_features = self.text_embeddings.shape[1]
-            
-            if len(self.text_embeddings.shape) != 2:
-                raise ValueError(f"Expected 2D array, got {len(self.text_embeddings.shape)}D array")
-            
-            if self.num_text_features == 0:
-                raise ValueError("Text embeddings have 0 features")
-                
-        except Exception as e:
-            raise ValueError(f"Error loading embeddings from '{csv_path}': {e}")
+            # Find the starting column index for embeddings (equivalent to 'xrd_0' in XRDDataset)
+            emb_start_col_index = df.columns.get_loc('emb_000')
+        except KeyError:
+            raise KeyError("The required column 'emb_000' was not found in the CSV file.")
+
+        # Find consecutive embedding columns (same logic as XRDDataset)
+        remaining_columns = df.columns[emb_start_col_index:]
+        is_emb_col = remaining_columns.str.startswith('emb_')
+        consecutive_mask = is_emb_col.cumprod().astype(bool)
+        
+        # Count the number of consecutive embedding features
+        self.num_text_features = consecutive_mask.sum()
+
+        if self.num_text_features == 0:
+            raise ValueError("Found 'emb_000' but no subsequent 'emb_n' columns to form a feature set.")
+
+        # Extract embedding values and compositions (same logic as XRDDataset)
+        emb_end_col_index = emb_start_col_index + self.num_text_features
+        emb_values = df.iloc[:, emb_start_col_index:emb_end_col_index].values
+        compositions = df['Composition'].astype(str).values 
+        
+        # Store embeddings as composition-keyed dictionary (identical to XRDDataset structure)
+        self.text_embeddings = {
+            comp: torch.tensor(feat, dtype=torch.float32)
+            for comp, feat in zip(compositions, emb_values)
+        }
+        
+        # Also store space group information for additional functionality
+        if 'space_group' in df.columns:
+            space_groups = df['space_group'].astype(str).values
+            self.space_groups = {
+                comp: sg
+                for comp, sg in zip(compositions, space_groups)
+            }
+        else:
+            self.space_groups = {}
 
     def __len__(self) -> int:
         """Returns the total number of samples in the dataset."""
         return len(self.text_embeddings)
 
-    def __getitem__(self, idx: int) -> torch.Tensor:
-        """Retrieves a single sample of text embeddings from the dataset at the given index."""
-        return self.text_embeddings[idx]
+    def __getitem__(self, key: str) -> torch.Tensor:
+        """
+        Retrieves a single sample of text embeddings from the dataset for the given composition.
+        
+        Args:
+            key (str): The composition string to lookup (same interface as XRDDataset)
+            
+        Returns:
+            torch.Tensor: The text embedding tensor for the composition
+        """
+        return self.text_embeddings[key]
+    
+    def get_space_group(self, composition: str) -> str:
+        """
+        Retrieves the space group for a given composition.
+        
+        Args:
+            composition (str): The composition string to lookup
+            
+        Returns:
+            str: The space group for the composition
+        """
+        if composition in self.space_groups:
+            return self.space_groups[composition]
+        else:
+            raise KeyError(f"Space group information not available for composition: {composition}")
+    
+    def get_compositions(self) -> list:
+        """
+        Returns a list of all available compositions in the dataset.
+        
+        Returns:
+            list: List of composition strings
+        """
+        return list(self.text_embeddings.keys())
+    
+    def has_composition(self, composition: str) -> bool:
+        """
+        Checks if a composition exists in the dataset.
+        
+        Args:
+            composition (str): The composition string to check
+            
+        Returns:
+            bool: True if composition exists, False otherwise
+        """
+        return composition in self.text_embeddings
 
 class TextFeatureExtractor(nn.Module):
     """
@@ -105,7 +176,7 @@ if __name__ == '__main__':
         log_print("1. Loading data using TextEmbeddingDataset...")
         
         # Use only the specified path
-        csv_path = 'data/spacegroup_embeddings_384d.csv'
+        csv_path = 'data/SG_text_data.csv'
         
         if not os.path.exists(csv_path):
             raise FileNotFoundError(f"File not found: {csv_path}")
@@ -168,7 +239,7 @@ if __name__ == '__main__':
         log_print(f"\n❌ An error occurred during testing: {e}")
         log_print("\n💡 Make sure:")
         log_print("   1. Run the Sentence-BERT embedding generator first")
-        log_print("   2. Check that '../data/spacegroup_embeddings_384d.csv' exists")
+        log_print("   2. Check that '../data/SG_text_data.csv' exists")
         log_print("   3. Verify the embedding file was generated correctly")
     
     finally:

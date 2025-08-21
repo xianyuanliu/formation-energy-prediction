@@ -14,6 +14,7 @@ from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataloader import default_collate
 from torch.utils.data.sampler import SubsetRandomSampler
 from models.xrd_module import XRDDataset  
+from models.sg_text_module import TextEmbeddingDataset
 
 def get_train_val_test_loader(dataset, collate_fn=default_collate,
                               batch_size=64, train_ratio=None,
@@ -315,10 +316,13 @@ class CIFData(Dataset):
         atom_init_file = os.path.join(self.root_dir, 'atom_init.json')
         assert os.path.exists(atom_init_file), 'atom_init.json does not exist!'
         xrd_data_file = os.path.join(self.root_dir, 'XRD_data.csv')
+        text_data_file = os.path.join(self.root_dir, 'SG_text_data.csv')
         assert os.path.exists(xrd_data_file), 'XRD_data.csv does not exist!'
+        assert os.path.exists(text_data_file), 'SG_text_data.csv does not exist!'
         self.xrd_data = XRDDataset(csv_path=xrd_data_file)
         self.ari = AtomCustomJSONInitializer(atom_init_file)
         self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
+        self.text = TextEmbeddingDataset(csv_path=text_data_file)
 
     def __len__(self):
         return len(self.id_prop_data)
