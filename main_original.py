@@ -1,5 +1,3 @@
-"""Refactored main training script with modular architecture."""
-
 import argparse
 import os
 import sys
@@ -14,13 +12,11 @@ from torch.optim.lr_scheduler import MultiStepLR
 
 from data import CIFData
 from data import collate_pool, get_train_val_test_loader
+from models.cgcnn import CrystalGraphConvNet
 from utils.utils import Normalizer, mae, save_checkpoint, AverageMeter
-from config import ModelConfig, TrainerConfig, ModalityConfig, create_configs_from_args
-from factories import model_factory
 
 import warnings
 warnings.filterwarnings("ignore", message=".*fractional coordinates rounded.*")
-
 
 def arg_parse():
     """Parsing arguments"""
@@ -56,7 +52,7 @@ def arg_parse():
     test_group.add_argument('--test-ratio', default=0.1, type=float, metavar='N', help='percentage of test data to be loaded (default 0.1)')
     test_group.add_argument('--test-size', default=None, type=int, metavar='N', help='number of test data to be loaded (default 1000)')
 
-    # Model parameters
+    # model parameters
     parser.add_argument('--optim', default='SGD', type=str, metavar='SGD', help='choose an optimizer, SGD or Adam, (default: SGD)')
     parser.add_argument('--atom-fea-len', default=64, type=int, metavar='N', help='number of hidden atom features in conv layers')
     parser.add_argument('--h-fea-len', default=128, type=int, metavar='N', help='number of hidden features after pooling')
@@ -64,136 +60,100 @@ def arg_parse():
     parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
     parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (cgcnn or mpnn)')
-    
-    # Add model type for extensibility
-    parser.add_argument('--model-type', default='cgcnn', type=str, help='model architecture type')
-    
     args = parser.parse_args(sys.argv[1:])
-    args.cuda = not args.disable_cuda and torch.cuda.is_available()
     return args
 
-
-def create_model_and_data(args, model_config, trainer_config, modality_config):
-    """Create model and data loaders based on configurations."""
-    
-    # Load dataset
-    dataset = CIFData(args.data_path, task=trainer_config.task)
-    collate_fn = collate_pool
-    
-    # Get data loaders
-    train_loader, val_loader, test_loader = get_train_val_test_loader(
-        dataset=dataset,
-        collate_fn=collate_fn,
-        batch_size=trainer_config.batch_size,
-        train_ratio=trainer_config.train_ratio,
-        train_size=trainer_config.train_size,
-        val_ratio=trainer_config.val_ratio,
-        val_size=trainer_config.val_size,
-        test_ratio=trainer_config.test_ratio,
-        test_size=trainer_config.test_size,
-        return_test=True,
-        num_workers=trainer_config.num_workers,
-        pin_memory=trainer_config.cuda
-    )
-
-    # Get feature dimensions from dataset
-    if trainer_config.task == 'regression':
-        sample_data_list = [dataset[i] for i in range(len(dataset))]
-    else:
-        sample_data_list = [dataset[i] for i in sample(range(len(dataset)), 500)]
-    _, sample_target, _, _, _ = collate_pool(sample_data_list)
-    normalizer = Normalizer(sample_target)
-
-    # Get data dimensions
-    structures, _, _, _, _, _ = dataset[0]
-    orig_atom_fea_len = structures[0].shape[-1]
-    nbr_fea_len = structures[1].shape[-1]
-
-    # Create model using factory
-    model = model_factory.create_model(
-        model_config=model_config,
-        modality_config=modality_config,
-        orig_atom_fea_len=orig_atom_fea_len,
-        nbr_fea_len=nbr_fea_len
-    )
-    
-    if trainer_config.cuda:
-        model.cuda()
-
-    return model, train_loader, val_loader, test_loader, normalizer
-
-
-def create_optimizer_and_scheduler(model, trainer_config):
-    """Create optimizer and scheduler based on configuration."""
-    
-    # Define loss function
-    criterion = nn.MSELoss()
-    
-    # Create optimizer
-    if trainer_config.optimizer == 'SGD':
-        optimizer = optim.SGD(
-            model.parameters(), 
-            trainer_config.learning_rate,
-            momentum=trainer_config.momentum,
-            weight_decay=trainer_config.weight_decay
-        )
-    elif trainer_config.optimizer == 'Adam':
-        optimizer = optim.Adam(
-            model.parameters(), 
-            trainer_config.learning_rate,
-            weight_decay=trainer_config.weight_decay
-        )
-    else:
-        raise NameError('Only SGD or Adam is allowed as optimizer')
-    
-    # Create scheduler
-    scheduler = MultiStepLR(optimizer, milestones=trainer_config.lr_milestones, gamma=0.1)
-    
-    return criterion, optimizer, scheduler
+best_mae_error = 1e10
 
 
 def main():
-    # Parse arguments and create configurations
+    global best_mae_error
+
     args = arg_parse()
-    model_config, trainer_config, modality_config = create_configs_from_args(args)
-    
-    # Set up CUDA
-    trainer_config.cuda = args.cuda
-    best_mae_error = trainer_config.best_mae_error
+    args.cuda = not args.disable_cuda and torch.cuda.is_available()
 
-    print(f"Using model type: {model_config.model_type}")
-    print(f"Available models: {model_factory.list_available_models()}")
-    print(f"Using modalities - XRD: {modality_config.use_xrd}, Text: {modality_config.use_text}")
+    # load data
+    dataset = CIFData(args.data_path)
+    collate_fn = collate_pool
+    train_loader, val_loader, test_loader = get_train_val_test_loader(
+        dataset=dataset,
+        collate_fn=collate_fn,
+        batch_size=args.batch_size,
+        train_ratio=args.train_ratio,
+        num_workers=args.workers,
+        val_ratio=args.val_ratio,
+        test_ratio=args.test_ratio,
+        pin_memory=args.cuda,
+        train_size=args.train_size,
+        val_size=args.val_size,
+        test_size=args.test_size,
+        return_test=True)
 
-    # Create model and data
-    model, train_loader, val_loader, test_loader, normalizer = create_model_and_data(
-        args, model_config, trainer_config, modality_config
-    )
-    
-    # Create optimizer and scheduler
-    criterion, optimizer, scheduler = create_optimizer_and_scheduler(model, trainer_config)
+    # obtain target value normalizer
+    if args.task == 'classification':
+        normalizer = Normalizer(torch.zeros(2))
+        normalizer.load_state_dict({'mean': 0., 'std': 1.})
+    else:
+        if len(dataset) < 500:
+            warnings.warn('Dataset has less than 500 data points. '
+                          'Lower accuracy is expected. ')
+            sample_data_list = [dataset[i] for i in range(len(dataset))]
+        else:
+            sample_data_list = [dataset[i] for i in
+                                sample(range(len(dataset)), 500)]
+        _, sample_target, _, _, _ = collate_pool(sample_data_list)
+        normalizer = Normalizer(sample_target)
 
-    # Optionally resume from a checkpoint
-    if trainer_config.resume:
-        if os.path.isfile(trainer_config.resume):
-            print("=> loading checkpoint '{}'".format(trainer_config.resume))
-            checkpoint = torch.load(trainer_config.resume)
-            trainer_config.start_epoch = checkpoint['epoch']
+    # build model
+    structures, _, _, _, _, _ = dataset[0]
+    orig_atom_fea_len = structures[0].shape[-1]
+    nbr_fea_len = structures[1].shape[-1]
+    model = CrystalGraphConvNet(orig_atom_fea_len, nbr_fea_len,
+                                atom_fea_len=args.atom_fea_len,
+                                n_conv=args.n_conv,
+                                h_fea_len=args.h_fea_len,
+                                n_h=args.n_h,
+                                xrd=args.xrd,
+                                text=args.text,
+                                graph_type=args.graph_type)
+    if args.cuda:
+        model.cuda()
+
+    # define loss func and optimizer
+    criterion = nn.MSELoss()
+    if args.optim == 'SGD':
+        optimizer = optim.SGD(model.parameters(), args.lr,
+                              momentum=args.momentum,
+                              weight_decay=args.weight_decay)
+    elif args.optim == 'Adam':
+        optimizer = optim.Adam(model.parameters(), args.lr,
+                               weight_decay=args.weight_decay)
+    else:
+        raise NameError('Only SGD or Adam is allowed as --optim')
+
+    # optionally resume from a checkpoint
+    if args.resume:
+        if os.path.isfile(args.resume):
+            print("=> loading checkpoint '{}'".format(args.resume))
+            checkpoint = torch.load(args.resume)
+            args.start_epoch = checkpoint['epoch']
             best_mae_error = checkpoint['best_mae_error']
             model.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer'])
             normalizer.load_state_dict(checkpoint['normalizer'])
-            print("=> loaded checkpoint '{}' (epoch {})".format(trainer_config.resume, checkpoint['epoch']))
+            print("=> loaded checkpoint '{}' (epoch {})"
+                  .format(args.resume, checkpoint['epoch']))
         else:
-            print("=> no checkpoint found at '{}'".format(trainer_config.resume))
+            print("=> no checkpoint found at '{}'".format(args.resume))
 
-    # Training loop
-    for epoch in range(trainer_config.start_epoch, trainer_config.epochs):
-        # Train for one epoch
-        train(trainer_config, train_loader, model, criterion, optimizer, epoch, normalizer)
+    scheduler = MultiStepLR(optimizer, milestones=args.lr_milestones, gamma=0.1)
 
-        # Evaluate on validation set
-        mae_error = validate(trainer_config, val_loader, model, criterion, normalizer)
+    for epoch in range(args.start_epoch, args.epochs):
+        # train for one epoch
+        train(args, train_loader, model, criterion, optimizer, epoch, normalizer)
+
+        # evaluate on validation set
+        mae_error = validate(args, val_loader, model, criterion, normalizer)
 
         if mae_error != mae_error:
             print('Exit due to NaN')
@@ -201,48 +161,41 @@ def main():
 
         scheduler.step()
 
-        # Remember the best mae_error and save checkpoint
+        # remember the best mae_eror and save checkpoint
         is_best = mae_error < best_mae_error
         best_mae_error = min(mae_error, best_mae_error)
-        
-        # Save checkpoint with config info
-        checkpoint_data = {
+        save_checkpoint({
             'epoch': epoch + 1,
             'state_dict': model.state_dict(),
             'best_mae_error': best_mae_error,
             'optimizer': optimizer.state_dict(),
             'normalizer': normalizer.state_dict(),
-            'args': vars(args),
-            'model_config': model_config.__dict__,
-            'trainer_config': trainer_config.__dict__,
-            'modality_config': modality_config.__dict__
-        }
-        save_checkpoint(checkpoint_data, is_best)
+            'args': vars(args)
+        }, is_best)
 
-    # Test best model
+    # test best model
     print('---------Evaluate Model on Test Set---------------')
     best_checkpoint = torch.load('model_best.pth.tar')
     model.load_state_dict(best_checkpoint['state_dict'])
-    validate(trainer_config, test_loader, model, criterion, normalizer, test=True)
+    validate(args, test_loader, model, criterion, normalizer, test=True)
 
 
-def train(config, train_loader, model, criterion, optimizer, epoch, normalizer):
-    """Training function - now takes config object instead of args."""
+def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
     mae_errors = AverageMeter()
     mre_errors = AverageMeter()
 
-    # Switch to train mode
+    # switch to train mode
     model.train()
 
     end = time.time()
     for i, (input, target, _, xrd_fea, text_fea) in enumerate(train_loader):
-        # Measure data loading time
+        # measure data loading time
         data_time.update(time.time() - end)
 
-        if config.cuda:
+        if args.cuda:
             input_var = (Variable(input[0].cuda(non_blocking=True)),
                          Variable(input[1].cuda(non_blocking=True)),
                          input[2].cuda(non_blocking=True),
@@ -256,18 +209,18 @@ def train(config, train_loader, model, criterion, optimizer, epoch, normalizer):
                          input[3],
                          xrd_fea,
                          text_fea)
-        # Normalize target
+        # normalize target
         target_normed = normalizer.norm(target)
-        if config.cuda:
+        if args.cuda:
             target_var = Variable(target_normed.cuda(non_blocking=True))
         else:
             target_var = Variable(target_normed)
 
-        # Compute output
+        # compute output
         output = model(*input_var)
         loss = criterion(output, target_var)
 
-        # Measure accuracy and record loss
+        # measure accuracy and record loss
         mae_error = mae(normalizer.denorm(output.data.cpu()), target)
         mre_error = mae_error / target.abs().mean()
 
@@ -275,16 +228,16 @@ def train(config, train_loader, model, criterion, optimizer, epoch, normalizer):
         mae_errors.update(mae_error, target.size(0))
         mre_errors.update(mre_error, target.size(0))
 
-        # Compute gradient and do SGD step
+        # compute gradient and do SGD step
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-        # Measure elapsed time
+        # measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if i % config.print_freq == 0:
+        if i % args.print_freq == 0:
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
@@ -296,8 +249,7 @@ def train(config, train_loader, model, criterion, optimizer, epoch, normalizer):
             )
 
 
-def validate(config, val_loader, model, criterion, normalizer, test=False):
-    """Validation function - now takes config object instead of args."""
+def validate(args, val_loader, model, criterion, normalizer, test=False):
     batch_time = AverageMeter()
     losses = AverageMeter()
     mae_errors = AverageMeter()
@@ -308,12 +260,12 @@ def validate(config, val_loader, model, criterion, normalizer, test=False):
         test_preds = []
         test_cif_ids = []
 
-    # Switch to evaluate mode
+    # switch to evaluate mode
     model.eval()
 
     end = time.time()
     for i, (input, target, batch_cif_ids, xrd_fea, text_fea) in enumerate(val_loader):
-        if config.cuda:
+        if args.cuda:
             with torch.no_grad():
                 input_var = (Variable(input[0].cuda(non_blocking=True)),
                              Variable(input[1].cuda(non_blocking=True)),
@@ -329,22 +281,22 @@ def validate(config, val_loader, model, criterion, normalizer, test=False):
                              input[3],
                              xrd_fea,
                              text_fea)
-        if config.task == 'regression':
+        if args.task == 'regression':
             target_normed = normalizer.norm(target)
         else:
             target_normed = target.view(-1).long()
-        if config.cuda:
+        if args.cuda:
             with torch.no_grad():
                 target_var = Variable(target_normed.cuda(non_blocking=True))
         else:
             with torch.no_grad():
                 target_var = Variable(target_normed)
 
-        # Compute output
+        # compute output
         output = model(*input_var)
         loss = criterion(output, target_var)
 
-        # Measure accuracy and record loss
+        # measure accuracy and record loss
         mae_error = mae(normalizer.denorm(output.data.cpu()), target)
         mre_error = mae_error / target.abs().mean()
         losses.update(loss.data.cpu().item(), target.size(0))
@@ -357,17 +309,18 @@ def validate(config, val_loader, model, criterion, normalizer, test=False):
             test_targets += test_target.view(-1).tolist()
             test_cif_ids += batch_cif_ids
 
-        # Measure elapsed time
+        # measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if i % config.print_freq == 0:
+        if i % args.print_freq == 0:
             print('Test: [{0}/{1}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'MAE {mae_errors.val:.3f} ({mae_errors.avg:.3f})'.format(
+                  'MAE {mae_errors.val:.3f} ({mae_errors.avg:.3f})\t'
+                  'MRE {mre_errors.val:.3f} ({mre_errors.avg:.3f})'.format(
                 i, len(val_loader), batch_time=batch_time, loss=losses,
-                mae_errors=mae_errors))
+                mae_errors=mae_errors, mre_errors=mre_errors))
 
     if test:
         star_label = '**'

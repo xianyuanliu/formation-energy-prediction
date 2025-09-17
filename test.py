@@ -1,4 +1,4 @@
-"""This code is extracted from the CGCNN repository"""
+"""Refactored test script with modular architecture."""
 
 import argparse
 import os
@@ -15,274 +15,251 @@ from torch.utils.data import DataLoader
 
 from data import CIFData
 from data import collate_pool
-from models.cgcnn import CrystalGraphConvNet
-
-parser = argparse.ArgumentParser(description='Crystal gated neural networks')
-parser.add_argument('--modelpath', help='path to the trained model.', default="pretrained_models/formation-energy-per-atom.pth")
-parser.add_argument('--cifpath', help='path to the directory of cifs files.', default="data/test_cifs/")
-parser.add_argument('-b', '--batch-size', default=256, type=int,
-                    metavar='N', help='mini-batch size (default: 256)')
-parser.add_argument('-j', '--workers', default=0, type=int, metavar='N',
-                    help='number of data loading workers (default: 0)')
-parser.add_argument('--disable-cuda', action='store_true',
-                    help='Disable CUDA')
-parser.add_argument('--print-freq', '-p', default=10, type=int,
-                    metavar='N', help='print frequency (default: 10)')
-
-args = parser.parse_args(sys.argv[1:])
-if os.path.isfile(args.modelpath):
-    print("=> loading model params '{}'".format(args.modelpath))
-    model_checkpoint = torch.load(args.modelpath,
-                                  map_location=lambda storage, loc: storage)
-    model_args = argparse.Namespace(**model_checkpoint['args'])
-    print("=> loaded model params '{}'".format(args.modelpath))
-else:
-    print("=> no model params found at '{}'".format(args.modelpath))
-
-args.cuda = not args.disable_cuda and torch.cuda.is_available()
-
-if model_args.task == 'regression':
-    best_mae_error = 1e10
-else:
-    best_mae_error = 0.
+from utils.utils import Normalizer, mae, AverageMeter
+from config import ModelConfig, TrainerConfig, ModalityConfig
+from factories import model_factory
 
 
-def main():
-    global args, model_args, best_mae_error
+def parse_args():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(description='Crystal Graph Neural Networks Testing')
+    parser.add_argument('--modelpath', help='path to the trained model.', 
+                       default="pretrained_models/formation-energy-per-atom.pth")
+    parser.add_argument('--cifpath', help='path to the directory of cifs files.', 
+                       default="data/test_cifs/")
+    parser.add_argument('-b', '--batch-size', default=256, type=int,
+                       metavar='N', help='mini-batch size (default: 256)')
+    parser.add_argument('-j', '--workers', default=0, type=int, metavar='N',
+                       help='number of data loading workers (default: 0)')
+    parser.add_argument('--disable-cuda', action='store_true',
+                       help='Disable CUDA')
+    parser.add_argument('--print-freq', '-p', default=10, type=int,
+                       metavar='N', help='print frequency (default: 10)')
 
-    # load data
-    dataset = CIFData(args.cifpath)
-    collate_fn = collate_pool
-    test_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True,
-                             num_workers=args.workers, collate_fn=collate_fn,
-                             pin_memory=args.cuda)
+    args = parser.parse_args(sys.argv[1:])
+    args.cuda = not args.disable_cuda and torch.cuda.is_available()
+    return args
 
-    # build model
+
+def load_model_from_checkpoint(modelpath, cuda_available=True):
+    """Load model configurations and state from checkpoint."""
+    
+    if not os.path.isfile(modelpath):
+        raise FileNotFoundError(f"=> no model params found at '{modelpath}'")
+        
+    print(f"=> loading model params '{modelpath}'")
+    model_checkpoint = torch.load(modelpath, map_location=lambda storage, loc: storage)
+    
+    # Extract configurations (backward compatibility)
+    if 'model_config' in model_checkpoint:
+        # New format with explicit configs
+        model_config_dict = model_checkpoint['model_config']
+        trainer_config_dict = model_checkpoint['trainer_config'] 
+        modality_config_dict = model_checkpoint['modality_config']
+        
+        model_config = ModelConfig(**model_config_dict)
+        trainer_config = TrainerConfig(**trainer_config_dict)
+        modality_config = ModalityConfig(**modality_config_dict)
+    else:
+        # Old format - extract from args
+        old_args = argparse.Namespace(**model_checkpoint['args'])
+        model_config = ModelConfig(
+            model_type=getattr(old_args, 'model_type', 'cgcnn'),
+            atom_fea_len=getattr(old_args, 'atom_fea_len', 64),
+            n_conv=getattr(old_args, 'n_conv', 3),
+            h_fea_len=getattr(old_args, 'h_fea_len', 128),
+            n_h=getattr(old_args, 'n_h', 1),
+            graph_type=getattr(old_args, 'graph_type', 'cgcnn')
+        )
+        trainer_config = TrainerConfig(
+            task=getattr(old_args, 'task', 'regression'),
+            cuda=cuda_available
+        )
+        modality_config = ModalityConfig(
+            use_xrd=getattr(old_args, 'xrd', False),
+            use_text=getattr(old_args, 'text', False)
+        )
+    
+    print(f"=> loaded model params '{modelpath}'")
+    return model_checkpoint, model_config, trainer_config, modality_config
+
+
+def create_test_model(model_config, modality_config, dataset):
+    """Create model for testing based on configurations and dataset."""
+    
+    # Get feature dimensions from dataset
     structures, _, _ = dataset[0]
     orig_atom_fea_len = structures[0].shape[-1]
     nbr_fea_len = structures[1].shape[-1]
-    model = CrystalGraphConvNet(orig_atom_fea_len, nbr_fea_len,
-                                atom_fea_len=model_args.atom_fea_len,
-                                n_conv=model_args.n_conv,
-                                h_fea_len=model_args.h_fea_len,
-                                n_h=model_args.n_h,
-                                classification=True if model_args.task ==
-                                'classification' else False)
+    
+    # Create model using factory
+    model = model_factory.create_model(
+        model_config=model_config,
+        modality_config=modality_config,
+        orig_atom_fea_len=orig_atom_fea_len,
+        nbr_fea_len=nbr_fea_len
+    )
+    
+    return model
+
+
+def main():
+    # Parse arguments
+    args = parse_args()
+
+    # Load model from checkpoint
+    try:
+        model_checkpoint, model_config, trainer_config, modality_config = load_model_from_checkpoint(
+            args.modelpath, args.cuda
+        )
+    except FileNotFoundError as e:
+        print(e)
+        return
+
+    # Set up task-specific variables
+    if trainer_config.task == 'regression':
+        best_mae_error = 1e10
+    else:
+        best_mae_error = 0.
+
+    print(f"Testing with model type: {model_config.model_type}")
+    print(f"Task: {trainer_config.task}")
+    print(f"Modalities - XRD: {modality_config.use_xrd}, Text: {modality_config.use_text}")
+
+    # Load test data
+    dataset = CIFData(args.cifpath)
+    collate_fn = collate_pool
+    test_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True,
+                           num_workers=args.workers, collate_fn=collate_fn,
+                           pin_memory=args.cuda)
+
+    # Create model
+    model = create_test_model(model_config, modality_config, dataset)
+    
     if args.cuda:
         model.cuda()
 
-    # define loss func and optimizer
+    # Load model state
+    model.load_state_dict(model_checkpoint['state_dict'])
+
+    # Define loss function and normalizer
     criterion = nn.MSELoss()
-
     normalizer = Normalizer(torch.zeros(3))
+    
+    if 'normalizer' in model_checkpoint:
+        normalizer.load_state_dict(model_checkpoint['normalizer'])
 
-    # optionally resume from a checkpoint
-    if os.path.isfile(args.modelpath):
-        print("=> loading model '{}'".format(args.modelpath))
-        checkpoint = torch.load(args.modelpath,
-                                map_location=lambda storage, loc: storage)
-        model.load_state_dict(checkpoint['state_dict'])
-        normalizer.load_state_dict(checkpoint['normalizer'])
-        print("=> loaded model '{}' (epoch {}, validation {})"
-              .format(args.modelpath, checkpoint['epoch'],
-                      checkpoint['best_mae_error']))
-    else:
-        print("=> no model found at '{}'".format(args.modelpath))
-
-    validate(test_loader, model, criterion, normalizer, test=True)
+    # Run testing
+    print("Running model evaluation...")
+    validate(trainer_config, test_loader, model, criterion, normalizer, test=True)
 
 
-def validate(val_loader, model, criterion, normalizer, test=False):
+def validate(config, val_loader, model, criterion, normalizer, test=False):
+    """Validation function using configuration object."""
     batch_time = AverageMeter()
     losses = AverageMeter()
-    if model_args.task == 'regression':
-        mae_errors = AverageMeter()
-    else:
-        accuracies = AverageMeter()
-        precisions = AverageMeter()
-        recalls = AverageMeter()
-        fscores = AverageMeter()
-        auc_scores = AverageMeter()
+    mae_errors = AverageMeter()
+    mre_errors = AverageMeter()
+
     if test:
         test_targets = []
         test_preds = []
         test_cif_ids = []
 
-    # switch to evaluate mode
+    # Switch to evaluate mode
     model.eval()
 
     end = time.time()
-    for i, (input, target, batch_cif_ids) in enumerate(val_loader):
-        with torch.no_grad():
-            if args.cuda:
+    for i, (input, target, batch_cif_ids, xrd_fea, text_fea) in enumerate(val_loader):
+        if config.cuda:
+            with torch.no_grad():
                 input_var = (Variable(input[0].cuda(non_blocking=True)),
-                             Variable(input[1].cuda(non_blocking=True)),
-                             input[2].cuda(non_blocking=True),
-                             [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]])
-            else:
+                           Variable(input[1].cuda(non_blocking=True)),
+                           input[2].cuda(non_blocking=True),
+                           [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
+                           xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None,
+                           text_fea.cuda(non_blocking=True) if text_fea is not None else None)
+        else:
+            with torch.no_grad():
                 input_var = (Variable(input[0]),
-                             Variable(input[1]),
-                             input[2],
-                             input[3])
-        if model_args.task == 'regression':
+                           Variable(input[1]),
+                           input[2],
+                           input[3],
+                           xrd_fea,
+                           text_fea)
+        
+        if config.task == 'regression':
             target_normed = normalizer.norm(target)
         else:
             target_normed = target.view(-1).long()
-        with torch.no_grad():
-            if args.cuda:
+        
+        if config.cuda:
+            with torch.no_grad():
                 target_var = Variable(target_normed.cuda(non_blocking=True))
-            else:
+        else:
+            with torch.no_grad():
                 target_var = Variable(target_normed)
 
-        # compute output
+        # Compute output
         output = model(*input_var)
         loss = criterion(output, target_var)
 
-        # measure accuracy and record loss
-        if model_args.task == 'regression':
+        # Measure accuracy and record loss
+        if config.task == 'regression':
             mae_error = mae(normalizer.denorm(output.data.cpu()), target)
-            losses.update(loss.data.cpu().item(), target.size(0))
-            mae_errors.update(mae_error, target.size(0))
-            if test:
+        else:
+            mae_error = class_eval(output.data.cpu(), target)
+        
+        mre_error = mae_error / target.abs().mean() if config.task == 'regression' else 0
+        losses.update(loss.data.cpu().item(), target.size(0))
+        mae_errors.update(mae_error, target.size(0))
+        mre_errors.update(mre_error, target.size(0))
+        
+        if test:
+            if config.task == 'regression':
                 test_pred = normalizer.denorm(output.data.cpu())
                 test_target = target
-                test_preds += test_pred.view(-1).tolist()
-                test_targets += test_target.view(-1).tolist()
-                test_cif_ids += batch_cif_ids
-        else:
-            accuracy, precision, recall, fscore, auc_score =\
-                class_eval(output.data.cpu(), target)
-            losses.update(loss.data.cpu().item(), target.size(0))
-            accuracies.update(accuracy, target.size(0))
-            precisions.update(precision, target.size(0))
-            recalls.update(recall, target.size(0))
-            fscores.update(fscore, target.size(0))
-            auc_scores.update(auc_score, target.size(0))
-            if test:
-                test_pred = torch.exp(output.data.cpu())
+            else:
+                test_pred = torch.softmax(output.data.cpu(), dim=1)
                 test_target = target
-                assert test_pred.shape[1] == 2
-                test_preds += test_pred[:, 1].tolist()
-                test_targets += test_target.view(-1).tolist()
-                test_cif_ids += batch_cif_ids
+                
+            test_preds += test_pred.view(-1).tolist()
+            test_targets += test_target.view(-1).tolist()
+            test_cif_ids += batch_cif_ids
 
-        # measure elapsed time
+        # Measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if i % args.print_freq == 0:
-            if model_args.task == 'regression':
-                print('Test: [{0}/{1}]\t'
-                      'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                      'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                      'MAE {mae_errors.val:.3f} ({mae_errors.avg:.3f})'.format(
-                       i, len(val_loader), batch_time=batch_time, loss=losses,
-                       mae_errors=mae_errors))
-            else:
-                print('Test: [{0}/{1}]\t'
-                      'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                      'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                      'Accu {accu.val:.3f} ({accu.avg:.3f})\t'
-                      'Precision {prec.val:.3f} ({prec.avg:.3f})\t'
-                      'Recall {recall.val:.3f} ({recall.avg:.3f})\t'
-                      'F1 {f1.val:.3f} ({f1.avg:.3f})\t'
-                      'AUC {auc.val:.3f} ({auc.avg:.3f})'.format(
-                       i, len(val_loader), batch_time=batch_time, loss=losses,
-                       accu=accuracies, prec=precisions, recall=recalls,
-                       f1=fscores, auc=auc_scores))
+        if i % getattr(config, 'print_freq', 10) == 0:
+            print('Test: [{0}/{1}]\t'
+                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+                  'MAE {mae_errors.val:.3f} ({mae_errors.avg:.3f})\t'
+                  'MRE {mre_errors.val:.3f} ({mre_errors.avg:.3f})'.format(
+                i, len(val_loader), batch_time=batch_time, loss=losses,
+                mae_errors=mae_errors, mre_errors=mre_errors))
 
     if test:
         star_label = '**'
         import csv
         with open('test_results.csv', 'w') as f:
             writer = csv.writer(f)
-            for cif_id, target, pred in zip(test_cif_ids, test_targets,
-                                            test_preds):
+            for cif_id, target, pred in zip(test_cif_ids, test_targets, test_preds):
                 writer.writerow((cif_id, target, pred))
     else:
         star_label = '*'
-    if model_args.task == 'regression':
-        print(' {star} MAE {mae_errors.avg:.3f}'.format(star=star_label,
-                                                        mae_errors=mae_errors))
-        return mae_errors.avg
-    else:
-        print(' {star} AUC {auc.avg:.3f}'.format(star=star_label,
-                                                 auc=auc_scores))
-        return auc_scores.avg
-
-
-class Normalizer(object):
-    """Normalize a Tensor and restore it later. """
-    def __init__(self, tensor):
-        """tensor is taken as a sample to calculate the mean and std"""
-        self.mean = torch.mean(tensor)
-        self.std = torch.std(tensor)
-
-    def norm(self, tensor):
-        return (tensor - self.mean) / self.std
-
-    def denorm(self, normed_tensor):
-        return normed_tensor * self.std + self.mean
-
-    def state_dict(self):
-        return {'mean': self.mean,
-                'std': self.std}
-
-    def load_state_dict(self, state_dict):
-        self.mean = state_dict['mean']
-        self.std = state_dict['std']
-
-
-def mae(prediction, target):
-    """
-    Computes the mean absolute error between prediction and target
-
-    Parameters
-    ----------
-
-    prediction: torch.Tensor (N, 1)
-    target: torch.Tensor (N, 1)
-    """
-    return torch.mean(torch.abs(target - prediction))
+    
+    print(' {star} MAE {mae_errors.avg:.3f}'.format(star=star_label, mae_errors=mae_errors))
+    return mae_errors.avg
 
 
 def class_eval(prediction, target):
+    """Evaluate classification task."""
     prediction = np.exp(prediction.numpy())
-    target = target.numpy()
-    pred_label = np.argmax(prediction, axis=1)
-    target_label = np.squeeze(target)
-    if prediction.shape[1] == 2:
-        precision, recall, fscore, _ = metrics.precision_recall_fscore_support(
-            target_label, pred_label, average='binary')
-        auc_score = metrics.roc_auc_score(target_label, prediction[:, 1])
-        accuracy = metrics.accuracy_score(target_label, pred_label)
-    else:
-        raise NotImplementedError
-    return accuracy, precision, recall, fscore, auc_score
-
-
-class AverageMeter(object):
-    """Computes and stores the average and current value"""
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self.val = 0
-        self.avg = 0
-        self.sum = 0
-        self.count = 0
-
-    def update(self, val, n=1):
-        self.val = val
-        self.sum += val * n
-        self.count += n
-        self.avg = self.sum / self.count
-
-
-def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
-    torch.save(state, filename)
-    if is_best:
-        shutil.copyfile(filename, 'model_best.pth.tar')
+    prediction = np.argmax(prediction, axis=1)
+    target = target.view(-1).numpy()
+    return metrics.accuracy_score(target, prediction)
 
 
 if __name__ == '__main__':
