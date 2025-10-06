@@ -40,6 +40,18 @@ def mae(prediction, target):
     return torch.mean(torch.abs(target - prediction))
 
 
+def rmse(prediction, target):
+    """
+    Computes the root mean squared error between prediction and target
+
+    Parameters
+    ----------
+    prediction: torch.Tensor (N, 1)
+    target: torch.Tensor (N, 1)
+    """
+    return torch.sqrt(torch.mean((target - prediction) ** 2))
+
+
 def class_eval(prediction, target):
     prediction = np.exp(prediction.numpy())
     target = target.numpy()
