@@ -1,0 +1,2 @@
+,n,l,train,test,ntrain,ntest,comment
+1,0,0,"['hexagonal', 'monoclinic', 'orthorhombic', 'tetragonal', 'triclinic', 'trigonal']",['cubic'],3301,1170,loo split

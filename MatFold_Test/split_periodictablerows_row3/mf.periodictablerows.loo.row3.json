@@ -1,0 +1,22 @@
+{
+    "MatFold": "v1.2.3",
+    "data_checksums": [
+        35803200770196752742061852118316480564,
+        211504842085113295620171805402346874851
+    ],
+    "__init__": {
+        "return_frac": 1.0,
+        "always_include_n_elements": null,
+        "cols_to_keep": null,
+        "seed": 0
+    },
+    "split_function_called": "create_loo_split",
+    "split_parameters": {
+        "split_type": "periodictablerows",
+        "loo_label": "row3",
+        "keep_n_elements_in_train": null,
+        "write_base_str": "mf",
+        "output_dir": "split_periodictablerows_row3",
+        "verbose": true
+    }
+}

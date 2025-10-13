@@ -1,0 +1,15 @@
+,n,l,train,test,ntrain,ntest,comment
+1,0,-1,"['group1', 'group10', 'group11', 'group13', 'group14', 'group15', 'group17', 'group2', 'group5', 'group6', 'group7', 'group8', 'group9']",['group3'],4186,285,split successful
+2,1,-1,"['group1', 'group10', 'group11', 'group13', 'group14', 'group15', 'group2', 'group3', 'group5', 'group6', 'group7', 'group8', 'group9']",['group17'],4133,338,split successful
+3,2,-1,"['group1', 'group10', 'group11', 'group13', 'group15', 'group17', 'group2', 'group3', 'group5', 'group6', 'group7', 'group8', 'group9']",['group14'],3724,747,split successful
+4,3,-1,"['group1', 'group10', 'group11', 'group13', 'group14', 'group15', 'group17', 'group2', 'group3', 'group5', 'group6', 'group8', 'group9']",['group7'],4205,266,split successful
+5,4,-1,"['group1', 'group10', 'group13', 'group14', 'group15', 'group17', 'group2', 'group3', 'group5', 'group6', 'group7', 'group8', 'group9']",['group11'],3607,864,split successful
+6,5,-1,"['group1', 'group10', 'group11', 'group13', 'group14', 'group15', 'group17', 'group2', 'group3', 'group5', 'group6', 'group7', 'group8']",['group9'],4020,451,split successful
+7,6,-1,"['group1', 'group10', 'group11', 'group13', 'group14', 'group15', 'group17', 'group2', 'group3', 'group6', 'group7', 'group8', 'group9']",['group5'],3648,823,split successful
+8,7,-1,"['group1', 'group11', 'group13', 'group14', 'group15', 'group17', 'group2', 'group3', 'group5', 'group6', 'group7', 'group8', 'group9']",['group10'],3731,740,split successful
+9,8,-1,"['group1', 'group10', 'group11', 'group13', 'group14', 'group15', 'group17', 'group3', 'group5', 'group6', 'group7', 'group8', 'group9']",['group2'],3850,621,split successful
+10,9,-1,"['group1', 'group10', 'group11', 'group13', 'group14', 'group15', 'group17', 'group2', 'group3', 'group5', 'group7', 'group8', 'group9']",['group6'],3688,783,split successful
+11,10,-1,"['group1', 'group10', 'group11', 'group14', 'group15', 'group17', 'group2', 'group3', 'group5', 'group6', 'group7', 'group8', 'group9']",['group13'],3556,915,split successful
+12,11,-1,"['group10', 'group11', 'group13', 'group14', 'group15', 'group17', 'group2', 'group3', 'group5', 'group6', 'group7', 'group8', 'group9']",['group1'],3957,514,split successful
+13,12,-1,"['group1', 'group10', 'group11', 'group13', 'group14', 'group17', 'group2', 'group3', 'group5', 'group6', 'group7', 'group8', 'group9']",['group15'],3523,948,split successful
+14,13,-1,"['group1', 'group10', 'group11', 'group13', 'group14', 'group15', 'group17', 'group2', 'group3', 'group5', 'group6', 'group7', 'group9']",['group8'],4079,392,split successful

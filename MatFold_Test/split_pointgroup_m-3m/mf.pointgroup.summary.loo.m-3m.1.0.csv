@@ -1,0 +1,2 @@
+,n,l,train,test,ntrain,ntest,comment
+1,0,0,"['-1', '-3m', '-43m', '-6m2', '1', '2', '2/m', '222', '23', '3m', '4/m', '4/mmm', '4mm', '6/m', '6/mmm', '6mm', 'm', 'm-3', 'mm2', 'mmm']",['m-3m'],3651,820,loo split

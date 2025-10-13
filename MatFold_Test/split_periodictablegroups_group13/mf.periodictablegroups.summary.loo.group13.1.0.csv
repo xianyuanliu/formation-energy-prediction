@@ -1,0 +1,2 @@
+,n,l,train,test,ntrain,ntest,comment
+1,0,0,"['group1', 'group10', 'group11', 'group14', 'group15', 'group17', 'group2', 'group3', 'group5', 'group6', 'group7', 'group8', 'group9']",['group13'],3556,915,loo split

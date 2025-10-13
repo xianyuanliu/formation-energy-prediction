@@ -1,0 +1,27 @@
+{
+    "MatFold": "v1.2.3",
+    "data_checksums": [
+        35803200770196752742061852118316480564,
+        211504842085113295620171805402346874851
+    ],
+    "__init__": {
+        "return_frac": 1.0,
+        "always_include_n_elements": null,
+        "cols_to_keep": null,
+        "seed": 0
+    },
+    "split_function_called": "create_splits",
+    "split_parameters": {
+        "split_type": "crystalsys",
+        "n_inner_splits": 1,
+        "n_outer_splits": 0,
+        "fraction_upper_limit": 1.0,
+        "fraction_lower_limit": 0.0,
+        "keep_n_elements_in_train": null,
+        "min_train_test_factor": null,
+        "inner_equals_outer_split_strategy": true,
+        "write_base_str": "mf",
+        "output_dir": "split_crystalsys",
+        "verbose": true
+    }
+}

@@ -1,0 +1,8 @@
+,n,l,train,test,ntrain,ntest,comment
+1,0,-1,"['cubic', 'hexagonal', 'monoclinic', 'orthorhombic', 'tetragonal', 'triclinic']",['trigonal'],4383,88,split successful
+2,1,-1,"['cubic', 'hexagonal', 'orthorhombic', 'tetragonal', 'triclinic', 'trigonal']",['monoclinic'],4402,69,split successful
+3,2,-1,"['cubic', 'monoclinic', 'orthorhombic', 'tetragonal', 'triclinic', 'trigonal']",['hexagonal'],4264,207,split successful
+4,3,-1,"['cubic', 'hexagonal', 'monoclinic', 'tetragonal', 'triclinic', 'trigonal']",['orthorhombic'],3094,1377,split successful
+5,4,-1,"['hexagonal', 'monoclinic', 'orthorhombic', 'tetragonal', 'triclinic', 'trigonal']",['cubic'],3301,1170,split successful
+6,5,-1,"['cubic', 'hexagonal', 'monoclinic', 'orthorhombic', 'tetragonal', 'trigonal']",['triclinic'],4422,49,split successful
+7,6,-1,"['cubic', 'hexagonal', 'monoclinic', 'orthorhombic', 'triclinic', 'trigonal']",['tetragonal'],2960,1511,split successful

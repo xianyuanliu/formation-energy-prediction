@@ -1,0 +1,6 @@
+,n,l,train,test,ntrain,ntest,comment
+1,0,-1,"['row3', 'row4', 'row6', 'row7']",['row5'],2378,2093,split successful
+2,1,-1,"['row4', 'row5', 'row6', 'row7']",['row3'],3460,1011,split successful
+3,2,-1,"['row3', 'row5', 'row6', 'row7']",['row4'],1806,2665,split successful
+4,3,-1,"['row3', 'row4', 'row5', 'row7']",['row6'],2517,1954,split successful
+5,4,-1,"['row3', 'row4', 'row5', 'row6']",['row7'],4315,156,split successful
