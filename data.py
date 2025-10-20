@@ -15,6 +15,7 @@ from torch.utils.data.dataloader import default_collate
 from torch.utils.data.sampler import SubsetRandomSampler
 from models.xrd_module import XRDDataset  
 from models.sg_text_module import TextEmbeddingDataset
+from models.robocr_text_module import RoboTextEmbeddingDataset
 
 def get_train_val_test_loader(dataset, collate_fn=default_collate,
                               batch_size=64, train_ratio=None,
@@ -134,8 +135,9 @@ def collate_pool(dataset_list):
     batch_cif_ids = []
     batch_xrd_fea = []
     batch_text_fea = []
+    batch_robotext_fea = []
     base_idx = 0
-    for i, ((atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea, text_fea) in enumerate(dataset_list):
+    for i, ((atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea, text_fea, robotext_fea) in enumerate(dataset_list):
         n_i = atom_fea.shape[0]  # number of atoms for this crystal
         batch_atom_fea.append(atom_fea)
         batch_nbr_fea.append(nbr_fea)
@@ -146,6 +148,7 @@ def collate_pool(dataset_list):
         batch_cif_ids.append(cif_id)
         batch_xrd_fea.append(xrd_fea)
         batch_text_fea.append(text_fea)
+        batch_robotext_fea.append(robotext_fea)
         base_idx += n_i
     return (torch.cat(batch_atom_fea, dim=0),
             torch.cat(batch_nbr_fea, dim=0),
@@ -154,7 +157,8 @@ def collate_pool(dataset_list):
         torch.stack(batch_target, dim=0),\
         batch_cif_ids,\
         torch.stack(batch_xrd_fea, dim=0), \
-        torch.stack(batch_text_fea, dim=0)
+        torch.stack(batch_text_fea, dim=0), \
+        torch.stack(batch_robotext_fea, dim=0)
 
 
 class GaussianDistance(object):
@@ -320,12 +324,15 @@ class CIFData(Dataset):
         assert os.path.exists(atom_init_file), 'atom_init.json does not exist!'
         xrd_data_file = os.path.join(self.root_dir, 'XRD_data.csv')
         text_data_file = os.path.join(self.root_dir, 'SG_text_data.csv')
+        robotext_data_file = os.path.join(self.root_dir, 'RoboCR_text_data.csv')
         assert os.path.exists(xrd_data_file), 'XRD_data.csv does not exist!'
         assert os.path.exists(text_data_file), 'SG_text_data.csv does not exist!'
+        assert os.path.exists(robotext_data_file), 'RoboCR_text_data.csv does not exist!'
         self.xrd_data = XRDDataset(csv_path=xrd_data_file)
         self.ari = AtomCustomJSONInitializer(atom_init_file)
         self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
         self.text_data = TextEmbeddingDataset(csv_path=text_data_file)
+        self.robocr_text_data = RoboTextEmbeddingDataset(csv_path=robotext_data_file)
 
     def __len__(self):
         return len(self.id_prop_data)
@@ -367,4 +374,5 @@ class CIFData(Dataset):
         target = torch.Tensor([float(target)])
         xrd_fea = self.xrd_data[cif_id]
         text_fea = self.text_data[cif_id]
-        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_groups, xrd_fea, text_fea
+        robocr_text_fea = self.robocr_text_data[cif_id]
+        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_groups, xrd_fea, text_fea, robocr_text_fea
