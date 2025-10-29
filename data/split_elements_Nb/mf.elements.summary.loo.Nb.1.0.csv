@@ -1,0 +1,2 @@
+,n,l,train,test,ntrain,ntest,comment
+1,0,0,"['Ac', 'Ag', 'Al', 'As', 'Au', 'Ba', 'Bi', 'Br', 'Ca', 'Ce', 'Cr', 'Cs', 'Cu', 'Eu', 'Fe', 'Ga', 'Ge', 'I', 'In', 'Ir', 'K', 'Mn', 'Mo', 'Na', 'Ni', 'Np', 'P', 'Pa', 'Pb', 'Pd', 'Pt', 'Rb', 'Rh', 'Sb', 'Sm', 'Sn', 'Sr', 'Ta', 'Th', 'U', 'V', 'W', 'Yb']",['Nb'],4152,283,loo split

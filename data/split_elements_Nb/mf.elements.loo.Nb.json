@@ -1,0 +1,22 @@
+{
+    "MatFold": "v1.2.3",
+    "data_checksums": [
+        114572536435066459951845152442169210844,
+        211504842085113295620171805402346874851
+    ],
+    "__init__": {
+        "return_frac": 1.0,
+        "always_include_n_elements": null,
+        "cols_to_keep": null,
+        "seed": 0
+    },
+    "split_function_called": "create_loo_split",
+    "split_parameters": {
+        "split_type": "elements",
+        "loo_label": "Nb",
+        "keep_n_elements_in_train": null,
+        "write_base_str": "mf",
+        "output_dir": "split_elements_Nb",
+        "verbose": true
+    }
+}
