@@ -11,8 +11,9 @@ from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiStepLR
 
 from data import CIFData
-from data import collate_pool, get_train_val_test_loader
+from data import collate_pool, get_train_val_test_loader, collate_pool_matgl
 from models.cgcnn import CrystalGraphConvNet
+from models.cgcnn import MatglGraphConvNet
 from utils.utils import Normalizer, mae, save_checkpoint, AverageMeter
 
 import warnings
@@ -73,8 +74,13 @@ def main():
     args.cuda = not args.disable_cuda and torch.cuda.is_available()
 
     # load data
-    dataset = CIFData(args.data_path)
-    collate_fn = collate_pool
+    dataset = CIFData(args.data_path, graph_type=args.graph_type)
+
+    if args.graph_type in ("cgcnn", "mpnn"):
+        collate_fn = collate_pool
+    elif args.graph_type in ("chgnet", "m3gnet"):
+        collate_fn = collate_pool_matgl
+
     train_loader, val_loader, test_loader = get_train_val_test_loader(
         dataset=dataset,
         collate_fn=collate_fn,
@@ -101,21 +107,36 @@ def main():
         else:
             sample_data_list = [dataset[i] for i in
                                 sample(range(len(dataset)), 500)]
-        _, sample_target, _, _, _ = collate_pool(sample_data_list)
+            
+        sample_target = torch.stack([d[1] for d in sample_data_list], dim=0)
         normalizer = Normalizer(sample_target)
 
     # build model
-    structures, _, _, _, _, _ = dataset[0]
-    orig_atom_fea_len = structures[0].shape[-1]
-    nbr_fea_len = structures[1].shape[-1]
-    model = CrystalGraphConvNet(orig_atom_fea_len, nbr_fea_len,
-                                atom_fea_len=args.atom_fea_len,
-                                n_conv=args.n_conv,
-                                h_fea_len=args.h_fea_len,
-                                n_h=args.n_h,
-                                xrd=args.xrd,
-                                text=args.text,
-                                graph_type=args.graph_type)
+    if args.graph_type in ("cgcnn", "mpnn"):
+        structures, _, _, _, _, _ = dataset[0]
+        orig_atom_fea_len = structures[0].shape[-1]
+        nbr_fea_len = structures[1].shape[-1]
+        model = CrystalGraphConvNet(orig_atom_fea_len, nbr_fea_len,
+                                    atom_fea_len=args.atom_fea_len,
+                                    n_conv=args.n_conv,
+                                    h_fea_len=args.h_fea_len,
+                                    n_h=args.n_h,
+                                    xrd=args.xrd,
+                                    text=args.text,
+                                    graph_type=args.graph_type)
+        
+    elif args.graph_type in ("chgnet", "m3gnet"):
+        model = MatglGraphConvNet(
+            element_types=dataset.element_types,
+            atom_fea_len=args.atom_fea_len,
+            h_fea_len=args.h_fea_len,
+            n_h=args.n_h,
+            xrd=args.xrd,
+            text=args.text,
+            cutoff=dataset.cutoff,
+            threebody_cutoff=4.0,            # M3GNet 3-body cutoff
+            graph_type=args.graph_type,
+        )
     if args.cuda:
         model.cuda()
 
@@ -195,29 +216,48 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
         # measure data loading time
         data_time.update(time.time() - end)
 
-        if args.cuda:
-            input_var = (Variable(input[0].cuda(non_blocking=True)),
-                         Variable(input[1].cuda(non_blocking=True)),
-                         input[2].cuda(non_blocking=True),
-                         [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
-                         xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None,
-                         text_fea.cuda(non_blocking=True) if text_fea is not None else None)
+
+        if args.graph_type in ("cgcnn", "mpnn"):
+            if args.cuda:
+                input_var = (Variable(input[0].cuda(non_blocking=True)),
+                            Variable(input[1].cuda(non_blocking=True)),
+                            input[2].cuda(non_blocking=True),
+                            [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
+                            xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None,
+                            text_fea.cuda(non_blocking=True) if text_fea is not None else None)
+            else:
+                input_var = (Variable(input[0]),
+                            Variable(input[1]),
+                            input[2],
+                            input[3],
+                            xrd_fea,
+                            text_fea)
+        elif args.graph_type in ("chgnet", "m3gnet"):
+            batch_graph, batch_state = input
+
+            if args.cuda:
+                batch_graph = batch_graph.to("cuda") 
+                batch_state = batch_state.cuda(non_blocking=True)
+                xrd_fea = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
+                text_fea = text_fea.cuda(non_blocking=True) if text_fea is not None else None
+            input_var = ((batch_graph, batch_state), xrd_fea, text_fea)
+
         else:
-            input_var = (Variable(input[0]),
-                         Variable(input[1]),
-                         input[2],
-                         input[3],
-                         xrd_fea,
-                         text_fea)
-        # normalize target
+            raise ValueError(f"Unknown graph_type: {args.graph_type}")
+        
         target_normed = normalizer.norm(target)
         if args.cuda:
             target_var = Variable(target_normed.cuda(non_blocking=True))
         else:
             target_var = Variable(target_normed)
 
-        # compute output
-        output = model(*input_var)
+        if args.graph_type in ("cgcnn", "mpnn"):
+            output = model(*input_var)
+        elif args.graph_type in ("chgnet", "m3gnet"):
+            # input_var = (graph_state, xrd_fea, text_fea)
+            graph_state, xrd_in, text_in = input_var
+            output = model(graph_state, xrd_in, text_in)
+
         loss = criterion(output, target_var)
 
         # measure accuracy and record loss
@@ -265,22 +305,39 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
 
     end = time.time()
     for i, (input, target, batch_cif_ids, xrd_fea, text_fea) in enumerate(val_loader):
-        if args.cuda:
-            with torch.no_grad():
-                input_var = (Variable(input[0].cuda(non_blocking=True)),
-                             Variable(input[1].cuda(non_blocking=True)),
-                             input[2].cuda(non_blocking=True),
-                             [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
-                            xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None,
-                             text_fea.cuda(non_blocking=True) if text_fea is not None else None)
+        if args.graph_type in ("cgcnn", "mpnn"):
+            if args.cuda:
+                with torch.no_grad():
+                    input_var = (Variable(input[0].cuda(non_blocking=True)),
+                                Variable(input[1].cuda(non_blocking=True)),
+                                input[2].cuda(non_blocking=True),
+                                [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
+                                xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None,
+                                text_fea.cuda(non_blocking=True) if text_fea is not None else None)
+            else:
+                with torch.no_grad():
+                    input_var = (Variable(input[0]),
+                                Variable(input[1]),
+                                input[2],
+                                input[3],
+                                xrd_fea,
+                                text_fea)
+        elif args.graph_type in ("chgnet", "m3gnet"):
+            graph_state = input 
+            if args.cuda:
+                with torch.no_grad():
+                    g, state_feats = graph_state
+                    g = g.to("cuda")
+                    state_feats = state_feats.cuda(non_blocking=True)
+                    xrd_fea_cuda = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
+                    text_fea_cuda = text_fea.cuda(non_blocking=True) if text_fea is not None else None
+                    input_var = ((g, state_feats), xrd_fea_cuda, text_fea_cuda)
+            else:
+                with torch.no_grad():
+                    input_var = (graph_state, xrd_fea, text_fea)
         else:
-            with torch.no_grad():
-                input_var = (Variable(input[0]),
-                             Variable(input[1]),
-                             input[2],
-                             input[3],
-                             xrd_fea,
-                             text_fea)
+            raise ValueError(f"Unknown graph_type: {args.graph_type}")
+
         if args.task == 'regression':
             target_normed = normalizer.norm(target)
         else:
@@ -335,5 +392,12 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
         return mae_errors.avg
 
 
+# if __name__ == '__main__':
+#     main()
 if __name__ == '__main__':
+    # run this file as if called with: --graph_type chgnet
+    # sys.argv += ['--graph_type', 'chgnet']
+    # sys.argv += ['--optim', 'Adam']
+    # sys.argv += ['--lr', 0.001,]
+    # sys.argv += ['--epochs', 50,]
     main()
