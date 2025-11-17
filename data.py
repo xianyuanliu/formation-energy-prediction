@@ -96,7 +96,6 @@ def get_train_val_test_loader(dataset, collate_fn=default_collate,
     else:
         return train_loader, val_loader
 
-
 def collate_pool(dataset_list):
     """
     Collate a list of data and return a batch for predicting crystal

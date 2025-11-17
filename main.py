@@ -66,7 +66,6 @@ def arg_parse():
 
 best_mae_error = 1e10
 
-
 def main():
     global best_mae_error
 

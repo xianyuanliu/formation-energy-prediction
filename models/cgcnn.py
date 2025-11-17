@@ -2,7 +2,6 @@ from __future__ import print_function, division, annotations
 
 import torch
 import torch.nn as nn
-
 from models.sg_text_module import TextFeatureExtractor
 from models.xrd_module import XRDFeatureExtractor
 
