@@ -60,6 +60,8 @@ def arg_parse():
     parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
     parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (cgcnn or mpnn)')
+    parser.add_argument('--text-input-dim', default=384, type=int, metavar='N', help='dimension of text embedding features')
+    parser.add_argument('--xrd-input-dim', default=128, type=int, metavar='N', help='dimension of XRD features')
     args = parser.parse_args(sys.argv[1:])
     return args
 
@@ -115,7 +117,9 @@ def main():
                                 n_h=args.n_h,
                                 xrd=args.xrd,
                                 text=args.text,
-                                graph_type=args.graph_type)
+                                graph_type=args.graph_type,
+                                text_input_dim=args.text_input_dim,
+                                xrd_input_dim=args.xrd_input_dim)
     if args.cuda:
         model.cuda()
 
