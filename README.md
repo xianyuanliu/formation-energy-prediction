@@ -3,10 +3,30 @@
 ## Overview
 This repository predicts formation energy using a multimodal model built on a crystal graph (CIF structure) plus optional XRD features and space-group text embeddings. It was developed for the [KRICT Hackathon 2025](https://gitlab.chemdx.org/global-network/2025-krict-chemdx-hackathon/-/wikis/home).
 
-## Key Features
-- Crystal Graph Convolutional Network backbone (CGCNN/MPNN-style).
-- Multimodal fusion of structure, XRD, and text embeddings.
-- Train/val/test split with checkpointing and test evaluation.
+## Environment Setup
+1. Install PyTorch with CUDA support:
+
+```bash
+pip install torch==2.4.0+cu121 torchvision==0.19.0+cu121 torchaudio==2.4.0+cu121 --index-url https://download.pytorch.org/whl/cu121
+```
+
+2. Install torchdata (required by matgl):
+
+```bash
+pip install torchdata==0.8.0
+```
+
+3. Install DGL with CUDA support:
+
+```bash
+pip install dgl -f https://data.dgl.ai/wheels/cu121/repo.html
+```
+
+4. Install remaining dependencies:
+
+```bash
+pip install -r requirements.txt
+```
 
 ## Repository Layout
 - `main.py`: training + validation + test evaluation entrypoint.
@@ -17,12 +37,6 @@ This repository predicts formation energy using a multimodal model built on a cr
 - `data_preprocessing/`, `data_preprocessing_update/`: dataset prep scripts and artifacts.
 - `data/`: expected dataset location.
 
-## Requirements
-Install dependencies from the pinned requirements:
-
-```bash
-pip install -r requirements.txt
-```
 
 ## Data Format
 By default `main.py` expects data under `data/cifs` (configurable via `--data_path`). The current loader expects this structure:

@@ -15,6 +15,7 @@ from torch.utils.data.dataloader import default_collate
 from torch.utils.data.sampler import SubsetRandomSampler
 from models.xrd_module import XRDDataset  
 from models.sg_text_module import TextEmbeddingDataset
+import dgl
 
 def get_train_val_test_loader(dataset, collate_fn=default_collate,
                               batch_size=64, train_ratio=None,
@@ -95,7 +96,6 @@ def get_train_val_test_loader(dataset, collate_fn=default_collate,
     else:
         return train_loader, val_loader
 
-
 def collate_pool(dataset_list):
     """
     Collate a list of data and return a batch for predicting crystal
@@ -156,7 +156,34 @@ def collate_pool(dataset_list):
         torch.stack(batch_xrd_fea, dim=0), \
         torch.stack(batch_text_fea, dim=0)
 
+def collate_pool_matgl(dataset_list):
+    """
+    MatGL's collate:
+    ((graph, state_feats), target, cif_id, space_group, xrd_fea, text_fea)
+    """
+    graphs = []
+    state_list = []
+    batch_target = []
+    batch_cif_ids = []
+    batch_xrd_fea = []
+    batch_text_fea = []
 
+    for (graph_state, target, cif_id, space_group, xrd_fea, text_fea) in dataset_list:
+        graph, state_feats = graph_state
+        graphs.append(graph)
+        state_list.append(state_feats)
+        batch_target.append(target)
+        batch_cif_ids.append(cif_id)
+        batch_xrd_fea.append(xrd_fea)
+        batch_text_fea.append(text_fea)
+
+    batch_graph = dgl.batch(graphs)
+    batch_state = torch.stack(state_list, dim=0)        # (N0, state_dim or 1)
+    batch_target = torch.stack(batch_target, dim=0)     # (N0, 1)
+    batch_xrd_fea = torch.stack(batch_xrd_fea, dim=0)   # (N0, xrd_dim)
+    batch_text_fea = torch.stack(batch_text_fea, dim=0) # (N0, text_dim)
+
+    return (batch_graph, batch_state), batch_target, batch_cif_ids, batch_xrd_fea, batch_text_fea
 
 class GaussianDistance(object):
     """
@@ -304,29 +331,48 @@ class CIFData(Dataset):
     target: torch.Tensor shape (1, )
     cif_id: str or int
     """
-    def __init__(self, root_dir, max_num_nbr=12, radius=8, dmin=0, step=0.2, random_seed=123):
+    def __init__(self, root_dir, cif_path=None, csv_filename='1_MatDX_EF_modified.csv', max_num_nbr=12, radius=8, dmin=0, step=0.2, random_seed=123, graph_type="cgcnn", cutoff=6.0):
         self.root_dir = root_dir
+        self.cif_path = cif_path if cif_path else root_dir
         self.max_num_nbr, self.radius = max_num_nbr, radius
-        assert os.path.exists(root_dir), 'root_dir does not exist!'
-        # id_prop_file = os.path.join(self.root_dir, 'id_prop.csv')
-        id_prop_file = os.path.join(self.root_dir, '1_MatDX_EF_modified.csv')
-        assert os.path.exists(id_prop_file), 'id_prop.csv does not exist!'
+        id_prop_file = os.path.join(self.root_dir, csv_filename)
+        if not os.path.exists(id_prop_file):
+            raise FileNotFoundError(f"{id_prop_file} does not exist!")
         with open(id_prop_file) as f:
             reader = csv.reader(f)
             next(reader)
             self.id_prop_data = [row for row in reader]
         random.seed(random_seed)
         random.shuffle(self.id_prop_data)
-        atom_init_file = os.path.join(self.root_dir, 'atom_init.json')
+        atom_init_file = os.path.join(self.root_dir, '../atom_init.json')
         assert os.path.exists(atom_init_file), 'atom_init.json does not exist!'
         xrd_data_file = os.path.join(self.root_dir, '../XRD_data.csv')
-        text_data_file = os.path.join(self.root_dir, '../SG_text_data.csv')
+        text_data_file = os.path.join(self.root_dir, '../space_group_embeddings.csv')
         assert os.path.exists(xrd_data_file), 'XRD_data.csv does not exist!'
-        assert os.path.exists(text_data_file), 'SG_text_data.csv does not exist!'
+        assert os.path.exists(text_data_file), 'space_group_embeddings.csv does not exist!'
         self.xrd_data = XRDDataset(csv_path=xrd_data_file)
         self.ari = AtomCustomJSONInitializer(atom_init_file)
         self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
         self.text_data = TextEmbeddingDataset(csv_path=text_data_file)
+        self.graph_type = graph_type
+
+        element_set = set()
+        for row in self.id_prop_data:
+            cif_id = row[0]
+            s = Structure.from_file(os.path.join(self.cif_path, cif_id + ".cif"))
+            for site in s:
+                element_set.add(site.specie.symbol)
+
+        self.element_types = tuple(sorted(element_set))
+        self.cutoff = cutoff
+
+        if self.graph_type in ("chgnet", "m3gnet"):
+            from matgl.ext.pymatgen import Structure2Graph
+            from matgl.graph.converters import GraphConverter
+            self.graph_converter = Structure2Graph(
+                element_types=self.element_types,
+                cutoff=self.cutoff,
+            )
 
     def __len__(self):
         return len(self.id_prop_data)
@@ -334,38 +380,51 @@ class CIFData(Dataset):
     @functools.lru_cache(maxsize=None)  # Cache loaded structures
     def __getitem__(self, idx):
         # cif_id, target = self.id_prop_data[idx]
-        row  = self.id_prop_data[idx]
-        cif_id = row[0]
+        row  = self.id_prop_data[idx] 
+        cif_id = row[0] #file_name
         space_group = row[2]
         target = row[3]
-
-        crystal = Structure.from_file(os.path.join(self.root_dir, cif_id+'.cif'))
-        atom_fea = np.vstack([self.ari.get_atom_fea(crystal[i].specie.number) for i in range(len(crystal))])
-        atom_fea = torch.Tensor(atom_fea)
-        all_nbrs = crystal.get_all_neighbors(self.radius, include_index=True)
-        all_nbrs = [sorted(nbrs, key=lambda x: x[1]) for nbrs in all_nbrs]
-        nbr_fea_idx, nbr_fea = [], []
-        for nbr in all_nbrs:
-            if len(nbr) < self.max_num_nbr:
-                warnings.warn('{} not find enough neighbors to build graph. '
-                              'If it happens frequently, consider increase '
-                              'radius.'.format(cif_id))
-                nbr_fea_idx.append(list(map(lambda x: x[2], nbr)) +
-                                   [0] * (self.max_num_nbr - len(nbr)))
-                nbr_fea.append(list(map(lambda x: x[1], nbr)) +
-                               [self.radius + 1.] * (self.max_num_nbr -
-                                                     len(nbr)))
-            else:
-                nbr_fea_idx.append(list(map(lambda x: x[2],
-                                            nbr[:self.max_num_nbr])))
-                nbr_fea.append(list(map(lambda x: x[1],
-                                        nbr[:self.max_num_nbr])))
-        nbr_fea_idx, nbr_fea = np.array(nbr_fea_idx), np.array(nbr_fea)
-        nbr_fea = self.gdf.expand(nbr_fea)
-        atom_fea = torch.Tensor(atom_fea)
-        nbr_fea = torch.Tensor(nbr_fea)
-        nbr_fea_idx = torch.LongTensor(nbr_fea_idx)
         target = torch.Tensor([float(target)])
         xrd_fea = self.xrd_data[cif_id]
-        text_fea = self.text_data[space_group]
-        return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea, text_fea
+        text_fea = self.text_data[space_group]          
+
+        crystal = Structure.from_file(os.path.join(self.cif_path, cif_id+'.cif'))
+        if self.graph_type in ("cgcnn", "mpnn"):
+            atom_fea = np.vstack([self.ari.get_atom_fea(crystal[i].specie.number) for i in range(len(crystal))])
+            atom_fea = torch.Tensor(atom_fea)
+            all_nbrs = crystal.get_all_neighbors(self.radius, include_index=True)
+            all_nbrs = [sorted(nbrs, key=lambda x: x[1]) for nbrs in all_nbrs]
+            nbr_fea_idx, nbr_fea = [], []
+            for nbr in all_nbrs:
+                if len(nbr) < self.max_num_nbr:
+                    warnings.warn('{} not find enough neighbors to build graph. '
+                                'If it happens frequently, consider increase '
+                                'radius.'.format(cif_id))
+                    nbr_fea_idx.append(list(map(lambda x: x[2], nbr)) +
+                                    [0] * (self.max_num_nbr - len(nbr)))
+                    nbr_fea.append(list(map(lambda x: x[1], nbr)) +
+                                [self.radius + 1.] * (self.max_num_nbr -
+                                                        len(nbr)))
+                else:
+                    nbr_fea_idx.append(list(map(lambda x: x[2],
+                                                nbr[:self.max_num_nbr])))
+                    nbr_fea.append(list(map(lambda x: x[1],
+                                            nbr[:self.max_num_nbr])))
+            nbr_fea_idx, nbr_fea = np.array(nbr_fea_idx), np.array(nbr_fea)
+            nbr_fea = self.gdf.expand(nbr_fea)
+            nbr_fea = torch.Tensor(nbr_fea)
+            nbr_fea_idx = torch.LongTensor(nbr_fea_idx)
+            return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea, text_fea
+        
+        elif self.graph_type in ("chgnet", "m3gnet"):
+            graph, lattice, state_feats_default = self.graph_converter.get_graph(crystal)
+            graph.edata["pbc_offshift"] = torch.matmul(graph.edata["pbc_offset"], lattice[0])
+            graph.ndata["pos"] = graph.ndata["frac_coords"] @ lattice[0]
+            state_feats = torch.tensor(state_feats_default)
+            return (graph, state_feats), target, cif_id, space_group, xrd_fea, text_fea
+            
+        
+        
+
+
+        
