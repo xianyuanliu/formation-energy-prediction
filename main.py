@@ -19,6 +19,7 @@ import os
 import sys
 import time
 from random import sample
+import numpy as np
 
 import torch
 import torch.nn as nn
@@ -36,6 +37,7 @@ from utils.utils import Normalizer, mae, save_checkpoint, AverageMeter
 from thop import profile
 import datetime
 import wandb
+import shutil, glob
 
 import warnings
 warnings.filterwarnings("ignore", message=".*fractional coordinates rounded.*")
@@ -95,9 +97,24 @@ def arg_parse():
 
 best_mae_error = 1e10
 
+def rmse(pred, target):
+    # pred/target: torch.Tensor (N,) on CPU
+    pred = pred.view(-1).numpy()
+    target = target.view(-1).numpy()
+    return float(np.sqrt(np.mean((pred - target) ** 2)))
+
+def r2_score(pred, target):
+    pred = pred.view(-1).numpy()
+    target = target.view(-1).numpy()
+    ss_res = float(np.sum((target - pred) ** 2))
+    ss_tot = float(np.sum((target - np.mean(target)) ** 2))
+    return float(1.0 - ss_res / ss_tot) if ss_tot > 0 else float("nan")
+
 def main():
     global best_mae_error
     args = arg_parse()
+    out_dir = f"result_{args.wandb_group}_{args.wandb_name}"
+    os.makedirs(out_dir, exist_ok=True)
     if args.use_wandb:
         wandb.init(
             project=args.wandb_project,
@@ -292,16 +309,21 @@ def main():
 
     for epoch in range(args.start_epoch, args.epochs):
         # train for one epoch
-        train(args, train_loader, model, criterion, optimizer, epoch, normalizer)
+        train_loss_avg, train_mae_avg = train(args, train_loader, model, criterion, optimizer, epoch, normalizer)
 
         # evaluate on validation set
-        mae_error = validate(args, val_loader, model, criterion, normalizer)
+        val_loss_avg, val_mae_avg = validate(args, val_loader, model, criterion, normalizer)
+        mae_error = val_mae_avg
         
         if args.use_wandb:
             wandb.log({
                 "epoch": epoch,
                 "val/mae": mae_error,
-                "learning_rate": optimizer.param_groups[0]['lr']
+                "learning_rate": optimizer.param_groups[0]['lr'],
+                "train/loss": train_loss_avg,
+                "train/mae": train_mae_avg,
+                "val/loss": val_loss_avg,
+                "val/mae": val_mae_avg,
             })
 
         if mae_error != mae_error:
@@ -340,6 +362,24 @@ def main():
     print(f"  Total Time Elapsed: {total_time_str}")
     print(f"  ({total_duration:.2f} seconds)")
     print("="*30)
+    
+    def collect_outputs(out_dir):
+        files = [
+            "checkpoint.pth.tar",
+            "model_best.pth.tar",
+            "test_results.csv",
+        ]
+        patterns = ["test.*.out", "test.*.err"]
+
+        for f in files:
+            if os.path.exists(f):
+                shutil.move(f, os.path.join(out_dir, f))
+
+        for pat in patterns:
+            for f in glob.glob(pat):
+                shutil.move(f, os.path.join(out_dir, os.path.basename(f)))
+
+    collect_outputs(out_dir)
 
 
 def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
@@ -433,7 +473,8 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
                 epoch, i, len(train_loader), batch_time=batch_time,
                 data_time=data_time, loss=losses, mae_errors=mae_errors, mre_errors=mre_errors)
             )
-
+            
+    return float(losses.avg), float(mae_errors.avg)
 
 def validate(args, val_loader, model, criterion, normalizer, test=False):
     batch_time = AverageMeter()
@@ -530,13 +571,31 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
         import csv
         with open('test_results.csv', 'w') as f:
             writer = csv.writer(f)
+            writer.writerow(["cif_id", "target", "pred"])
             for cif_id, target, pred in zip(test_cif_ids, test_targets, test_preds):
                 writer.writerow((cif_id, target, pred))
+        
+        pred_t = torch.tensor(test_preds, dtype=torch.float32)
+        targ_t = torch.tensor(test_targets, dtype=torch.float32)
+
+        test_mae = float(torch.mean(torch.abs(pred_t - targ_t)))
+        test_rmse = rmse(pred_t, targ_t)
+        test_r2 = r2_score(pred_t, targ_t)
+        
+        if args.use_wandb:
+            wandb.run.summary["test/mae"] = test_mae
+            wandb.run.summary["test/rmse"] = test_rmse
+            wandb.run.summary["test/r2"] = test_r2
+
+            table = wandb.Table(columns=["cif_id", "target", "pred"])
+            for cid, t, p in zip(test_cif_ids, test_targets, test_preds):
+                table.add_data(cid, t, p)
+            wandb.log({"test/results_table": table})
     else:
         star_label = '*'
         print(' {star} MAE {mae_errors.avg:.3f}'.format(star=star_label, mae_errors=mae_errors))
-        return mae_errors.avg
-
+        return float(losses.avg), float(mae_errors.avg)
+     
 
 if __name__ == '__main__':
     # --- Configuration for testing/running the script ---
@@ -546,12 +605,12 @@ if __name__ == '__main__':
     # Validation data will be automatically split from the train.csv based on --val-ratio.
     sys.argv += [
         '--graph_type', 'chgnet', 
-        '--data_path', 'data/split_both_hhi',
+        '--data_path', 'data/split_rand',
         '--train_file', 'train.csv', 
         '--test_file', 'test.csv',
         '--use_wandb',
         '--wandb_group', 'CHGNet-Baseline', 
-        '--wandb_name', 'hhi'
+        '--wandb_name', 'rand'
     ]
     
     # Mode B: Combined File Mode (Original Behavior)
@@ -562,3 +621,4 @@ if __name__ == '__main__':
     #    ]
     
     main()
+
