@@ -1,3 +1,7 @@
 .idea
 *.tar
-__pycache__
+__pycache__/
+*.py[cod]
+
+# Ignore large model folders
+data_preprocessing/embedding_space_group.v2/matbert-base-uncased/

@@ -149,7 +149,7 @@ class CrystalGraphConvNet(nn.Module):
     material properties.
     """
     def __init__(self, orig_atom_fea_len, nbr_fea_len, atom_fea_len=64, n_conv=3, h_fea_len=128, n_h=1,
-                 xrd=False, text=False, graph_type="cgcnn"):
+                 xrd=False, text=False, graph_type="cgcnn", text_input_dim=384, xrd_input_dim=128):
         """
         Initialize CrystalGraphConvNet.
 
@@ -168,12 +168,16 @@ class CrystalGraphConvNet(nn.Module):
           Number of hidden features after pooling
         n_h: int
           Number of hidden layers after pooling
+        text_input_dim: int
+          Dimension of the input text embedding vector (used when text=True).
+        xrd_input_dim: int
+          Dimension of the input XRD feature vector (used when xrd=True).
         """
         super(CrystalGraphConvNet, self).__init__()
         conv_to_fc_input_dim = atom_fea_len
         self.embedding = nn.Linear(orig_atom_fea_len, atom_fea_len)
         if xrd:
-            self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
+            self.xrd_model = XRDFeatureExtractor(input_dim=xrd_input_dim, output_dim=64, hidden_dim=128)
             conv_to_fc_input_dim += 64
         if text:
             self.text_model = TextFeatureExtractor(input_dim=768, output_dim=64, hidden_dim=128)
