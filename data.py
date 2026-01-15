@@ -331,25 +331,25 @@ class CIFData(Dataset):
     target: torch.Tensor shape (1, )
     cif_id: str or int
     """
-    def __init__(self, root_dir, max_num_nbr=12, radius=8, dmin=0, step=0.2, random_seed=123, graph_type="cgcnn", cutoff=6.0):
+    def __init__(self, root_dir, cif_path=None, csv_filename='1_MatDX_EF_modified.csv', max_num_nbr=12, radius=8, dmin=0, step=0.2, random_seed=123, graph_type="cgcnn", cutoff=6.0):
         self.root_dir = root_dir
+        self.cif_path = cif_path if cif_path else root_dir
         self.max_num_nbr, self.radius = max_num_nbr, radius
-        assert os.path.exists(root_dir), 'root_dir does not exist!'
-        # id_prop_file = os.path.join(self.root_dir, 'id_prop.csv')
-        id_prop_file = os.path.join(self.root_dir, '1_MatDX_EF_modified.csv')
-        assert os.path.exists(id_prop_file), 'id_prop.csv does not exist!'
+        id_prop_file = os.path.join(self.root_dir, csv_filename)
+        if not os.path.exists(id_prop_file):
+            raise FileNotFoundError(f"{id_prop_file} does not exist!")
         with open(id_prop_file) as f:
             reader = csv.reader(f)
             next(reader)
             self.id_prop_data = [row for row in reader]
         random.seed(random_seed)
         random.shuffle(self.id_prop_data)
-        atom_init_file = os.path.join(self.root_dir, 'atom_init.json')
+        atom_init_file = os.path.join(self.root_dir, '../atom_init.json')
         assert os.path.exists(atom_init_file), 'atom_init.json does not exist!'
         xrd_data_file = os.path.join(self.root_dir, '../XRD_data.csv')
-        text_data_file = os.path.join(self.root_dir, '../SG_text_data.csv')
+        text_data_file = os.path.join(self.root_dir, '../space_group_embeddings.csv')
         assert os.path.exists(xrd_data_file), 'XRD_data.csv does not exist!'
-        assert os.path.exists(text_data_file), 'SG_text_data.csv does not exist!'
+        assert os.path.exists(text_data_file), 'space_group_embeddings.csv does not exist!'
         self.xrd_data = XRDDataset(csv_path=xrd_data_file)
         self.ari = AtomCustomJSONInitializer(atom_init_file)
         self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
@@ -359,7 +359,7 @@ class CIFData(Dataset):
         element_set = set()
         for row in self.id_prop_data:
             cif_id = row[0]
-            s = Structure.from_file(os.path.join(self.root_dir, cif_id + ".cif"))
+            s = Structure.from_file(os.path.join(self.cif_path, cif_id + ".cif"))
             for site in s:
                 element_set.add(site.specie.symbol)
 
@@ -380,15 +380,15 @@ class CIFData(Dataset):
     @functools.lru_cache(maxsize=None)  # Cache loaded structures
     def __getitem__(self, idx):
         # cif_id, target = self.id_prop_data[idx]
-        row  = self.id_prop_data[idx]
-        cif_id = row[0]
+        row  = self.id_prop_data[idx] 
+        cif_id = row[0] #file_name
         space_group = row[2]
         target = row[3]
         target = torch.Tensor([float(target)])
         xrd_fea = self.xrd_data[cif_id]
-        text_fea = self.text_data[space_group]
+        text_fea = self.text_data[space_group]          
 
-        crystal = Structure.from_file(os.path.join(self.root_dir, cif_id+'.cif'))
+        crystal = Structure.from_file(os.path.join(self.cif_path, cif_id+'.cif'))
         if self.graph_type in ("cgcnn", "mpnn"):
             atom_fea = np.vstack([self.ari.get_atom_fea(crystal[i].specie.number) for i in range(len(crystal))])
             atom_fea = torch.Tensor(atom_fea)
@@ -412,7 +412,6 @@ class CIFData(Dataset):
                                             nbr[:self.max_num_nbr])))
             nbr_fea_idx, nbr_fea = np.array(nbr_fea_idx), np.array(nbr_fea)
             nbr_fea = self.gdf.expand(nbr_fea)
-            #atom_fea = torch.Tensor(atom_fea)
             nbr_fea = torch.Tensor(nbr_fea)
             nbr_fea_idx = torch.LongTensor(nbr_fea_idx)
             return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea, text_fea

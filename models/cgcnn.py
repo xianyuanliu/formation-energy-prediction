@@ -176,7 +176,7 @@ class CrystalGraphConvNet(nn.Module):
             self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
             conv_to_fc_input_dim += 64
         if text:
-            self.text_model = TextFeatureExtractor(input_dim=384, output_dim=64, hidden_dim=128)
+            self.text_model = TextFeatureExtractor(input_dim=768, output_dim=64, hidden_dim=128)
             conv_to_fc_input_dim += 64
         if graph_type == "cgcnn":
           self.convs = nn.ModuleList([ConvLayer(atom_fea_len=atom_fea_len,
@@ -389,7 +389,7 @@ class CHGNetLayer(nn.Module):
                 f"Invalid activation type, please try using one of {[af.name for af in ActivationFunction]}"
             ) from None
 
-        element_types = element_types or DEFAULT_ELEMENTS
+        element_types = DEFAULT_ELEMENTS
         self.use_bond_graph = threebody_cutoff > 0
         if not self.use_bond_graph and readout_field == "angle_feat":
             raise ValueError(
@@ -661,7 +661,7 @@ class MatglGraphConvNet(nn.Module):
             self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
             conv_to_fc_input_dim += 64
         if text:
-            self.text_model = TextFeatureExtractor(input_dim=384, output_dim=64, hidden_dim=128)
+            self.text_model = TextFeatureExtractor(input_dim=768, output_dim=64, hidden_dim=128)
             conv_to_fc_input_dim += 64
         self.conv_to_fc = nn.Linear(conv_to_fc_input_dim, h_fea_len)
         self.conv_to_fc_softplus = nn.Softplus()

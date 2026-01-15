@@ -1,3 +1,19 @@
+import sys, types
+sys.modules.setdefault("dgl.graphbolt", types.ModuleType("dgl.graphbolt"))
+
+# ---- torchdata.datapipes compatibility shim (must be before importing dgl) ----
+import sys, types
+from torch.utils.data.datapipes.datapipe import IterDataPipe  # ✅ correct location for your torch
+
+pkg = types.ModuleType("torchdata.datapipes")
+pkg.__path__ = []  # mark as package-like
+sys.modules.setdefault("torchdata.datapipes", pkg)
+
+mod = types.ModuleType("torchdata.datapipes.iter")
+mod.IterDataPipe = IterDataPipe
+sys.modules["torchdata.datapipes.iter"] = mod
+# -----------------------------------------------------------------------------
+
 import argparse
 import os
 import sys
@@ -9,12 +25,17 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiStepLR
+from torch.utils.data import DataLoader
+from torch.utils.data.sampler import SubsetRandomSampler
 
 from data import CIFData
 from data import collate_pool, get_train_val_test_loader, collate_pool_matgl
 from models.cgcnn import CrystalGraphConvNet
 from models.cgcnn import MatglGraphConvNet
 from utils.utils import Normalizer, mae, save_checkpoint, AverageMeter
+from thop import profile
+import datetime
+import wandb
 
 import warnings
 warnings.filterwarnings("ignore", message=".*fractional coordinates rounded.*")
@@ -24,7 +45,8 @@ def arg_parse():
     parser = argparse.ArgumentParser(description='Crystal Graph Convolutional Neural Networks')
 
     # Basic parameters
-    parser.add_argument('--data_path', default='data/cifs', help='dataset path')
+    parser.add_argument('--data_path', default='data/split_both_hhi', help='path to csv files')
+    parser.add_argument('--cif_path', default='data/cifs', help='path to cif files')
     parser.add_argument('--task', default='regression')
     parser.add_argument('--xrd', default=True, help='use xrd features')
     parser.add_argument('--text', default=True, help='use text features')
@@ -39,6 +61,13 @@ def arg_parse():
     parser.add_argument('--weight-decay', '--wd', default=0, type=float, metavar='W', help='weight decay (default: 0)')
     parser.add_argument('--print-freq', '-p', default=10, type=int, metavar='N', help='print frequency (default: 10)')
     parser.add_argument('--resume', default='', type=str, metavar='PATH', help='path to latest checkpoint (default: none)')
+    parser.add_argument('--train_file', default=None, help='train csv file name in data_path')
+    parser.add_argument('--test_file', default=None, help='test csv file name in data_path')
+    # WandB parameters
+    parser.add_argument('--use_wandb', action='store_true', help='Use WandB for logging')
+    parser.add_argument('--wandb_project', default='formatin-energy-preiction-project', type=str, help='WandB project name')
+    parser.add_argument('--wandb_group', default='baseline', type=str, help='WandB group name')
+    parser.add_argument('--wandb_name', default=None, type=str, help='WandB run name (None = auto-generated)')
 
     # Data split
     train_group = parser.add_mutually_exclusive_group()
@@ -68,31 +97,78 @@ best_mae_error = 1e10
 
 def main():
     global best_mae_error
-
     args = arg_parse()
+    if args.use_wandb:
+        wandb.init(
+            project=args.wandb_project,
+            group=args.wandb_group,
+            name=args.wandb_name,
+            config=vars(args),
+            mode="offline",
+            settings=wandb.Settings(console="off")
+        )
+    start_total_time = time.time()
     args.cuda = not args.disable_cuda and torch.cuda.is_available()
-
-    # load data
-    dataset = CIFData(args.data_path, graph_type=args.graph_type)
+    device = torch.device("cuda" if args.cuda else "cpu")
 
     if args.graph_type in ("cgcnn", "mpnn"):
         collate_fn = collate_pool
     elif args.graph_type in ("chgnet", "m3gnet"):
         collate_fn = collate_pool_matgl
 
-    train_loader, val_loader, test_loader = get_train_val_test_loader(
-        dataset=dataset,
-        collate_fn=collate_fn,
-        batch_size=args.batch_size,
-        train_ratio=args.train_ratio,
-        num_workers=args.workers,
-        val_ratio=args.val_ratio,
-        test_ratio=args.test_ratio,
-        pin_memory=args.cuda,
-        train_size=args.train_size,
-        val_size=args.val_size,
-        test_size=args.test_size,
-        return_test=True)
+    # Data loader generation (Conditional branching)
+    if args.train_file and args.test_file:
+        # Mode A: Use separate files for training and testing
+        print(f"=> Separate file mode: {args.train_file} (train) / {args.test_file} (test)")
+        
+        # Load full training dataset
+        full_train_dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=args.train_file, graph_type=args.graph_type)
+        # Load test dataset
+        test_dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=args.test_file, graph_type=args.graph_type)
+        
+        # Calculate indices for validation split from the train file
+        indices = list(range(len(full_train_dataset)))
+        val_size = int(len(full_train_dataset) * args.val_ratio)
+        train_size = len(full_train_dataset) - val_size
+        
+        # Set up samplers for random split
+        train_sampler = SubsetRandomSampler(indices[:train_size])
+        val_sampler = SubsetRandomSampler(indices[train_size:])
+        
+        # Create DataLoaders
+        train_loader = DataLoader(full_train_dataset, batch_size=args.batch_size,
+                                  sampler=train_sampler, num_workers=args.workers,
+                                  collate_fn=collate_fn, pin_memory=args.cuda)
+        
+        val_loader = DataLoader(full_train_dataset, batch_size=args.batch_size,
+                                sampler=val_sampler, num_workers=args.workers,
+                                collate_fn=collate_fn, pin_memory=args.cuda)
+        
+        test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
+                                 shuffle=False, num_workers=args.workers,
+                                 collate_fn=collate_fn, pin_memory=args.cuda)
+        
+        # Set representative dataset for model building
+        dataset = full_train_dataset
+
+    else:
+        # Mode B: Original behavior (Split single file by ratios)
+        print("=> Combined file mode: Using 1_MatDX_EF_modified.csv with ratio split")
+        dataset = CIFData(args.data_path, graph_type=args.graph_type)
+
+        train_loader, val_loader, test_loader = get_train_val_test_loader(
+            dataset=dataset,
+            collate_fn=collate_fn,
+            batch_size=args.batch_size,
+            train_ratio=args.train_ratio,
+            num_workers=args.workers,
+            val_ratio=args.val_ratio,
+            test_ratio=args.test_ratio,
+            pin_memory=args.cuda,
+            train_size=args.train_size,
+            val_size=args.val_size,
+            test_size=args.test_size,
+            return_test=True)
 
     # obtain target value normalizer
     if args.task == 'classification':
@@ -139,6 +215,52 @@ def main():
     if args.cuda:
         model.cuda()
 
+    print("\n" + "="*30)
+    print("      Calculating FLOPs")
+    print("="*30)
+
+    model.eval() 
+    try:
+        sample_data = next(iter(train_loader))
+        if args.graph_type in ("cgcnn", "mpnn"):
+            inputs = (
+                sample_data[0][0].to(device), # atom_fea
+                sample_data[0][1].to(device), # nbr_fea
+                sample_data[0][2].to(device), # nbr_fea_idx
+                [idx.to(device) for idx in sample_data[0][3]], # crystal_atom_idx
+                sample_data[3].to(device),    # xrd_feature
+                sample_data[4].to(device)     # text_feature
+            )
+        else:
+        # MatglGraphConvNet (graph_state, xrd, text)
+            graph_state = (
+                sample_data[0][0].to(device), # batch_graph
+                sample_data[0][1].to(device)  # state_feats
+            )
+            inputs = (
+                graph_state,
+                sample_data[3].to(device),    # xrd_feature
+                sample_data[4].to(device)     # text_feature
+            )
+
+        flops, params = profile(model, inputs=inputs, verbose=False)
+        if args.use_wandb:
+            wandb.config.update({
+                "total_flops_g": flops / 1e9,
+                "total_params_m": params / 1e6
+            })
+        
+        print(f"[*] Batch Size: {args.batch_size}")
+        print(f"[*] Total FLOPs for one batch: {flops / 1e9:.4f} GFLOPs")
+        print(f"[*] FLOPs per crystal: {(flops / args.batch_size) / 1e6:.2f} MFLOPs")
+        print(f"[*] Total Params: {params / 1e6:.2f} M")
+    except Exception as e:
+        print(f"[!] FLOPs calculation failed: {e}")
+    
+    print("="*30 + "\n")
+    model.train()
+
+
     # define loss func and optimizer
     criterion = nn.MSELoss()
     if args.optim == 'SGD':
@@ -174,6 +296,13 @@ def main():
 
         # evaluate on validation set
         mae_error = validate(args, val_loader, model, criterion, normalizer)
+        
+        if args.use_wandb:
+            wandb.log({
+                "epoch": epoch,
+                "val/mae": mae_error,
+                "learning_rate": optimizer.param_groups[0]['lr']
+            })
 
         if mae_error != mae_error:
             print('Exit due to NaN')
@@ -198,6 +327,19 @@ def main():
     best_checkpoint = torch.load('model_best.pth.tar')
     model.load_state_dict(best_checkpoint['state_dict'])
     validate(args, test_loader, model, criterion, normalizer, test=True)
+    end_total_time = time.time()
+    total_duration = end_total_time - start_total_time
+    total_time_str = str(datetime.timedelta(seconds=int(total_duration)))
+    if args.use_wandb:
+        wandb.run.summary["total_training_time_sec"] = total_duration
+        wandb.run.summary["best_mae_error"] = best_mae_error
+        wandb.finish() # 프로세스 종료
+
+    print("\n" + "="*30)
+    print(f"  Training Completed!")
+    print(f"  Total Time Elapsed: {total_time_str}")
+    print(f"  ({total_duration:.2f} seconds)")
+    print("="*30)
 
 
 def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
@@ -277,6 +419,11 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
         end = time.time()
 
         if i % args.print_freq == 0:
+            if args.use_wandb:
+                wandb.log({
+                    "train/batch_loss": losses.val,
+                    "train/batch_mae": mae_errors.val
+                })
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
@@ -391,12 +538,27 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
         return mae_errors.avg
 
 
-# if __name__ == '__main__':
-#     main()
 if __name__ == '__main__':
-    # run this file as if called with: --graph_type chgnet
-    # sys.argv += ['--graph_type', 'chgnet']
-    # sys.argv += ['--optim', 'Adam']
-    # sys.argv += ['--lr', 0.001,]
-    # sys.argv += ['--epochs', 50,]
+    # --- Configuration for testing/running the script ---
+    
+    # Mode A: Individual File Mode
+    # Use this if you have physically separated train.csv and test.csv files.
+    # Validation data will be automatically split from the train.csv based on --val-ratio.
+    sys.argv += [
+        '--graph_type', 'chgnet', 
+        '--data_path', 'data/split_both_hhi',
+        '--train_file', 'train.csv', 
+        '--test_file', 'test.csv',
+        '--use_wandb',
+        '--wandb_group', 'CHGNet-Baseline', 
+        '--wandb_name', 'hhi'
+    ]
+    
+    # Mode B: Combined File Mode (Original Behavior)
+    # Use this to load the default '1_MatDX_EF_modified.csv' and split it by ratios.
+    # To use this mode, comment out Mode 1 above and uncomment the line below.
+    #sys.argv += [
+    #    '--graph_type', 'chgnet'] 
+    #    ]
+    
     main()

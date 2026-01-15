@@ -3,10 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from typing import Optional
-import numpy as np
 import pandas as pd  # Missing import!
 import os
-from pathlib import Path
 
 class TextEmbeddingDataset(Dataset):
     """
@@ -24,41 +22,42 @@ class TextEmbeddingDataset(Dataset):
         if not os.path.exists(csv_path):
             raise FileNotFoundError(f"The file '{csv_path}' was not found.")
         
-        # Load CSV file with pandas (same as XRDDataset)
+        # Load CSV file with pandas 
         df = pd.read_csv(csv_path)
 
-        # Check for required 'Composition' column (same as XRDDataset)
+        # Check for required 'space_group' column 
         if 'space_group' not in df.columns:
             raise KeyError("The required column 'space_group' was not found in the CSV file.")
 
         try:
-            # Find the starting column index for embeddings (equivalent to 'xrd_0' in XRDDataset)
-            emb_start_col_index = df.columns.get_loc('emb_000')
+            # Find the starting column index for embeddings 
+            emb_start_col_index = df.columns.get_loc('dim_0')
         except KeyError:
-            raise KeyError("The required column 'emb_000' was not found in the CSV file.")
+            raise KeyError("The required column 'dim_0' was not found in the CSV file.")
 
-        # Find consecutive embedding columns (same logic as XRDDataset)
+        # Find consecutive embedding columns 
         remaining_columns = df.columns[emb_start_col_index:]
-        is_emb_col = remaining_columns.str.startswith('emb_')
+        is_emb_col = remaining_columns.str.startswith('dim_')
         consecutive_mask = is_emb_col.cumprod().astype(bool)
         
         # Count the number of consecutive embedding features
         self.num_text_features = consecutive_mask.sum()
 
         if self.num_text_features == 0:
-            raise ValueError("Found 'emb_000' but no subsequent 'emb_n' columns to form a feature set.")
+            raise ValueError("Found 'dim_0' but no subsequent 'dim_n' columns to form a feature set.")
 
-        # Extract embedding values and compositions (same logic as XRDDataset)
+        # Extract embedding values and space groups 
         emb_end_col_index = emb_start_col_index + self.num_text_features
         emb_values = df.iloc[:, emb_start_col_index:emb_end_col_index].values
         
-        space_groups = df.get('space_group', pd.Series(dtype=str)).astype(str).values
-        if 'space_group' in df.columns:
-            self.text_embeddings = {
-                space_group: torch.tensor(feat, dtype=torch.float32)
-                for space_group, feat in zip(space_groups, emb_values)
+        df['space_group'] = df['space_group'].astype(str).str.strip()
+        spacegroups = df['space_group'].values
+        self.text_embeddings = {
+            sg: torch.tensor(feat, dtype=torch.float32)
+            for sg, feat in zip(spacegroups, emb_values)
         }
-
+        self._keys = list(self.text_embeddings.keys())
+        
     def __len__(self) -> int:
         """Returns the total number of samples in the dataset."""
         return len(self.text_embeddings)
@@ -69,22 +68,31 @@ class TextEmbeddingDataset(Dataset):
         
         Args:
             key: Can be either int (index) for DataLoader compatibility 
-                 or str (composition) for direct lookup
+                 or str (space_group) for direct lookup
             
         Returns:
-            torch.Tensor: The text embedding tensor for the composition
+            torch.Tensor: The text embedding tensor for the space_group
         """
         if isinstance(key, int):
-            sgs = list(self.text_embeddings.keys())
-            if key >= len(sgs):
-                raise IndexError(f"Index {key} out of range for dataset of size {len(sgs)}")
-            sg = sgs[key]
+            if key < 0 or  key >= len(self._keys):
+                raise IndexError(f"Index {key} out of range for dataset of size {len(self._keys)}")
+            sg = self._keys[key]
             return self.text_embeddings[sg]
         elif isinstance(key, str):
-            # Direct composition lookup
-            if key not in self.text_embeddings:
-                raise KeyError(f"Composition '{key}' not found in dataset")
-            return self.text_embeddings[key]
+            k = key.strip()
+            if k in self.text_embeddings:
+                return self.text_embeddings[k]
+            if "_" in k:
+                left, right = k.split("_", 1)
+                left, right = left.strip(), right.strip()
+                if left in self.text_embeddings:
+                    return self.text_embeddings[left]
+                if right in self.text_embeddings:
+                    return self.text_embeddings[right]
+            raise KeyError(
+                f"space_group '{key}' not found in dataset"
+                f"Example keys: {self._keys[:5]}"
+            )
         else:
             raise TypeError(f"Key must be int or str, got {type(key)}")
 
@@ -155,10 +163,8 @@ if __name__ == '__main__':
         
         # Try multiple possible paths for the CSV file
         possible_paths = [
-            'data/SG_text_data.csv',
-            'SG_text_data.csv',
-            '../data/SG_text_data.csv',
-            './SG_text_data.csv'
+            'data/space_group_embeddings.csv',
+            'space_group_embeddings.csv',
         ]
         
         csv_path = None
@@ -168,7 +174,7 @@ if __name__ == '__main__':
                 break
         
         if csv_path is None:
-            raise FileNotFoundError(f"SG_text_data.csv not found in any of these paths: {possible_paths}")
+            raise FileNotFoundError(f"space_group_embeddings.csv not found in any of these paths: {possible_paths}")
         
         log_print(f"   Found embeddings file at: {csv_path}")
         dataset = TextEmbeddingDataset(csv_path=csv_path)
@@ -181,10 +187,8 @@ if __name__ == '__main__':
         # 2. Create an instance of the model with the correct input dimension.
         log_print("\n2. Creating an instance of the TextFeatureExtractor model.")
         model = TextFeatureExtractor(input_dim=detected_feature_dim, output_dim=128)
-        
         # Convert model architecture to string for logging
-        model_str = str(model)
-        log_print(f"Model architecture:\n{model_str}")
+        log_print(f"Model architecture:\n{model}")
         
         # 3. Use DataLoader to create a batch of real data for testing.
         log_print("\n3. Creating a DataLoader to batch the real data.")
@@ -213,9 +217,9 @@ if __name__ == '__main__':
         # 7. Final verification.
         expected_output_shape = (real_data_batch.shape[0], 128)
         if output.shape == expected_output_shape:
-            log_print("\n✅ Test Successful: Model processed the text embeddings and produced the correct output shape.")
+            log_print("\nTest Successful: Model processed the text embeddings and produced the correct output shape.")
         else:
-            log_print(f"\n❌ Test Failed: Expected output shape {expected_output_shape}, got {output.shape}")
+            log_print(f"\nTest Failed: Expected output shape {expected_output_shape}, got {output.shape}")
             
         # 8. Test with different batch sizes
         log_print("\n5. Testing with different batch sizes...")
@@ -225,32 +229,23 @@ if __name__ == '__main__':
                 test_batch = next(iter(test_loader))
                 with torch.no_grad():
                     test_output = model(test_batch)
-                log_print(f"   Batch size {batch_size}: {test_batch.shape} → {test_output.shape} ✅")
+                log_print(f"Batch size {batch_size}: {test_batch.shape} -> {test_output.shape} OK")
         
         # 9. Test direct composition access
         log_print("\n6. Testing direct composition access...")
-        compositions = dataset.get_compositions()
-        if len(compositions) > 0:
-            test_comp = compositions[0]
-            direct_embedding = dataset[test_comp]
-            log_print(f"   Direct access to '{test_comp}': {direct_embedding.shape} ✅")
-            
-            # Test space group access
-            try:
-                space_group = dataset.get_space_group(test_comp)
-                log_print(f"   Space group for '{test_comp}': {space_group} ✅")
-            except KeyError:
-                log_print(f"   Space group info not available for '{test_comp}' ⚠️")
+        example_sg = dataset._keys[0]
+        emb = dataset[example_sg]
+        log_print(f"Direct access to '{example_sg}': {emb.shape} OK")
 
     except (FileNotFoundError, ValueError, KeyError) as e:
-        log_print(f"\n❌ An error occurred during testing: {e}")
-        log_print("\n💡 Make sure:")
-        log_print("   1. SG_text_data.csv file is available in the working directory")
-        log_print("   2. The CSV file contains 'Composition', 'space_group', and 'emb_000' columns")
-        log_print("   3. Embedding columns are properly formatted (emb_000, emb_001, etc.)")
+        log_print(f"\nAn error occurred during testing: {e}")
+        log_print("\n Make sure:")
+        log_print("   1. space_group_embeddings.csv file is available in the working directory")
+        log_print("   2. The CSV file contains 'space_group', and 'dim_0' columns")
+        log_print("   3. Embedding columns are properly formatted (dim_0, dim_1, dim_2, ...)")
     
     except Exception as e:
-        log_print(f"\n❌ Unexpected error occurred: {e}")
+        log_print(f"\nUnexpected error occurred: {e}")
         import traceback
         log_print(f"Traceback: {traceback.format_exc()}")
     
@@ -262,6 +257,6 @@ if __name__ == '__main__':
                 f.write("=" * 50 + "\n\n")
                 for line in output_lines:
                     f.write(line + "\n")
-            print(f"\n📄 Test output saved to: {output_file}")
+            print(f"\n Test output saved to: {output_file}")
         except Exception as e:
-            print(f"\n⚠️ Could not save output file: {e}")
+            print(f"\nCould not save output file: {e}")
