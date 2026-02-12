@@ -92,8 +92,6 @@ def arg_parse():
     parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
     parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (cgcnn or mpnn)')
-    parser.add_argument('--text-input-dim', default=384, type=int, metavar='N', help='dimension of text embedding features')
-    parser.add_argument('--xrd-input-dim', default=128, type=int, metavar='N', help='dimension of XRD features')
     args = parser.parse_args(sys.argv[1:])
     return args
 
