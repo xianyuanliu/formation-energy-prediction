@@ -92,8 +92,6 @@ def arg_parse():
     parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
     parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (cgcnn or mpnn)')
-    parser.add_argument('--text-input-dim', default=384, type=int, metavar='N', help='dimension of text embedding features')
-    parser.add_argument('--xrd-input-dim', default=128, type=int, metavar='N', help='dimension of XRD features')
     args = parser.parse_args(sys.argv[1:])
     return args
 
@@ -126,6 +124,11 @@ def main():
             mode="offline",
             settings=wandb.Settings(console="off")
         )
+        wandb.define_metric("epoch")
+        wandb.define_metric("train/*", step_metric="epoch")
+        wandb.define_metric("val/*", step_metric="epoch")
+        wandb.define_metric("learning_rate", step_metric="epoch")    
+    
     start_total_time = time.time()
     args.cuda = not args.disable_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if args.cuda else "cpu")
@@ -145,14 +148,29 @@ def main():
         # Load test dataset
         test_dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=args.test_file, graph_type=args.graph_type)
         
+        element_types_union = sorted(set(full_train_dataset.element_types) | set(test_dataset.element_types))
+        print("[element_types_union size]", len(element_types_union))
+        
+        full_train_dataset = CIFData(args.data_path, cif_path=args.cif_path,
+                             csv_filename=args.train_file, graph_type=args.graph_type,
+                             element_types=element_types_union)
+
+        test_dataset = CIFData(args.data_path, cif_path=args.cif_path,
+                       csv_filename=args.test_file, graph_type=args.graph_type,
+                       element_types=element_types_union)
+        
+        g = torch.Generator()
+        g.manual_seed(0)
+        indices = torch.randperm(len(full_train_dataset), generator=g).tolist()
+        
         # Calculate indices for validation split from the train file
-        indices = list(range(len(full_train_dataset)))
-        val_size = int(len(full_train_dataset) * args.val_ratio)
-        train_size = len(full_train_dataset) - val_size
+        val_size = max(1, int(len(full_train_dataset) * args.val_ratio))
+        train_idx = indices[val_size:]
+        val_idx   = indices[:val_size]
         
         # Set up samplers for random split
-        train_sampler = SubsetRandomSampler(indices[:train_size])
-        val_sampler = SubsetRandomSampler(indices[train_size:])
+        train_sampler = SubsetRandomSampler(train_idx)
+        val_sampler   = SubsetRandomSampler(val_idx)
         
         # Create DataLoaders
         train_loader = DataLoader(full_train_dataset, batch_size=args.batch_size,
@@ -326,7 +344,7 @@ def main():
                 "train/mae": train_mae_avg,
                 "val/loss": val_loss_avg,
                 "val/mae": val_mae_avg,
-            })
+            },step=epoch)
 
         if mae_error != mae_error:
             print('Exit due to NaN')
@@ -351,6 +369,7 @@ def main():
     best_checkpoint = torch.load('model_best.pth.tar')
     model.load_state_dict(best_checkpoint['state_dict'])
     validate(args, test_loader, model, criterion, normalizer, test=True)
+    
     end_total_time = time.time()
     total_duration = end_total_time - start_total_time
     total_time_str = str(datetime.timedelta(seconds=int(total_duration)))
@@ -364,6 +383,25 @@ def main():
     print(f"  Total Time Elapsed: {total_time_str}")
     print(f"  ({total_duration:.2f} seconds)")
     print("="*30)
+    
+    ytr, ypr, emb_tr, _ = collect_pred_emb(args, train_loader, model, normalizer, device)
+    yte, ype, emb_te, test_ids = collect_pred_emb(args, test_loader, model, normalizer, device)
+
+    np.save(os.path.join(out_dir, "train_emb.npy"), emb_tr)
+    np.save(os.path.join(out_dir, "test_emb.npy"), emb_te)
+
+    fig_path = os.path.join(out_dir, "ood_umap_kde.png")
+    stats = make_ood_umap_figure(
+        train_emb=emb_tr,
+        test_emb=emb_te,
+        y_true_test=yte,
+        y_pred_test=ype,
+        out_png=fig_path,
+        density_threshold=1e-3, 
+        n_neighbors=50,          
+        min_dist=0.1             
+    )
+    
     
     def collect_outputs(out_dir):
         files = [
@@ -435,16 +473,16 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
             target_var = Variable(target_normed)
 
         if args.graph_type in ("cgcnn", "mpnn"):
-            output = model(*input_var)
+            out, emb = model(*input_var)
         elif args.graph_type in ("chgnet", "m3gnet"):
             # input_var = (graph_state, xrd_fea, text_fea)
             graph_state, xrd_in, text_in = input_var
-            output = model(graph_state, xrd_in, text_in)
+            out, emb = model(graph_state, xrd_in, text_in)
 
-        loss = criterion(output, target_var)
+        loss = criterion(out, target_var)
 
         # measure accuracy and record loss
-        mae_error = mae(normalizer.denorm(output.data.cpu()), target)
+        mae_error = mae(normalizer.denorm(out.data.cpu()), target)
         mre_error = mae_error / target.abs().mean()
 
         losses.update(loss.data.cpu(), target.size(0))
@@ -461,11 +499,11 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
         end = time.time()
 
         if i % args.print_freq == 0:
-            if args.use_wandb:
-                wandb.log({
-                    "train/batch_loss": losses.val,
-                    "train/batch_mae": mae_errors.val
-                })
+            #if args.use_wandb:
+                #wandb.log({
+                #    "train/batch_loss": losses.val,
+                #    "train/batch_mae": mae_errors.val
+                #})
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
@@ -539,17 +577,17 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
                 target_var = Variable(target_normed)
 
         # compute output
-        output = model(*input_var)
-        loss = criterion(output, target_var)
+        out, emb = model(*input_var)
+        loss = criterion(out, target_var)
 
         # measure accuracy and record loss
-        mae_error = mae(normalizer.denorm(output.data.cpu()), target)
+        mae_error = mae(normalizer.denorm(out.data.cpu()), target)
         mre_error = mae_error / target.abs().mean()
         losses.update(loss.data.cpu().item(), target.size(0))
         mae_errors.update(mae_error, target.size(0))
         mre_errors.update(mre_error, target.size(0))
         if test:
-            test_pred = normalizer.denorm(output.data.cpu())
+            test_pred = normalizer.denorm(out.data.cpu())
             test_target = target
             test_preds += test_pred.view(-1).tolist()
             test_targets += test_target.view(-1).tolist()
@@ -597,6 +635,104 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
         star_label = '*'
         print(' {star} MAE {mae_errors.avg:.3f}'.format(star=star_label, mae_errors=mae_errors))
         return float(losses.avg), float(mae_errors.avg)
+        
+
+def collect_pred_emb(args, loader, model, normalizer, device):
+    model.eval()
+    y_true, y_pred, emb_all = [], [], []
+    cif_ids = []
+
+    for i, (input, target, batch_cif_ids, xrd_fea, text_fea) in enumerate(loader):
+
+        # ---- input_var ----
+        if args.graph_type in ("cgcnn", "mpnn"):
+            if args.cuda:
+                input_var = (
+                    input[0].to(device, non_blocking=True),
+                    input[1].to(device, non_blocking=True),
+                    input[2].to(device, non_blocking=True),
+                    [crys_idx.to(device, non_blocking=True) for crys_idx in input[3]],
+                    xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None,
+                    text_fea.to(device, non_blocking=True) if text_fea is not None else None,
+                )
+            else:
+                input_var = (input[0], input[1], input[2], input[3], xrd_fea, text_fea)
+
+            out, emb = model(*input_var)
+
+        elif args.graph_type in ("chgnet", "m3gnet"):
+            g, state_feats = input
+            if args.cuda:
+                g = g.to(device)
+                state_feats = state_feats.to(device, non_blocking=True)
+                xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+                text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
+            out, emb = model((g, state_feats), xrd_fea, text_fea)
+
+        else:
+            raise ValueError(f"Unknown graph_type: {args.graph_type}")
+
+        # denorm prediction for metrics / plotting
+        pred_denorm = normalizer.denorm(out.detach().cpu())
+        y_pred.append(pred_denorm.view(-1))
+        y_true.append(target.detach().cpu().view(-1))
+        emb_all.append(emb.detach().cpu())
+        cif_ids += batch_cif_ids
+
+    y_true = torch.cat(y_true).numpy()
+    y_pred = torch.cat(y_pred).numpy()
+    emb_all = torch.cat(emb_all).numpy()
+    return y_true, y_pred, emb_all, cif_ids
+    
+    
+def make_ood_umap_figure(train_emb, test_emb, y_true_test, y_pred_test, out_png,
+                         density_threshold=1e-3, n_neighbors=50, min_dist=0.1):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from scipy.stats import gaussian_kde
+    from sklearn.metrics import r2_score
+    import umap
+
+    reducer = umap.UMAP(
+        n_components=2, n_neighbors=n_neighbors, min_dist=min_dist, random_state=0
+    )
+    all_emb = np.vstack([train_emb, test_emb])
+    all_2d = reducer.fit_transform(all_emb)
+
+    n_train = len(train_emb)
+    train_2d = all_2d[:n_train]
+    test_2d = all_2d[n_train:]
+
+    kde = gaussian_kde(train_2d.T)
+    test_density = kde(test_2d.T)
+
+    in_mask = test_density >= density_threshold
+    out_mask = ~in_mask
+
+    r2_all = r2_score(y_true_test, y_pred_test)
+    r2_in = r2_score(y_true_test[in_mask], y_pred_test[in_mask]) if in_mask.any() else float("nan")
+    r2_out = r2_score(y_true_test[out_mask], y_pred_test[out_mask]) if out_mask.any() else float("nan")
+
+    plt.figure(figsize=(6, 6))
+    plt.scatter(train_2d[:, 0], train_2d[:, 1], s=6, alpha=0.5, c="gray", label="train")
+    plt.scatter(test_2d[in_mask, 0], test_2d[in_mask, 1], s=10, alpha=0.9, c="blue", label="test in-domain")
+    plt.scatter(test_2d[out_mask, 0], test_2d[out_mask, 1], s=10, alpha=0.9, c="red", label="test out-of-domain")
+
+    plt.title(f"R2 all={r2_all:.3f} | in={r2_in:.3f} | out={r2_out:.3f}")
+    plt.xlabel("UMAP-1"); plt.ylabel("UMAP-2")
+    plt.legend(frameon=False)
+    plt.tight_layout()
+    plt.savefig(out_png, dpi=300)
+    plt.close()
+
+    return {
+        "r2_all": r2_all, "r2_in": r2_in, "r2_out": r2_out,
+        "test_density": test_density,
+        "in_mask": in_mask, "out_mask": out_mask,
+        "train_2d": train_2d, "test_2d": test_2d,
+    }
+
+
      
 
 if __name__ == '__main__':
@@ -607,12 +743,15 @@ if __name__ == '__main__':
     # Validation data will be automatically split from the train.csv based on --val-ratio.
     sys.argv += [
         '--graph_type', 'chgnet', 
-        '--data_path', 'data/split_rand',
+        '--data_path', 'data/split_structural_complexity',
         '--train_file', 'train.csv', 
         '--test_file', 'test.csv',
         '--use_wandb',
-        '--wandb_group', 'CHGNet-Baseline', 
-        '--wandb_name', 'rand'
+        '--wandb_group', 'CHGNet-ood', 
+        '--wandb_name', 'structural_complexity,chgnet',
+        '--optim', 'Adam',    
+        '--epochs', '100',
+        '--lr', '0.001'
     ]
     
     # Mode B: Combined File Mode (Original Behavior)
@@ -621,6 +760,6 @@ if __name__ == '__main__':
     #sys.argv += [
     #    '--graph_type', 'chgnet'] 
     #    ]
-    
+   
     main()
 

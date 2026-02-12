@@ -139,13 +139,20 @@ def collate_pool(dataset_list):
         n_i = atom_fea.shape[0]  # number of atoms for this crystal
         batch_atom_fea.append(atom_fea)
         batch_nbr_fea.append(nbr_fea)
-        batch_nbr_fea_idx.append(nbr_fea_idx+base_idx)
+        
+        idx = nbr_fea_idx.clone()  # (n_i, M)
+        mask = idx >= 0            # 실제 이웃만 True, padding(-1)은 False
+        idx[mask] += base_idx      # padding은 그대로 -1 유지
+        batch_nbr_fea_idx.append(idx)
+        
         new_idx = torch.LongTensor(np.arange(n_i)+base_idx)
         crystal_atom_idx.append(new_idx)
+        
         batch_target.append(target)
         batch_cif_ids.append(cif_id)
         batch_xrd_fea.append(xrd_fea)
         batch_text_fea.append(text_fea)
+        
         base_idx += n_i
     return (torch.cat(batch_atom_fea, dim=0),
             torch.cat(batch_nbr_fea, dim=0),
@@ -331,7 +338,7 @@ class CIFData(Dataset):
     target: torch.Tensor shape (1, )
     cif_id: str or int
     """
-    def __init__(self, root_dir, cif_path=None, csv_filename='1_MatDX_EF_modified.csv', max_num_nbr=12, radius=8, dmin=0, step=0.2, random_seed=123, graph_type="cgcnn", cutoff=6.0):
+    def __init__(self, root_dir, cif_path=None, csv_filename='1_MatDX_EF_modified.csv', max_num_nbr=12, radius=8, dmin=0, step=0.2, random_seed=123, graph_type="cgcnn", cutoff=6.0, element_types=None):
         self.root_dir = root_dir
         self.cif_path = cif_path if cif_path else root_dir
         self.max_num_nbr, self.radius = max_num_nbr, radius
@@ -362,8 +369,18 @@ class CIFData(Dataset):
             s = Structure.from_file(os.path.join(self.cif_path, cif_id + ".cif"))
             for site in s:
                 element_set.add(site.specie.symbol)
-
-        self.element_types = tuple(sorted(element_set))
+        
+        if element_types is None:
+            element_set = set()
+            for row in self.id_prop_data:
+                cif_id = row[0]
+                s = Structure.from_file(os.path.join(self.cif_path, cif_id + ".cif"))
+                for site in s:
+                    element_set.add(site.specie.symbol)
+            self.element_types = tuple(sorted(element_set))
+        else:
+            self.element_types = tuple(element_types)
+        
         self.cutoff = cutoff
 
         if self.graph_type in ("chgnet", "m3gnet"):
@@ -401,7 +418,7 @@ class CIFData(Dataset):
                                 'If it happens frequently, consider increase '
                                 'radius.'.format(cif_id))
                     nbr_fea_idx.append(list(map(lambda x: x[2], nbr)) +
-                                    [0] * (self.max_num_nbr - len(nbr)))
+                                    [-1] * (self.max_num_nbr - len(nbr)))
                     nbr_fea.append(list(map(lambda x: x[1], nbr)) +
                                 [self.radius + 1.] * (self.max_num_nbr -
                                                         len(nbr)))

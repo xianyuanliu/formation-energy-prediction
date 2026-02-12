@@ -90,10 +90,15 @@ class ConvLayer(nn.Module):
           Atom hidden features after convolution
 
         """
-        # TODO will there be problems with the index zero padding?
-        N, M = nbr_fea_idx.shape
+        N, M = nbr_fea_idx.shape 
+        nbr_mask = (nbr_fea_idx >= 0) 
+        nbr_mask_f = nbr_mask.unsqueeze(-1).type_as(atom_in_fea)  # (N, M, 1) float
+        
+        safe_idx = nbr_fea_idx.clone()
+        safe_idx[~nbr_mask] = 0                        # padding 위치만 0으로
+        atom_nbr_fea = atom_in_fea[safe_idx, :]        # (N, M, atom_fea_len)
+
         # convolution
-        atom_nbr_fea = atom_in_fea[nbr_fea_idx, :]
         total_nbr_fea = torch.cat(
             [atom_in_fea.unsqueeze(1).expand(N, M, self.atom_fea_len),
              atom_nbr_fea, nbr_fea], dim=2)
@@ -103,7 +108,9 @@ class ConvLayer(nn.Module):
         nbr_filter, nbr_core = total_gated_fea.chunk(2, dim=2)
         nbr_filter = self.sigmoid(nbr_filter)
         nbr_core = self.softplus1(nbr_core)
-        nbr_sumed = torch.sum(nbr_filter * nbr_core, dim=1)
+        nbr_message = (nbr_filter * nbr_core) * nbr_mask_f  # (N, M, atom_fea_len)
+        
+        nbr_sumed = torch.sum(nbr_message, dim=1)
         nbr_sumed = self.bn2(nbr_sumed)
         out = self.softplus2(atom_in_fea + nbr_sumed)
         return out
@@ -128,12 +135,14 @@ class MPNNLayer(nn.Module):
         F = atom_in_fea.size(1)
 
         src = atom_in_fea.unsqueeze(1).expand(N, M, F)  # (N,M,F)
-        nbr = atom_in_fea[nbr_fea_idx, :]               # (N,M,F)
+        idx = nbr_fea_idx.clamp(min=0)
+        nbr = atom_in_fea[idx, :]
+                      # (N,M,F)
         x = torch.cat([src, nbr, nbr_fea], dim=-1)      # (N,M,2F+B)
-
-        msg = self.mlp(x)                               # (N,M,F)
+        msg = self.mlp(x)      
+                                 # (N,M,F)
         # padding mask (최종 합산에서 제거)
-        mask = (nbr_fea_idx == 0).unsqueeze(-1)   # (N,M,1)
+        mask = (nbr_fea_idx < 0).unsqueeze(-1)   # (N,M,1)
         msg = msg.masked_fill(mask, 0.0)
         msg = msg.sum(dim=1)                            # (N,F)
 
@@ -149,7 +158,7 @@ class CrystalGraphConvNet(nn.Module):
     material properties.
     """
     def __init__(self, orig_atom_fea_len, nbr_fea_len, atom_fea_len=64, n_conv=3, h_fea_len=128, n_h=1,
-                 xrd=False, text=False, graph_type="cgcnn", text_input_dim=384, xrd_input_dim=128):
+                 xrd=False, text=False, graph_type="cgcnn"):
         """
         Initialize CrystalGraphConvNet.
 
@@ -168,16 +177,12 @@ class CrystalGraphConvNet(nn.Module):
           Number of hidden features after pooling
         n_h: int
           Number of hidden layers after pooling
-        text_input_dim: int
-          Dimension of the input text embedding vector (used when text=True).
-        xrd_input_dim: int
-          Dimension of the input XRD feature vector (used when xrd=True).
         """
         super(CrystalGraphConvNet, self).__init__()
         conv_to_fc_input_dim = atom_fea_len
         self.embedding = nn.Linear(orig_atom_fea_len, atom_fea_len)
         if xrd:
-            self.xrd_model = XRDFeatureExtractor(input_dim=xrd_input_dim, output_dim=64, hidden_dim=128)
+            self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
             conv_to_fc_input_dim += 64
         if text:
             self.text_model = TextFeatureExtractor(input_dim=768, output_dim=64, hidden_dim=128)
@@ -249,7 +254,8 @@ class CrystalGraphConvNet(nn.Module):
             for fc, softplus in zip(self.fcs, self.softpluses):
                 crys_fea = softplus(fc(crys_fea))
         out = self.fc_out(crys_fea)
-        return out
+        embedding = crys_fea
+        return out, embedding
 
     def pooling(self, atom_fea, crystal_atom_idx):
         """
@@ -696,5 +702,6 @@ class MatglGraphConvNet(nn.Module):
             for fc, softplus in zip(self.fcs, self.softpluses):
                 crys_fea = softplus(fc(crys_fea))
         out = self.fc_out(crys_fea)
-        return out
+        embedding = crys_fea
+        return out, embedding
     
