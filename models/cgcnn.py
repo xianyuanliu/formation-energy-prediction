@@ -38,6 +38,8 @@ if TYPE_CHECKING:
     from matgl.graph.converters import GraphConverter
 #for M3GNet    
 from matgl.models._m3gnet import M3GNet
+#for ALIGNN    
+from alignn.models.alignn import ALIGNN, ALIGNNConfig
 
 class ConvLayer(nn.Module):
     """
@@ -704,4 +706,49 @@ class MatglGraphConvNet(nn.Module):
         out = self.fc_out(crys_fea)
         embedding = crys_fea
         return out, embedding
+
+class AlignnGraphConvNet(nn.Module):
+    def __init__(self, element_types, atom_fea_len=92, edge_fea_len=80, h_fea_len=128, 
+                 xrd=True, text=True, graph_type="alignn"):
+        super(AlignnGraphConvNet, self).__init__()
+        self.use_xrd = xrd
+        self.use_text = text
+        
+        config = ALIGNNConfig(
+            name="alignn",
+            output_features=h_fea_len,
+            embedding_features=h_fea_len,
+            hidden_features=h_fea_len,
+            alignn_layers=4,
+            gcn_layers=4,
+            atom_input_features=atom_fea_len,
+            edge_input_features=edge_fea_len,
+            triplet_input_features=40
+        )
+        self.alignn_backbone = ALIGNN(config)
+        
+        combined_dim = h_fea_len
+        if xrd:
+            self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
+            combined_dim += 64
+        if text:
+            self.text_model = TextFeatureExtractor(input_dim=768, output_dim=64, hidden_dim=128)
+            combined_dim += 64
+            
+        self.fc_out = nn.Sequential(
+            nn.Linear(combined_dim, h_fea_len),
+            nn.ReLU(),
+            nn.Linear(h_fea_len, 1)
+        )
+    def forward(self, g, lg, lattice, xrd_feature=None, text_feature=None):
+        x = self.alignn_backbone([g, lg, lattice])
+        
+        features = [x]
+        if self.use_xrd and xrd_feature is not None:
+            features.append(self.xrd_model(xrd_feature))
+        if self.use_text and text_feature is not None:
+            features.append(self.text_model(text_feature))
+            
+        combined = torch.cat(features, dim=1)
+        return self.fc_out(combined), x
     

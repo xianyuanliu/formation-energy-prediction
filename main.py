@@ -30,9 +30,10 @@ from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
 
 from data import CIFData
-from data import collate_pool, get_train_val_test_loader, collate_pool_matgl
+from data import collate_pool, get_train_val_test_loader, collate_pool_matgl, collate_pool_alignn
 from models.cgcnn import CrystalGraphConvNet
 from models.cgcnn import MatglGraphConvNet
+from models.cgcnn import AlignnGraphConvNet
 from utils.utils import Normalizer, mae, save_checkpoint, AverageMeter
 from thop import profile
 import datetime
@@ -137,6 +138,8 @@ def main():
         collate_fn = collate_pool
     elif args.graph_type in ("chgnet", "m3gnet"):
         collate_fn = collate_pool_matgl
+    elif args.graph_type == "alignn":
+        collate_fn = collate_pool_alignn
 
     # Data loader generation (Conditional branching)
     if args.train_file and args.test_file:
@@ -249,6 +252,16 @@ def main():
             threebody_cutoff=4.0,            # M3GNet 3-body cutoff
             graph_type=args.graph_type,
         )
+
+    elif args.graph_type in ("alignn"):
+        model = AlignnGraphConvNet(
+            element_types=dataset.element_types,
+            atom_fea_len=92,    # JARVIS default value example
+            edge_fea_len=80,    # JARVIS default value example
+            h_fea_len=args.h_fea_len,
+            xrd=args.xrd,
+            text=args.text
+        )
     if args.cuda:
         model.cuda()
 
@@ -268,7 +281,7 @@ def main():
                 sample_data[3].to(device),    # xrd_feature
                 sample_data[4].to(device)     # text_feature
             )
-        else:
+        elif args.graph_type in ("chgnet", "m3gnet"):
         # MatglGraphConvNet (graph_state, xrd, text)
             graph_state = (
                 sample_data[0][0].to(device), # batch_graph
@@ -279,7 +292,15 @@ def main():
                 sample_data[3].to(device),    # xrd_feature
                 sample_data[4].to(device)     # text_feature
             )
-
+        elif args.graph_type in ("alignn"):
+            batch_g, batch_lg, batch_lat = sample_data[0] 
+            inputs = (
+                batch_g.to(device),
+                batch_lg.to(device),
+                batch_lat.to(device),  
+                sample_data[3].to(device), # xrd_feature
+                sample_data[4].to(device)  # text_feature
+            )
         flops, params = profile(model, inputs=inputs, verbose=False)
         if args.use_wandb:
             wandb.config.update({
@@ -463,6 +484,16 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
                 text_fea = text_fea.cuda(non_blocking=True) if text_fea is not None else None
             input_var = ((batch_graph, batch_state), xrd_fea, text_fea)
 
+        elif args.graph_type == "alignn":
+            batch_g, batch_lg, batch_lat = input
+            if args.cuda:
+                batch_g = batch_g.to("cuda")
+                batch_lg = batch_lg.to("cuda")
+                batch_lat = batch_lat.to("cuda")
+                xrd_fea = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
+                text_fea = text_fea.cuda(non_blocking=True) if text_fea is not None else None
+            input_var = (batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
+
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
         
@@ -478,6 +509,8 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
             # input_var = (graph_state, xrd_fea, text_fea)
             graph_state, xrd_in, text_in = input_var
             out, emb = model(graph_state, xrd_in, text_in)
+        elif args.graph_type in ("alignn"):
+            out, emb = model(*input_var)
 
         loss = criterion(out, target_var)
 
@@ -562,6 +595,20 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
             else:
                 with torch.no_grad():
                     input_var = (graph_state, xrd_fea, text_fea)
+        elif args.graph_type in ("alignn"):
+            batch_g, batch_lg, batch_lat = input
+            if args.cuda:
+                with torch.no_grad():
+                    batch_g = batch_g.to("cuda")
+                    batch_lg = batch_lg.to("cuda")
+                    batch_lat = batch_lat.to("cuda")
+                    xrd_fea_cuda = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
+                    text_fea_cuda = text_fea.cuda(non_blocking=True) if text_fea is not None else None
+                    input_var = (batch_g, batch_lg, batch_lat, xrd_fea_cuda, text_fea_cuda)
+            else:
+                with torch.no_grad():
+                    input_var = (batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
+        
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
 
@@ -668,7 +715,16 @@ def collect_pred_emb(args, loader, model, normalizer, device):
                 xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
                 text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
             out, emb = model((g, state_feats), xrd_fea, text_fea)
-
+        
+        elif args.graph_type in ("alignn"):
+            batch_g, batch_lg, batch_lat = input
+            if args.cuda:
+                batch_g = batch_g.to(device)
+                batch_lg = batch_lg.to(device)
+                batch_lat = batch_lat.to(device)
+                xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+                text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
+            out, emb = model(batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
 
@@ -742,13 +798,13 @@ if __name__ == '__main__':
     # Use this if you have physically separated train.csv and test.csv files.
     # Validation data will be automatically split from the train.csv based on --val-ratio.
     sys.argv += [
-        '--graph_type', 'chgnet', 
+        '--graph_type', 'alignn', 
         '--data_path', 'data/split_structural_complexity',
         '--train_file', 'train.csv', 
         '--test_file', 'test.csv',
         '--use_wandb',
-        '--wandb_group', 'CHGNet-ood', 
-        '--wandb_name', 'structural_complexity,chgnet',
+        '--wandb_group', 'test', 
+        '--wandb_name', 'structural_complexity',
         '--optim', 'Adam',    
         '--epochs', '100',
         '--lr', '0.001'

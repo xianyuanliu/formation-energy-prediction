@@ -16,6 +16,8 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from models.xrd_module import XRDDataset  
 from models.sg_text_module import TextEmbeddingDataset
 import dgl
+from jarvis.core.atoms import pmg_to_atoms
+from alignn.graphs import Graph
 
 def get_train_val_test_loader(dataset, collate_fn=default_collate,
                               batch_size=64, train_ratio=None,
@@ -191,6 +193,26 @@ def collate_pool_matgl(dataset_list):
     batch_text_fea = torch.stack(batch_text_fea, dim=0) # (N0, text_dim)
 
     return (batch_graph, batch_state), batch_target, batch_cif_ids, batch_xrd_fea, batch_text_fea
+
+def collate_pool_alignn(dataset_list):
+    g_list, lg_list, lat_list = [], [], []
+    batch_target, batch_cif_ids = [], []
+    batch_xrd_fea, batch_text_fea = [], []
+
+    for ((g, lg, lat), target, cif_id, space_group, xrd_fea, text_fea) in dataset_list:
+        g_list.append(g)
+        lg_list.append(lg)
+        lat_list.append(lat)
+        batch_target.append(target)
+        batch_cif_ids.append(cif_id)
+        batch_xrd_fea.append(xrd_fea)
+        batch_text_fea.append(text_fea)
+
+    return (dgl.batch(g_list), dgl.batch(lg_list), torch.stack(lat_list, dim=0)), \
+           torch.stack(batch_target, dim=0), \
+           batch_cif_ids, \
+           torch.stack(batch_xrd_fea, dim=0), \
+           torch.stack(batch_text_fea, dim=0)
 
 class GaussianDistance(object):
     """
@@ -439,8 +461,19 @@ class CIFData(Dataset):
             graph.ndata["pos"] = graph.ndata["frac_coords"] @ lattice[0]
             state_feats = torch.tensor(state_feats_default)
             return (graph, state_feats), target, cif_id, space_group, xrd_fea, text_fea
-            
-        
+
+        elif self.graph_type in ("alignn"):
+            jarvis_atoms = pmg_to_atoms(crystal)
+            g, lg = Graph.atom_dgl_multigraph(
+                jarvis_atoms, 
+                cutoff=self.radius, 
+                max_neighbors=self.max_num_nbr,
+                compute_line_graph=True
+            )
+            lattice = torch.tensor(jarvis_atoms.lattice_mat).float()
+            return (g, lg, lattice), target, cif_id, space_group, xrd_fea, text_fea
+
+
         
 
 
