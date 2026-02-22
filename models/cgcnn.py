@@ -708,8 +708,8 @@ class MatglGraphConvNet(nn.Module):
         return out, embedding
 
 class AlignnGraphConvNet(nn.Module):
-    def __init__(self, element_types, atom_fea_len=92, edge_fea_len=80, h_fea_len=128, 
-                 xrd=True, text=True, graph_type="alignn"):
+    def __init__(self, atom_fea_len=92, edge_fea_len=80, triplet_fea_len=40, h_fea_len=128, 
+                 xrd=True, text=True):
         super(AlignnGraphConvNet, self).__init__()
         self.use_xrd = xrd
         self.use_text = text
@@ -723,7 +723,7 @@ class AlignnGraphConvNet(nn.Module):
             gcn_layers=4,
             atom_input_features=atom_fea_len,
             edge_input_features=edge_fea_len,
-            triplet_input_features=40
+            triplet_input_features=triplet_fea_len
         )
         self.alignn_backbone = ALIGNN(config)
         
