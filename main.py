@@ -193,7 +193,7 @@ def main():
 
     else:
         # Mode B: Original behavior (Split single file by ratios)
-        print("=> Combined file mode: Using 1_MatDX_EF_modified.csv with ratio split")
+        print("=> Combined file mode: Using file with ratio split")
         dataset = CIFData(args.data_path, graph_type=args.graph_type)
 
         train_loader, val_loader, test_loader = get_train_val_test_loader(
@@ -262,6 +262,9 @@ def main():
             xrd=args.xrd,
             text=args.text
         )
+    else:
+        raise ValueError(f"Unknown graph_type: {args.graph_type}")
+        
     if args.cuda:
         model.cuda()
 
@@ -787,35 +790,4 @@ def make_ood_umap_figure(train_emb, test_emb, y_true_test, y_pred_test, out_png,
         "in_mask": in_mask, "out_mask": out_mask,
         "train_2d": train_2d, "test_2d": test_2d,
     }
-
-
-     
-
-if __name__ == '__main__':
-    # --- Configuration for testing/running the script ---
-    
-    # Mode A: Individual File Mode
-    # Use this if you have physically separated train.csv and test.csv files.
-    # Validation data will be automatically split from the train.csv based on --val-ratio.
-    sys.argv += [
-        '--graph_type', 'alignn', 
-        '--data_path', 'data/split_structural_complexity',
-        '--train_file', 'train.csv', 
-        '--test_file', 'test.csv',
-        '--use_wandb',
-        '--wandb_group', 'test', 
-        '--wandb_name', 'structural_complexity',
-        '--optim', 'Adam',    
-        '--epochs', '100',
-        '--lr', '0.001'
-    ]
-    
-    # Mode B: Combined File Mode (Original Behavior)
-    # Use this to load the default '1_MatDX_EF_modified.csv' and split it by ratios.
-    # To use this mode, comment out Mode 1 above and uncomment the line below.
-    #sys.argv += [
-    #    '--graph_type', 'chgnet'] 
-    #    ]
-   
-    main()
 
