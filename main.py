@@ -259,6 +259,7 @@ def main():
             edge_fea_len=80,    # JARVIS default value example
             triplet_fea_len=40,
             h_fea_len=args.h_fea_len,
+            n_h=args.n_h,
             xrd=args.xrd,
             text=args.text
         )
