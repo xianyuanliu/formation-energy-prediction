@@ -255,9 +255,9 @@ def main():
 
     elif args.graph_type in ("alignn"):
         model = AlignnGraphConvNet(
-            element_types=dataset.element_types,
             atom_fea_len=92,    # JARVIS default value example
             edge_fea_len=80,    # JARVIS default value example
+            triplet_fea_len=40,
             h_fea_len=args.h_fea_len,
             xrd=args.xrd,
             text=args.text
