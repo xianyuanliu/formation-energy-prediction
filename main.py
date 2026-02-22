@@ -514,7 +514,9 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
             graph_state, xrd_in, text_in = input_var
             out, emb = model(graph_state, xrd_in, text_in)
         elif args.graph_type in ("alignn"):
-            out, emb = model(*input_var)
+            # input_var = (batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
+            batch_g, batch_lg, batch_lat, xrd_in, text_in = input_var
+            out, emb = model(batch_g, batch_lg, batch_lat, xrd_in, text_in)
 
         loss = criterion(out, target_var)
 

@@ -708,6 +708,59 @@ class MatglGraphConvNet(nn.Module):
         return out, embedding
 
 class AlignnGraphConvNet(nn.Module):
+    """Graph neural network model based on the ALIGNN architecture with optional
+    XRD and text feature encoders.
+
+    This model wraps an :class:`ALIGNN` backbone and, optionally, additional
+    feature extractors for X-ray diffraction (XRD) patterns and text-based
+    descriptors. The outputs of these components are concatenated and passed
+    through a small fully connected head to produce a scalar prediction.
+
+    Parameters
+    ----------
+    element_types : Sequence[str] or list
+        List of element symbols present in the dataset. This parameter is kept
+        for API compatibility with other models and is not used directly.
+    atom_fea_len : int, optional
+        Dimension of the atom input features expected by the ALIGNN backbone.
+    edge_fea_len : int, optional
+        Dimension of the edge (bond) input features expected by the ALIGNN
+        backbone.
+    h_fea_len : int, optional
+        Hidden and output feature dimension for the ALIGNN backbone and the
+        final fully connected output head.
+    xrd : bool, optional
+        If ``True``, enable the XRD feature extractor and concatenate its
+        output with the ALIGNN embeddings.
+    text : bool, optional
+        If ``True``, enable the text feature extractor and concatenate its
+        output with the ALIGNN embeddings.
+    graph_type : str, optional
+        Identifier for the underlying graph representation, kept for
+        consistency with other model classes.
+
+    Forward inputs
+    --------------
+    g : dgl.DGLGraph
+        Atomic graph used as input to the ALIGNN backbone.
+    lg : dgl.DGLGraph
+        Line graph (bond graph) corresponding to ``g``.
+    lattice : torch.Tensor
+        Lattice or state tensor required by the ALIGNN backbone.
+    xrd_feature : torch.Tensor, optional
+        XRD feature tensor. Used only when ``xrd`` is ``True`` and
+        ``self.use_xrd`` is enabled.
+    text_feature : torch.Tensor, optional
+        Text feature tensor. Used only when ``text`` is ``True`` and
+        ``self.use_text`` is enabled.
+
+    Returns
+    -------
+    tuple[torch.Tensor, torch.Tensor]
+        A tuple ``(prediction, embedding)`` where ``prediction`` is a scalar
+        property prediction and ``embedding`` is the ALIGNN latent
+        representation for each input structure.
+    """
     def __init__(self, atom_fea_len=92, edge_fea_len=80, triplet_fea_len=40, h_fea_len=128, n_h=1,
                  xrd=True, text=True):
         super(AlignnGraphConvNet, self).__init__()

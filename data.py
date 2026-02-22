@@ -195,6 +195,31 @@ def collate_pool_matgl(dataset_list):
     return (batch_graph, batch_state), batch_target, batch_cif_ids, batch_xrd_fea, batch_text_fea
 
 def collate_pool_alignn(dataset_list):
+    """
+    ALIGNN collate function.
+
+    Parameters
+    ----------
+    dataset_list : list
+        List of dataset items, where each item has the form
+        ((g, lg, lat), target, cif_id, space_group, xrd_fea, text_fea).
+        Here ``g`` and ``lg`` are DGLGraphs, ``lat`` is a lattice tensor,
+        ``target`` is the supervision target, ``cif_id`` is an identifier
+        for the structure, and ``xrd_fea`` / ``text_fea`` are feature tensors.
+
+    Returns
+    -------
+    tuple
+        A 5-tuple:
+
+        - (batch_g, batch_lg, batch_lat): batched graphs and lattice tensor, where
+          ``batch_g`` and ``batch_lg`` are obtained via :func:`dgl.batch` and
+          ``batch_lat`` is a tensor formed by stacking ``lat`` along dimension 0.
+        - batch_target: tensor of stacked targets.
+        - batch_cif_ids: list of CIF identifiers.
+        - batch_xrd_fea: tensor of stacked XRD feature vectors.
+        - batch_text_fea: tensor of stacked text feature vectors.
+    """
     g_list, lg_list, lat_list = [], [], []
     batch_target, batch_cif_ids = [], []
     batch_xrd_fea, batch_text_fea = [], []
