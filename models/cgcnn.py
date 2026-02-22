@@ -708,7 +708,7 @@ class MatglGraphConvNet(nn.Module):
         return out, embedding
 
 class AlignnGraphConvNet(nn.Module):
-    def __init__(self, atom_fea_len=92, edge_fea_len=80, triplet_fea_len=40, h_fea_len=128, 
+    def __init__(self, atom_fea_len=92, edge_fea_len=80, triplet_fea_len=40, h_fea_len=128, n_h=1,
                  xrd=True, text=True):
         super(AlignnGraphConvNet, self).__init__()
         self.use_xrd = xrd
@@ -727,19 +727,21 @@ class AlignnGraphConvNet(nn.Module):
         )
         self.alignn_backbone = ALIGNN(config)
         
-        combined_dim = h_fea_len
+        conv_to_fc_input_dim = h_fea_len
         if xrd:
             self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
-            combined_dim += 64
+            conv_to_fc_input_dim += 64
         if text:
             self.text_model = TextFeatureExtractor(input_dim=768, output_dim=64, hidden_dim=128)
-            combined_dim += 64
+            conv_to_fc_input_dim += 64
             
-        self.fc_out = nn.Sequential(
-            nn.Linear(combined_dim, h_fea_len),
-            nn.ReLU(),
-            nn.Linear(h_fea_len, 1)
-        )
+        self.conv_to_fc = nn.Linear(conv_to_fc_input_dim, h_fea_len)
+        self.conv_to_fc_softplus = nn.Softplus()
+        if n_h > 1:
+            self.fcs = nn.ModuleList([nn.Linear(h_fea_len, h_fea_len) for _ in range(n_h-1)])
+            self.softpluses = nn.ModuleList([nn.Softplus() for _ in range(n_h-1)])
+        self.fc_out = nn.Linear(h_fea_len, 1)
+                     
     def forward(self, g, lg, lattice, xrd_feature=None, text_feature=None):
         x = self.alignn_backbone([g, lg, lattice])
         
@@ -750,5 +752,11 @@ class AlignnGraphConvNet(nn.Module):
             features.append(self.text_model(text_feature))
             
         combined = torch.cat(features, dim=1)
-        return self.fc_out(combined), x
-    
+        crys_fea = self.conv_to_fc(self.conv_to_fc_softplus(combined))
+        crys_fea = self.conv_to_fc_softplus(crys_fea)
+        if hasattr(self, 'fcs'):
+            for fc, softplus in zip(self.fcs, self.softpluses):
+                crys_fea = softplus(fc(crys_fea))
+        out = self.fc_out(crys_fea)
+        embedding = crys_fea 
+        return out, embedding
