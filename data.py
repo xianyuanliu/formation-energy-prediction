@@ -16,6 +16,8 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from models.xrd_module import XRDDataset  
 from models.sg_text_module import TextEmbeddingDataset
 import dgl
+from jarvis.core.atoms import pmg_to_atoms
+from alignn.graphs import Graph
 
 def get_train_val_test_loader(dataset, collate_fn=default_collate,
                               batch_size=64, train_ratio=None,
@@ -191,6 +193,51 @@ def collate_pool_matgl(dataset_list):
     batch_text_fea = torch.stack(batch_text_fea, dim=0) # (N0, text_dim)
 
     return (batch_graph, batch_state), batch_target, batch_cif_ids, batch_xrd_fea, batch_text_fea
+
+def collate_pool_alignn(dataset_list):
+    """
+    ALIGNN collate function.
+
+    Parameters
+    ----------
+    dataset_list : list
+        List of dataset items, where each item has the form
+        ((g, lg, lat), target, cif_id, space_group, xrd_fea, text_fea).
+        Here ``g`` and ``lg`` are DGLGraphs, ``lat`` is a lattice tensor,
+        ``target`` is the supervision target, ``cif_id`` is an identifier
+        for the structure, and ``xrd_fea`` / ``text_fea`` are feature tensors.
+
+    Returns
+    -------
+    tuple
+        A 5-tuple:
+
+        - (batch_g, batch_lg, batch_lat): batched graphs and lattice tensor, where
+          ``batch_g`` and ``batch_lg`` are obtained via :func:`dgl.batch` and
+          ``batch_lat`` is a tensor formed by stacking ``lat`` along dimension 0.
+        - batch_target: tensor of stacked targets.
+        - batch_cif_ids: list of CIF identifiers.
+        - batch_xrd_fea: tensor of stacked XRD feature vectors.
+        - batch_text_fea: tensor of stacked text feature vectors.
+    """
+    g_list, lg_list, lat_list = [], [], []
+    batch_target, batch_cif_ids = [], []
+    batch_xrd_fea, batch_text_fea = [], []
+
+    for ((g, lg, lat), target, cif_id, space_group, xrd_fea, text_fea) in dataset_list:
+        g_list.append(g)
+        lg_list.append(lg)
+        lat_list.append(lat)
+        batch_target.append(target)
+        batch_cif_ids.append(cif_id)
+        batch_xrd_fea.append(xrd_fea)
+        batch_text_fea.append(text_fea)
+
+    return (dgl.batch(g_list), dgl.batch(lg_list), torch.stack(lat_list, dim=0)), \
+           torch.stack(batch_target, dim=0), \
+           batch_cif_ids, \
+           torch.stack(batch_xrd_fea, dim=0), \
+           torch.stack(batch_text_fea, dim=0)
 
 class GaussianDistance(object):
     """
@@ -439,9 +486,14 @@ class CIFData(Dataset):
             graph.ndata["pos"] = graph.ndata["frac_coords"] @ lattice[0]
             state_feats = torch.tensor(state_feats_default)
             return (graph, state_feats), target, cif_id, space_group, xrd_fea, text_fea
-            
-        
-        
 
-
-        
+        elif self.graph_type in ("alignn"):
+            jarvis_atoms = pmg_to_atoms(crystal)
+            g, lg = Graph.atom_dgl_multigraph(
+                jarvis_atoms, 
+                cutoff=self.radius, 
+                max_neighbors=self.max_num_nbr,
+                compute_line_graph=True
+            )
+            lattice = torch.tensor(jarvis_atoms.lattice_mat).float()
+            return (g, lg, lattice), target, cif_id, space_group, xrd_fea, text_fea
