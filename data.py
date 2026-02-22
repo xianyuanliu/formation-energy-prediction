@@ -472,9 +472,3 @@ class CIFData(Dataset):
             )
             lattice = torch.tensor(jarvis_atoms.lattice_mat).float()
             return (g, lg, lattice), target, cif_id, space_group, xrd_fea, text_fea
-
-
-        
-
-
-        
