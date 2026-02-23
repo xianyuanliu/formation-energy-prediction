@@ -385,7 +385,7 @@ class CIFData(Dataset):
     target: torch.Tensor shape (1, )
     cif_id: str or int
     """
-    def __init__(self, root_dir, cif_path=None, csv_filename='1_MatDX_EF_modified.csv', max_num_nbr=12, radius=8, dmin=0, step=0.2, random_seed=123, graph_type="cgcnn", cutoff=6.0, element_types=None):
+    def __init__(self, root_dir, csv_filename, base_data_dir='data', cif_path=None, max_num_nbr=12, radius=8, dmin=0, step=0.2, random_seed=123, graph_type="cgcnn", cutoff=6.0, element_types=None,use_xrd=True, use_text=True):
         self.root_dir = root_dir
         self.cif_path = cif_path if cif_path else root_dir
         self.max_num_nbr, self.radius = max_num_nbr, radius
@@ -393,6 +393,8 @@ class CIFData(Dataset):
         # Support for multiple CSV files
         if isinstance(csv_filename, str):
             csv_filenames = [csv_filename]
+        elif csv_filename is None:
+            raise ValueError("csv_filename must be provided (e.g., 'id_prop.csv')")
         else:
             csv_filenames = csv_filename
 
@@ -407,16 +409,36 @@ class CIFData(Dataset):
 
         random.seed(random_seed)
         random.shuffle(self.id_prop_data)
-        atom_init_file = os.path.join(self.root_dir, '../atom_init.json')
-        assert os.path.exists(atom_init_file), 'atom_init.json does not exist!'
-        xrd_data_file = os.path.join(self.root_dir, '../XRD_data.csv')
-        text_data_file = os.path.join(self.root_dir, '../space_group_embeddings.csv')
-        assert os.path.exists(xrd_data_file), 'XRD_data.csv does not exist!'
-        assert os.path.exists(text_data_file), 'space_group_embeddings.csv does not exist!'
-        self.xrd_data = XRDDataset(csv_path=xrd_data_file)
+        atom_init_file = os.path.join(base_data_dir, 'atom_init.json')
+        xrd_data_file = os.path.join(base_data_dir, 'XRD_data.csv')
+        text_data_file = os.path.join(base_data_dir, 'space_group_embeddings.csv')
+        if not os.path.exists(atom_init_file):
+            raise FileNotFoundError(f"Missing essential file: {atom_init_file}")
         self.ari = AtomCustomJSONInitializer(atom_init_file)
+
+        self.use_xrd = use_xrd
+        if self.use_xrd:
+            if os.path.exists(xrd_data_file):
+                self.xrd_data = XRDDataset(csv_path=xrd_data_file)
+            else:
+                warnings.warn(f"XRD data not found at {xrd_data_file}. Disabling XRD features.")
+                self.use_xrd = False
+                self.xrd_data = None
+        else:
+            self.xrd_data = None
+
+        self.use_text = use_text
+        if self.use_text:
+            if os.path.exists(text_data_file):
+                self.text_data = TextEmbeddingDataset(csv_path=text_data_file)
+            else:
+                warnings.warn(f"Text data not found at {text_data_file}. Disabling text features.")
+                self.use_text = False
+                self.text_data = None
+        else:
+            self.text_data = None
+
         self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
-        self.text_data = TextEmbeddingDataset(csv_path=text_data_file)
         self.graph_type = graph_type
 
         # Strict column check
@@ -471,8 +493,14 @@ class CIFData(Dataset):
             raise KeyError(f"Required column missing while reading data item: {e}")
 
         target = torch.Tensor([float(target_val)])
-        xrd_fea = self.xrd_data[cif_id]
-        text_fea = self.text_data[space_group]          
+        if self.use_xrd:
+            xrd_fea = self.xrd_data[cif_id]
+        else:
+            xrd_fea = torch.zeros(128) 
+        if self.use_text:
+            text_fea = self.text_data[space_group]
+        else:
+            text_fea = torch.zeros(768)  
 
         crystal = Structure.from_file(os.path.join(self.cif_path, cif_id+'.cif'))
         if self.graph_type in ("cgcnn", "mpnn"):

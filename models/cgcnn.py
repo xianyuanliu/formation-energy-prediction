@@ -143,7 +143,7 @@ class MPNNLayer(nn.Module):
         x = torch.cat([src, nbr, nbr_fea], dim=-1)      # (N,M,2F+B)
         msg = self.mlp(x)      
                                  # (N,M,F)
-        # padding mask (최종 합산에서 제거)
+        # padding mask 
         mask = (nbr_fea_idx < 0).unsqueeze(-1)   # (N,M,1)
         msg = msg.masked_fill(mask, 0.0)
         msg = msg.sum(dim=1)                            # (N,F)

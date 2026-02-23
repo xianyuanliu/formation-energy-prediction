@@ -48,6 +48,7 @@ def arg_parse():
     parser = argparse.ArgumentParser(description='Crystal Graph Convolutional Neural Networks')
 
     # Basic parameters
+    parser.add_argument('--base_data_dir', default='data', help='path to common data files (atom_init, XRD, space_group_embeddings)')
     parser.add_argument('--data_path', default='data/split_both_hhi', help='path to csv files')
     parser.add_argument('--cif_path', default='data/cifs', help='path to cif files')
     parser.add_argument('--task', default='regression')
@@ -85,6 +86,8 @@ def arg_parse():
     test_group.add_argument('--test-ratio', default=0.1, type=float, metavar='N', help='percentage of test data to be loaded (default 0.1)')
     test_group.add_argument('--test-size', default=None, type=int, metavar='N', help='number of test data to be loaded (default 1000)')
 
+    parser.add_argument('--result_dir', default=None, type=str, help='Directory to save results. If None, no folder is created.')
+    parser.add_argument('--result_files', default=['checkpoint.pth.tar', 'model_best.pth.tar', 'test_results.csv'], nargs='+', help='List of files to move to result_dir')
     # model parameters
     parser.add_argument('--optim', default='SGD', type=str, metavar='SGD', help='choose an optimizer, SGD or Adam, (default: SGD)')
     parser.add_argument('--atom-fea-len', default=64, type=int, metavar='N', help='number of hidden atom features in conv layers')
@@ -114,8 +117,13 @@ def r2_score(pred, target):
 def main():
     global best_mae_error
     args = arg_parse()
-    out_dir = f"result_{args.wandb_group}_{args.wandb_name}"
-    os.makedirs(out_dir, exist_ok=True)
+
+    if args.result_dir:
+        out_dir = args.result_dir
+        os.makedirs(out_dir, exist_ok=True)
+    else:
+        out_dir = "."
+
     if args.use_wandb:
         wandb.init(
             project=args.wandb_project,
@@ -155,22 +163,24 @@ def main():
             train_files = args.train_file if args.train_file else []
             test_files = args.test_file if args.test_file else []
         print(f"=> Separate file mode: {args.train_file} (train) / {args.test_file} (test)")
-        # Load full training dataset
-        full_train_dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=train_files, graph_type=args.graph_type)
-        # Load test dataset
-        test_dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=test_files, graph_type=args.graph_type)
-        
-        element_types_union = sorted(set(full_train_dataset.element_types) | set(test_dataset.element_types))
-        print("[element_types_union size]", len(element_types_union))
-        
-        full_train_dataset = CIFData(args.data_path, cif_path=args.cif_path,
-                             csv_filename=train_files, graph_type=args.graph_type,
-                             element_types=element_types_union)
 
-        test_dataset = CIFData(args.data_path, cif_path=args.cif_path,
-                       csv_filename=test_files, graph_type=args.graph_type,
-                       element_types=element_types_union)
-        
+        data_kwargs = {
+            "root_dir": args.data_path,
+            "cif_path": args.cif_path,
+            "base_data_dir": args.base_data_dir,
+            "graph_type": args.graph_type,
+            "use_xrd": args.xrd,
+            "use_text": args.text
+        }
+
+        tmp_train = CIFData(csv_filename=train_files, **data_kwargs)
+        tmp_test = CIFData(csv_filename=test_files, **data_kwargs)
+        element_types_union = sorted(set(tmp_train.element_types) | set(tmp_test.element_types))
+        print(f"[Element Types Union Size] {len(element_types_union)}")
+
+        full_train_dataset = CIFData(csv_filename=train_files, element_types=element_types_union, **data_kwargs)
+        test_dataset = CIFData(csv_filename=test_files, element_types=element_types_union, **data_kwargs)
+
         g = torch.Generator()
         g.manual_seed(0)
         indices = torch.randperm(len(full_train_dataset), generator=g).tolist()
@@ -203,8 +213,8 @@ def main():
     else:
         # Mode B: Original behavior (Split single file by ratios)
         print("=> Combined file mode: Using file with ratio split")
-        dataset = CIFData(args.data_path, graph_type=args.graph_type)
-
+        target_csv = args.train_file[0] if (args.train_file and len(args.train_file) > 0) else 'id_prop.csv'
+        dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=target_csv, base_data_dir=args.base_data_dir, graph_type=args.graph_type, use_xrd=args.xrd, use_text=args.text)
         train_loader, val_loader, test_loader = get_train_val_test_loader(
             dataset=dataset,
             collate_fn=collate_fn,
@@ -410,7 +420,7 @@ def main():
     if args.use_wandb:
         wandb.run.summary["total_training_time_sec"] = total_duration
         wandb.run.summary["best_mae_error"] = best_mae_error
-        wandb.finish() # 프로세스 종료
+        wandb.finish() 
 
     print("\n" + "="*30)
     print(f"  Training Completed!")
@@ -437,23 +447,19 @@ def main():
     )
     
     
-    def collect_outputs(out_dir):
-        files = [
-            "checkpoint.pth.tar",
-            "model_best.pth.tar",
-            "test_results.csv",
-        ]
-        patterns = ["test.*.out", "test.*.err"]
-
-        for f in files:
-            if os.path.exists(f):
-                shutil.move(f, os.path.join(out_dir, f))
-
-        for pat in patterns:
-            for f in glob.glob(pat):
-                shutil.move(f, os.path.join(out_dir, os.path.basename(f)))
-
-    collect_outputs(out_dir)
+    def collect_outputs(target_dir, files_to_move):
+        if target_dir == "." or not target_dir:
+            return
+        for pattern in files_to_move:
+            for f in glob.glob(pattern):
+                if os.path.exists(f):
+                    dest = os.path.join(target_dir, os.path.basename(f))
+                    if os.path.abspath(f) != os.path.abspath(dest):
+                        try:
+                            shutil.move(f, dest)
+                        except Exception as e:
+                            print(f"[!] Warning: Could not move {f} to {target_dir}: {e}")
+    collect_outputs(out_dir, args.result_files)
 
 
 def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
