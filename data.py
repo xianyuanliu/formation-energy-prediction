@@ -143,8 +143,8 @@ def collate_pool(dataset_list):
         batch_nbr_fea.append(nbr_fea)
         
         idx = nbr_fea_idx.clone()  # (n_i, M)
-        mask = idx >= 0            # 실제 이웃만 True, padding(-1)은 False
-        idx[mask] += base_idx      # padding은 그대로 -1 유지
+        mask = idx >= 0           
+        idx[mask] += base_idx     
         batch_nbr_fea_idx.append(idx)
         
         new_idx = torch.LongTensor(np.arange(n_i)+base_idx)
