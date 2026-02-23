@@ -42,6 +42,15 @@ import shutil, glob
 
 import warnings
 warnings.filterwarnings("ignore", message=".*fractional coordinates rounded.*")
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def arg_parse():
     """Parsing arguments"""
@@ -52,8 +61,8 @@ def arg_parse():
     parser.add_argument('--data_path', default='data/split_both_hhi', help='path to csv files')
     parser.add_argument('--cif_path', default='data/cifs', help='path to cif files')
     parser.add_argument('--task', default='regression')
-    parser.add_argument('--xrd', default=True, help='use xrd features')
-    parser.add_argument('--text', default=True, help='use text features')
+    parser.add_argument('--xrd', default=True, type=str2bool, help='use xrd features')
+    parser.add_argument('--text', default=True, type=str2bool, help='use text features')
     parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
     parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', help='number of data loading workers (default: 0)')
     parser.add_argument('--epochs', default=30, type=int, metavar='N', help='number of total epochs to run (default: 30)')
