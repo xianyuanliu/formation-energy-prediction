@@ -195,6 +195,31 @@ def collate_pool_matgl(dataset_list):
     return (batch_graph, batch_state), batch_target, batch_cif_ids, batch_xrd_fea, batch_text_fea
 
 def collate_pool_alignn(dataset_list):
+    """
+    ALIGNN collate function.
+
+    Parameters
+    ----------
+    dataset_list : list
+        List of dataset items, where each item has the form
+        ((g, lg, lat), target, cif_id, space_group, xrd_fea, text_fea).
+        Here ``g`` and ``lg`` are DGLGraphs, ``lat`` is a lattice tensor,
+        ``target`` is the supervision target, ``cif_id`` is an identifier
+        for the structure, and ``xrd_fea`` / ``text_fea`` are feature tensors.
+
+    Returns
+    -------
+    tuple
+        A 5-tuple:
+
+        - (batch_g, batch_lg, batch_lat): batched graphs and lattice tensor, where
+          ``batch_g`` and ``batch_lg`` are obtained via :func:`dgl.batch` and
+          ``batch_lat`` is a tensor formed by stacking ``lat`` along dimension 0.
+        - batch_target: tensor of stacked targets.
+        - batch_cif_ids: list of CIF identifiers.
+        - batch_xrd_fea: tensor of stacked XRD feature vectors.
+        - batch_text_fea: tensor of stacked text feature vectors.
+    """
     g_list, lg_list, lat_list = [], [], []
     batch_target, batch_cif_ids = [], []
     batch_xrd_fea, batch_text_fea = [], []
@@ -364,13 +389,22 @@ class CIFData(Dataset):
         self.root_dir = root_dir
         self.cif_path = cif_path if cif_path else root_dir
         self.max_num_nbr, self.radius = max_num_nbr, radius
-        id_prop_file = os.path.join(self.root_dir, csv_filename)
-        if not os.path.exists(id_prop_file):
-            raise FileNotFoundError(f"{id_prop_file} does not exist!")
-        with open(id_prop_file) as f:
-            reader = csv.reader(f)
-            next(reader)
-            self.id_prop_data = [row for row in reader]
+
+        # Support for multiple CSV files
+        if isinstance(csv_filename, str):
+            csv_filenames = [csv_filename]
+        else:
+            csv_filenames = csv_filename
+
+        self.id_prop_data = []
+        for fname in csv_filenames:
+            id_prop_file = os.path.join(self.root_dir, fname)
+            if not os.path.exists(id_prop_file):
+                raise FileNotFoundError(f"{id_prop_file} does not exist!")
+            with open(id_prop_file) as f:
+                reader = csv.DictReader(f)
+                self.id_prop_data.extend([row for row in reader])
+
         random.seed(random_seed)
         random.shuffle(self.id_prop_data)
         atom_init_file = os.path.join(self.root_dir, '../atom_init.json')
@@ -385,9 +419,17 @@ class CIFData(Dataset):
         self.text_data = TextEmbeddingDataset(csv_path=text_data_file)
         self.graph_type = graph_type
 
+        # Strict column check
+        if self.id_prop_data:
+            required_cols = ['file_name', 'value_per_atom', 'space_group']
+            first_row_keys = self.id_prop_data[0].keys()
+            for col in required_cols:
+                if col not in first_row_keys:
+                    raise KeyError(f"Required column '{col}' is missing from the CSV file. (Current columns: {list(first_row_keys)})")
+
         element_set = set()
         for row in self.id_prop_data:
-            cif_id = row[0]
+            cif_id = row['file_name']
             s = Structure.from_file(os.path.join(self.cif_path, cif_id + ".cif"))
             for site in s:
                 element_set.add(site.specie.symbol)
@@ -395,7 +437,7 @@ class CIFData(Dataset):
         if element_types is None:
             element_set = set()
             for row in self.id_prop_data:
-                cif_id = row[0]
+                cif_id = row['file_name']
                 s = Structure.from_file(os.path.join(self.cif_path, cif_id + ".cif"))
                 for site in s:
                     element_set.add(site.specie.symbol)
@@ -418,12 +460,17 @@ class CIFData(Dataset):
 
     @functools.lru_cache(maxsize=None)  # Cache loaded structures
     def __getitem__(self, idx):
-        # cif_id, target = self.id_prop_data[idx]
         row  = self.id_prop_data[idx] 
-        cif_id = row[0] #file_name
-        space_group = row[2]
-        target = row[3]
-        target = torch.Tensor([float(target)])
+        
+        # Strict column access with English error messages
+        try:
+            cif_id = row['file_name']
+            space_group = row['space_group']
+            target_val = row['value_per_atom']
+        except KeyError as e:
+            raise KeyError(f"Required column missing while reading data item: {e}")
+
+        target = torch.Tensor([float(target_val)])
         xrd_fea = self.xrd_data[cif_id]
         text_fea = self.text_data[space_group]          
 
@@ -472,9 +519,3 @@ class CIFData(Dataset):
             )
             lattice = torch.tensor(jarvis_atoms.lattice_mat).float()
             return (g, lg, lattice), target, cif_id, space_group, xrd_fea, text_fea
-
-
-        
-
-
-        

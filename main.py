@@ -64,8 +64,8 @@ def arg_parse():
     parser.add_argument('--weight-decay', '--wd', default=0, type=float, metavar='W', help='weight decay (default: 0)')
     parser.add_argument('--print-freq', '-p', default=10, type=int, metavar='N', help='print frequency (default: 10)')
     parser.add_argument('--resume', default='', type=str, metavar='PATH', help='path to latest checkpoint (default: none)')
-    parser.add_argument('--train_file', default=None, help='train csv file name in data_path')
-    parser.add_argument('--test_file', default=None, help='test csv file name in data_path')
+    parser.add_argument('--train_file', default=None, nargs='+', help='train csv file name(s) in data_path')
+    parser.add_argument('--test_file', default=None, nargs='+', help='test csv file name(s) in data_path')
     # WandB parameters
     parser.add_argument('--use_wandb', action='store_true', help='Use WandB for logging')
     parser.add_argument('--wandb_project', default='formatin-energy-preiction-project', type=str, help='WandB project name')
@@ -92,7 +92,7 @@ def arg_parse():
     parser.add_argument('--n-conv', default=3, type=int, metavar='N', help='number of conv layers')
     parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
-    parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (cgcnn or mpnn)')
+    parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network')
     args = parser.parse_args(sys.argv[1:])
     return args
 
@@ -142,24 +142,33 @@ def main():
         collate_fn = collate_pool_alignn
 
     # Data loader generation (Conditional branching)
-    if args.train_file and args.test_file:
+    if args.train_file or args.test_file:
         # Mode A: Use separate files for training and testing
+        if args.test_file and not args.train_file:
+            all_csvs = [f for f in os.listdir(args.data_path) if f.endswith('.csv')]
+            train_files = [f for f in all_csvs if f not in args.test_file]
+            aux_files = ['XRD_data.csv', 'space_group_embeddings.csv', 'id_prop.csv']
+            train_files = [f for f in train_files if f not in aux_files]
+            test_files = args.test_file
+            print(f"=> Auto-detected train files: {train_files}")
+        else:
+            train_files = args.train_file if args.train_file else []
+            test_files = args.test_file if args.test_file else []
         print(f"=> Separate file mode: {args.train_file} (train) / {args.test_file} (test)")
-        
         # Load full training dataset
-        full_train_dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=args.train_file, graph_type=args.graph_type)
+        full_train_dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=train_files, graph_type=args.graph_type)
         # Load test dataset
-        test_dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=args.test_file, graph_type=args.graph_type)
+        test_dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=test_files, graph_type=args.graph_type)
         
         element_types_union = sorted(set(full_train_dataset.element_types) | set(test_dataset.element_types))
         print("[element_types_union size]", len(element_types_union))
         
         full_train_dataset = CIFData(args.data_path, cif_path=args.cif_path,
-                             csv_filename=args.train_file, graph_type=args.graph_type,
+                             csv_filename=train_files, graph_type=args.graph_type,
                              element_types=element_types_union)
 
         test_dataset = CIFData(args.data_path, cif_path=args.cif_path,
-                       csv_filename=args.test_file, graph_type=args.graph_type,
+                       csv_filename=test_files, graph_type=args.graph_type,
                        element_types=element_types_union)
         
         g = torch.Generator()
@@ -193,7 +202,7 @@ def main():
 
     else:
         # Mode B: Original behavior (Split single file by ratios)
-        print("=> Combined file mode: Using 1_MatDX_EF_modified.csv with ratio split")
+        print("=> Combined file mode: Using file with ratio split")
         dataset = CIFData(args.data_path, graph_type=args.graph_type)
 
         train_loader, val_loader, test_loader = get_train_val_test_loader(
@@ -255,13 +264,17 @@ def main():
 
     elif args.graph_type in ("alignn"):
         model = AlignnGraphConvNet(
-            element_types=dataset.element_types,
             atom_fea_len=92,    # JARVIS default value example
             edge_fea_len=80,    # JARVIS default value example
+            triplet_fea_len=40,
             h_fea_len=args.h_fea_len,
+            n_h=args.n_h,
             xrd=args.xrd,
             text=args.text
         )
+    else:
+        raise ValueError(f"Unknown graph_type: {args.graph_type}")
+        
     if args.cuda:
         model.cuda()
 
@@ -510,7 +523,9 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
             graph_state, xrd_in, text_in = input_var
             out, emb = model(graph_state, xrd_in, text_in)
         elif args.graph_type in ("alignn"):
-            out, emb = model(*input_var)
+            # input_var = (batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
+            batch_g, batch_lg, batch_lat, xrd_in, text_in = input_var
+            out, emb = model(batch_g, batch_lg, batch_lat, xrd_in, text_in)
 
         loss = criterion(out, target_var)
 
@@ -787,35 +802,4 @@ def make_ood_umap_figure(train_emb, test_emb, y_true_test, y_pred_test, out_png,
         "in_mask": in_mask, "out_mask": out_mask,
         "train_2d": train_2d, "test_2d": test_2d,
     }
-
-
-     
-
-if __name__ == '__main__':
-    # --- Configuration for testing/running the script ---
-    
-    # Mode A: Individual File Mode
-    # Use this if you have physically separated train.csv and test.csv files.
-    # Validation data will be automatically split from the train.csv based on --val-ratio.
-    sys.argv += [
-        '--graph_type', 'alignn', 
-        '--data_path', 'data/split_structural_complexity',
-        '--train_file', 'train.csv', 
-        '--test_file', 'test.csv',
-        '--use_wandb',
-        '--wandb_group', 'test', 
-        '--wandb_name', 'structural_complexity',
-        '--optim', 'Adam',    
-        '--epochs', '100',
-        '--lr', '0.001'
-    ]
-    
-    # Mode B: Combined File Mode (Original Behavior)
-    # Use this to load the default '1_MatDX_EF_modified.csv' and split it by ratios.
-    # To use this mode, comment out Mode 1 above and uncomment the line below.
-    #sys.argv += [
-    #    '--graph_type', 'chgnet'] 
-    #    ]
-   
-    main()
 
