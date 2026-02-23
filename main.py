@@ -3,7 +3,7 @@ sys.modules.setdefault("dgl.graphbolt", types.ModuleType("dgl.graphbolt"))
 
 # ---- torchdata.datapipes compatibility shim (must be before importing dgl) ----
 import sys, types
-from torch.utils.data.datapipes.datapipe import IterDataPipe  # ✅ correct location for your torch
+from torch.utils.data.datapipes.datapipe import IterDataPipe  
 
 pkg = types.ModuleType("torchdata.datapipes")
 pkg.__path__ = []  # mark as package-like
