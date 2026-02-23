@@ -97,7 +97,7 @@ class ConvLayer(nn.Module):
         nbr_mask_f = nbr_mask.unsqueeze(-1).type_as(atom_in_fea)  # (N, M, 1) float
         
         safe_idx = nbr_fea_idx.clone()
-        safe_idx[~nbr_mask] = 0                        # padding 위치만 0으로
+        safe_idx[~nbr_mask] = 0                       
         atom_nbr_fea = atom_in_fea[safe_idx, :]        # (N, M, atom_fea_len)
 
         # convolution
