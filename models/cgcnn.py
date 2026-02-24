@@ -97,7 +97,7 @@ class ConvLayer(nn.Module):
         nbr_mask_f = nbr_mask.unsqueeze(-1).type_as(atom_in_fea)  # (N, M, 1) float
         
         safe_idx = nbr_fea_idx.clone()
-        safe_idx[~nbr_mask] = 0                        # padding 위치만 0으로
+        safe_idx[~nbr_mask] = 0                       
         atom_nbr_fea = atom_in_fea[safe_idx, :]        # (N, M, atom_fea_len)
 
         # convolution
@@ -143,7 +143,7 @@ class MPNNLayer(nn.Module):
         x = torch.cat([src, nbr, nbr_fea], dim=-1)      # (N,M,2F+B)
         msg = self.mlp(x)      
                                  # (N,M,F)
-        # padding mask (최종 합산에서 제거)
+        # padding mask 
         mask = (nbr_fea_idx < 0).unsqueeze(-1)   # (N,M,1)
         msg = msg.masked_fill(mask, 0.0)
         msg = msg.sum(dim=1)                            # (N,F)

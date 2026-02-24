@@ -143,8 +143,8 @@ def collate_pool(dataset_list):
         batch_nbr_fea.append(nbr_fea)
         
         idx = nbr_fea_idx.clone()  # (n_i, M)
-        mask = idx >= 0            # 실제 이웃만 True, padding(-1)은 False
-        idx[mask] += base_idx      # padding은 그대로 -1 유지
+        mask = idx >= 0           
+        idx[mask] += base_idx     
         batch_nbr_fea_idx.append(idx)
         
         new_idx = torch.LongTensor(np.arange(n_i)+base_idx)
@@ -385,34 +385,73 @@ class CIFData(Dataset):
     target: torch.Tensor shape (1, )
     cif_id: str or int
     """
-    def __init__(self, root_dir, cif_path=None, csv_filename='1_MatDX_EF_modified.csv', max_num_nbr=12, radius=8, dmin=0, step=0.2, random_seed=123, graph_type="cgcnn", cutoff=6.0, element_types=None):
+    def __init__(self, root_dir, csv_filename, base_data_dir='data', cif_path=None, max_num_nbr=12, radius=8, dmin=0, step=0.2, random_seed=123, graph_type="cgcnn", cutoff=6.0, element_types=None,use_xrd=True, use_text=True):
         self.root_dir = root_dir
         self.cif_path = cif_path if cif_path else root_dir
         self.max_num_nbr, self.radius = max_num_nbr, radius
-        id_prop_file = os.path.join(self.root_dir, csv_filename)
-        if not os.path.exists(id_prop_file):
-            raise FileNotFoundError(f"{id_prop_file} does not exist!")
-        with open(id_prop_file) as f:
-            reader = csv.reader(f)
-            next(reader)
-            self.id_prop_data = [row for row in reader]
+
+        # Support for multiple CSV files
+        if isinstance(csv_filename, str):
+            csv_filenames = [csv_filename]
+        elif csv_filename is None:
+            raise ValueError("csv_filename must be provided (e.g., 'id_prop.csv')")
+        else:
+            csv_filenames = csv_filename
+
+        self.id_prop_data = []
+        for fname in csv_filenames:
+            id_prop_file = os.path.join(self.root_dir, fname)
+            if not os.path.exists(id_prop_file):
+                raise FileNotFoundError(f"{id_prop_file} does not exist!")
+            with open(id_prop_file) as f:
+                reader = csv.DictReader(f)
+                self.id_prop_data.extend([row for row in reader])
+
         random.seed(random_seed)
         random.shuffle(self.id_prop_data)
-        atom_init_file = os.path.join(self.root_dir, '../atom_init.json')
-        assert os.path.exists(atom_init_file), 'atom_init.json does not exist!'
-        xrd_data_file = os.path.join(self.root_dir, '../XRD_data.csv')
-        text_data_file = os.path.join(self.root_dir, '../space_group_embeddings.csv')
-        assert os.path.exists(xrd_data_file), 'XRD_data.csv does not exist!'
-        assert os.path.exists(text_data_file), 'space_group_embeddings.csv does not exist!'
-        self.xrd_data = XRDDataset(csv_path=xrd_data_file)
+        atom_init_file = os.path.join(base_data_dir, 'atom_init.json')
+        xrd_data_file = os.path.join(base_data_dir, 'XRD_data.csv')
+        text_data_file = os.path.join(base_data_dir, 'space_group_embeddings.csv')
+        if not os.path.exists(atom_init_file):
+            raise FileNotFoundError(f"Missing essential file: {atom_init_file}")
         self.ari = AtomCustomJSONInitializer(atom_init_file)
+
+        self.use_xrd = use_xrd
+        if self.use_xrd:
+            if os.path.exists(xrd_data_file):
+                self.xrd_data = XRDDataset(csv_path=xrd_data_file)
+            else:
+                warnings.warn(f"XRD data not found at {xrd_data_file}. Disabling XRD features.")
+                self.use_xrd = False
+                self.xrd_data = None
+        else:
+            self.xrd_data = None
+
+        self.use_text = use_text
+        if self.use_text:
+            if os.path.exists(text_data_file):
+                self.text_data = TextEmbeddingDataset(csv_path=text_data_file)
+            else:
+                warnings.warn(f"Text data not found at {text_data_file}. Disabling text features.")
+                self.use_text = False
+                self.text_data = None
+        else:
+            self.text_data = None
+
         self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
-        self.text_data = TextEmbeddingDataset(csv_path=text_data_file)
         self.graph_type = graph_type
+
+        # Strict column check
+        if self.id_prop_data:
+            required_cols = ['file_name', 'value_per_atom', 'space_group']
+            first_row_keys = self.id_prop_data[0].keys()
+            for col in required_cols:
+                if col not in first_row_keys:
+                    raise KeyError(f"Required column '{col}' is missing from the CSV file. (Current columns: {list(first_row_keys)})")
 
         element_set = set()
         for row in self.id_prop_data:
-            cif_id = row[0]
+            cif_id = row['file_name']
             s = Structure.from_file(os.path.join(self.cif_path, cif_id + ".cif"))
             for site in s:
                 element_set.add(site.specie.symbol)
@@ -420,7 +459,7 @@ class CIFData(Dataset):
         if element_types is None:
             element_set = set()
             for row in self.id_prop_data:
-                cif_id = row[0]
+                cif_id = row['file_name']
                 s = Structure.from_file(os.path.join(self.cif_path, cif_id + ".cif"))
                 for site in s:
                     element_set.add(site.specie.symbol)
@@ -443,14 +482,25 @@ class CIFData(Dataset):
 
     @functools.lru_cache(maxsize=None)  # Cache loaded structures
     def __getitem__(self, idx):
-        # cif_id, target = self.id_prop_data[idx]
         row  = self.id_prop_data[idx] 
-        cif_id = row[0] #file_name
-        space_group = row[2]
-        target = row[3]
-        target = torch.Tensor([float(target)])
-        xrd_fea = self.xrd_data[cif_id]
-        text_fea = self.text_data[space_group]          
+        
+        # Strict column access with English error messages
+        try:
+            cif_id = row['file_name']
+            space_group = row['space_group']
+            target_val = row['value_per_atom']
+        except KeyError as e:
+            raise KeyError(f"Required column missing while reading data item: {e}")
+
+        target = torch.Tensor([float(target_val)])
+        if self.use_xrd:
+            xrd_fea = self.xrd_data[cif_id]
+        else:
+            xrd_fea = torch.zeros(128) 
+        if self.use_text:
+            text_fea = self.text_data[space_group]
+        else:
+            text_fea = torch.zeros(768)  
 
         crystal = Structure.from_file(os.path.join(self.cif_path, cif_id+'.cif'))
         if self.graph_type in ("cgcnn", "mpnn"):
