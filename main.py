@@ -78,7 +78,7 @@ def arg_parse():
     parser.add_argument('--test_file', default=None, nargs='+', help='test csv file name(s) in data_path')
     # WandB parameters
     parser.add_argument('--use_wandb', action='store_true', help='Use WandB for logging')
-    parser.add_argument('--wandb_project', default='formation-energy-prediction-project', type=str, help='WandB project name')
+    parser.add_argument('--wandb_project', default='formation-energy-krict', type=str, help='WandB project name')
     parser.add_argument('--wandb_group', default='baseline', type=str, help='WandB group name')
     parser.add_argument('--wandb_name', default=None, type=str, help='WandB run name (None = auto-generated)')
     parser.add_argument('--online_mode', default=False, type=str2bool, help='Use WandB online mode for web monitoring (default: False)')
