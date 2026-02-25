@@ -1,16 +1,34 @@
-matminer==0.9.3
-sentence_transformers==5.1.0
+--index-url https://download.pytorch.org/whl/cu121
+--extra-index-url https://pypi.org/simple
+--find-links https://data.dgl.ai/wheels/cu118/repo.html
 
-pandas                       # fixed version remove
-matplotlib                   # fixed version remove
-scikit_learn                 # fixed version remove
-tqdm                         # fixed version remove
+# Immutable Constraints (alignn requires these)
+torch==2.2.1+cu121
+torchvision==0.17.1+cu121
+torchaudio==2.2.1+cu121
+dgl==1.1.1+cu118
 
-pymatgen                     # fixed version remove
-ase
-matgl==1.3.0
-chgnet==0.4.2
+# Models & Physics (Loose constraints to let pip solve conflicts)
+alignn==2025.4.1
+jarvis-tools>=2024.10.30
+matgl>=1.3.0
+matminer>=0.9.0
+sentence-transformers>=3.0.0
+pymatgen>=2024.11.13
+ase>=3.23.0
 
+# Dependencies (Let pip find the common ground)
+numpy<2.0.0
+scipy>=1.13.0
+spglib>=2.5.0
+networkx>=3.0
+umap-learn
+
+# Utils
+pandas
+matplotlib
+scikit-learn
+tqdm
 monty
 ruamel.yaml
 pydantic

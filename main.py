@@ -164,7 +164,7 @@ def main():
         if args.test_file and not args.train_file:
             all_csvs = [f for f in os.listdir(args.data_path) if f.endswith('.csv')]
             train_files = [f for f in all_csvs if f not in args.test_file]
-            aux_files = ['XRD_data.csv', 'space_group_embeddings.csv', 'id_prop.csv']
+            aux_files = ['XRD_data.csv', 'space_group_embeddings.csv']
             train_files = [f for f in train_files if f not in aux_files]
             test_files = args.test_file
             print(f"=> Auto-detected train files: {train_files}")
@@ -220,10 +220,15 @@ def main():
         dataset = full_train_dataset
 
     else:
-        # Mode B: Original behavior (Split single file by ratios)
-        print("=> Combined file mode: Using file with ratio split")
-        target_csv = args.train_file[0] if (args.train_file and len(args.train_file) > 0) else 'id_prop.csv'
-        dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=target_csv, base_data_dir=args.base_data_dir, graph_type=args.graph_type, use_xrd=args.xrd, use_text=args.text)
+        # Mode B: Single file mode with ratio split
+        print("=> Ratio split mode: Splitting one file into train/val/test")
+        # In this mode, we need at least one file. 
+        # Since id_prop.csv is gone, we check args.train_file or raise error.
+        if not args.train_file:
+             raise ValueError("Please provide a CSV file (e.g., --train_file my_data.csv) to split by ratio.")
+        
+        target_csv = args.train_file[0]
+        dataset = CIFData(args.data_path, csv_filename=target_csv, base_data_dir=args.base_data_dir, graph_type=args.graph_type, use_xrd=args.xrd, use_text=args.text)
         train_loader, val_loader, test_loader = get_train_val_test_loader(
             dataset=dataset,
             collate_fn=collate_fn,
