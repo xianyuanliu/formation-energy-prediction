@@ -78,9 +78,10 @@ def arg_parse():
     parser.add_argument('--test_file', default=None, nargs='+', help='test csv file name(s) in data_path')
     # WandB parameters
     parser.add_argument('--use_wandb', action='store_true', help='Use WandB for logging')
-    parser.add_argument('--wandb_project', default='formatin-energy-preiction-project', type=str, help='WandB project name')
+    parser.add_argument('--wandb_project', default='formation-energy-krict', type=str, help='WandB project name')
     parser.add_argument('--wandb_group', default='baseline', type=str, help='WandB group name')
     parser.add_argument('--wandb_name', default=None, type=str, help='WandB run name (None = auto-generated)')
+    parser.add_argument('--online_mode', default=False, type=str2bool, help='Use WandB online mode for web monitoring (default: False)')
 
     # Data split
     train_group = parser.add_mutually_exclusive_group()
@@ -139,7 +140,7 @@ def main():
             group=args.wandb_group,
             name=args.wandb_name,
             config=vars(args),
-            mode="offline",
+            mode="online" if args.online_mode else "offline",
             settings=wandb.Settings(console="off")
         )
         wandb.define_metric("epoch")
@@ -818,3 +819,6 @@ def make_ood_umap_figure(train_emb, test_emb, y_true_test, y_pred_test, out_png,
         "train_2d": train_2d, "test_2d": test_2d,
     }
 
+
+if __name__ == "__main__":
+    main()
