@@ -4,29 +4,18 @@
 This repository predicts formation energy using a multimodal model built on a crystal graph (CIF structure) plus optional XRD features and space-group text embeddings. It was developed for the [KRICT Hackathon 2025](https://gitlab.chemdx.org/global-network/2025-krict-chemdx-hackathon/-/wikis/home).
 
 ## Environment Setup
-1. Install PyTorch with CUDA support:
 
-```bash
-pip install torch==2.4.0+cu121 torchvision==0.19.0+cu121 torchaudio==2.4.0+cu121 --index-url https://download.pytorch.org/whl/cu121
-```
+> **Important**: This repository is optimized for **PyTorch 2.2.1** and **DGL 1.1.1** to ensure full compatibility with `alignn` and other GNN models.
 
-2. Install torchdata (required by matgl):
-
-```bash
-pip install torchdata==0.8.0
-```
-
-3. Install DGL with CUDA support:
-
-```bash
-pip install dgl -f https://data.dgl.ai/wheels/cu121/repo.html
-```
-
-4. Install remaining dependencies:
+1. Install all dependencies with a single command:
 
 ```bash
 pip install -r requirements.txt
 ```
+
+By installing everything from `requirements.txt` at once, `pip`'s dependency resolver ensures all versions (including CUDA-enabled PyTorch and DGL) are compatible without manual intervention.
+
+> **Caution**: If you encounter a situation where `alignn` installation attempts to downgrade `torch` or `dgl`, ensure you are using the latest version of `pip` (`pip install --upgrade pip`) and try installing with the pinned `requirements.txt`.
 
 ## Repository Layout
 - `main.py`: training + validation + test evaluation entrypoint.
