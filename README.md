@@ -92,6 +92,8 @@ You can choose from several Graph Neural Network architectures via the `--graph_
 - `mpnn`: Message Passing Neural Network
 - `chgnet`: Crystalline Hamiltonian Graph Network (via MatGL)
 - `m3gnet`: Materials 3-body Graph Network (via MatGL)
+- `tensornet`: TensorNet (via MatGL)
+- `qet`: Quantum Electrostatic Transformer (via MatGL)
 - `alignn`: Atomistic Line Graph Neural Network (via ALIGNN)
 
 Example:
