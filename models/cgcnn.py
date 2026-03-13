@@ -2,6 +2,7 @@ from __future__ import print_function, division, annotations
 
 import torch
 import torch.nn as nn
+import dgl
 from models.sg_text_module import TextFeatureExtractor
 from models.xrd_module import XRDFeatureExtractor
 
@@ -12,34 +13,101 @@ import warnings
 
 import logging
 from typing import TYPE_CHECKING, Literal
-from dgl import readout_edges, readout_nodes
-from matgl.config import DEFAULT_ELEMENTS
-from matgl.graph.compute import (
-    compute_pair_vector_and_distance,
-    compute_theta,
-    create_line_graph,
-    ensure_line_graph_compatibility,
-)
-from matgl.layers import (
-    ActivationFunction,
-    CHGNetAtomGraphBlock,
-    CHGNetBondGraphBlock,
-    FourierExpansion,
-    GatedMLP_norm,
-    MLP_norm,
-    RadialBesselFunction,
-)
-from matgl.utils.cutoff import polynomial_cutoff
-from matgl.models._core import MatGLModel
 
-if TYPE_CHECKING:
-    from collections.abc import Sequence
-    import dgl
-    from matgl.graph.converters import GraphConverter
-#for M3GNet    
-from matgl.models._m3gnet import M3GNet
-#for ALIGNN    
-from alignn.models.alignn import ALIGNN, ALIGNNConfig
+# Conditional Imports for Environment Separation
+try:
+    import os
+    os.environ["MATGL_BACKEND"] = "dgl"
+    import matgl
+    # Force DGL backend for MatGL 2.0.0 compatibility with the existing pipeline
+    # matgl.set_backend("dgl") # REMOVED: Use env var instead
+    
+    from matgl.config import DEFAULT_ELEMENTS
+    try:
+        # MatGL 2.0.6 DGL Specific path
+        from matgl.graph._compute_dgl import (
+            compute_pair_vector_and_distance,
+            compute_theta,
+            create_line_graph,
+            ensure_line_graph_compatibility,
+        )
+    except ImportError:
+        # Fallback for older versions
+        from matgl.graph.compute import (
+            compute_pair_vector_and_distance,
+            compute_theta,
+            create_line_graph,
+            ensure_line_graph_compatibility,
+        )
+    from dgl import readout_nodes, readout_edges
+    from matgl.layers import (
+        ActivationFunction,
+        CHGNetAtomGraphBlock,
+        CHGNetBondGraphBlock,
+        FourierExpansion,
+        GatedMLPNorm,
+        MLPNorm,
+        RadialBesselFunction,
+    )
+    from matgl.utils.cutoff import polynomial_cutoff
+    from matgl.models._core import MatGLModel
+    from matgl.models._m3gnet import M3GNet
+    from matgl.models import TensorNet
+    # In MatGL 2.0.6 DGL, QET is not exported in matgl.models top-level
+    try:
+        from matgl.models._qet_dgl import QET
+    except ImportError:
+        from matgl.models import QET
+    HAS_MATGL = True
+except Exception as e:
+    print(f"[!] Critical: MatGL initialization failed in models/cgcnn.py: {e}")
+    import traceback
+    traceback.print_exc()
+    HAS_MATGL = False
+    DEFAULT_ELEMENTS = None
+
+try:
+    from alignn.models.alignn import ALIGNN, ALIGNNConfig
+    HAS_ALIGNN = True
+except ImportError:
+    HAS_ALIGNN = False
+
+class MPNNLayer(nn.Module):
+    def __init__(self, atom_fea_len, nbr_fea_len, hidden=128, use_bn=True):
+        super().__init__()
+        self.atom_fea_len = atom_fea_len
+        self.nbr_fea_len = nbr_fea_len
+        self.mlp = nn.Sequential(
+            nn.Linear(2*atom_fea_len + nbr_fea_len, hidden),
+            nn.Softplus(),
+            nn.Linear(hidden, atom_fea_len)
+        )
+        self.use_bn = use_bn
+        if use_bn:
+            self.bn = nn.BatchNorm1d(atom_fea_len)
+        self.act = nn.Softplus()
+
+    def forward(self, atom_in_fea, nbr_fea, nbr_fea_idx):
+        N, M = nbr_fea_idx.shape
+        F = atom_in_fea.size(1)
+
+        src = atom_in_fea.unsqueeze(1).expand(N, M, F)  # (N,M,F)
+        idx = nbr_fea_idx.clamp(min=0)
+        nbr = atom_in_fea[idx, :]
+                      # (N,M,F)
+        x = torch.cat([src, nbr, nbr_fea], dim=-1)      # (N,M,2F+B)
+        msg = self.mlp(x)      
+                                 # (N,M,F)
+        # padding mask 
+        mask = (nbr_fea_idx < 0).unsqueeze(-1)   # (N,M,1)
+        msg = msg.masked_fill(mask, 0.0)
+        msg = msg.sum(dim=1)                            # (N,F)
+
+        out = atom_in_fea + msg                         # residual
+        if self.use_bn:
+            out = self.bn(out)
+        out = self.act(out)
+        return out
 
 class ConvLayer(nn.Module):
     """
@@ -115,43 +183,6 @@ class ConvLayer(nn.Module):
         nbr_sumed = torch.sum(nbr_message, dim=1)
         nbr_sumed = self.bn2(nbr_sumed)
         out = self.softplus2(atom_in_fea + nbr_sumed)
-        return out
-
-class MPNNLayer(nn.Module):
-    def __init__(self, atom_fea_len, nbr_fea_len, hidden=128, use_bn=True):
-        super().__init__()
-        self.atom_fea_len = atom_fea_len
-        self.nbr_fea_len = nbr_fea_len
-        self.mlp = nn.Sequential(
-            nn.Linear(2*atom_fea_len + nbr_fea_len, hidden),
-            nn.Softplus(),
-            nn.Linear(hidden, atom_fea_len)
-        )
-        self.use_bn = use_bn
-        if use_bn:
-            self.bn = nn.BatchNorm1d(atom_fea_len)
-        self.act = nn.Softplus()
-
-    def forward(self, atom_in_fea, nbr_fea, nbr_fea_idx):
-        N, M = nbr_fea_idx.shape
-        F = atom_in_fea.size(1)
-
-        src = atom_in_fea.unsqueeze(1).expand(N, M, F)  # (N,M,F)
-        idx = nbr_fea_idx.clamp(min=0)
-        nbr = atom_in_fea[idx, :]
-                      # (N,M,F)
-        x = torch.cat([src, nbr, nbr_fea], dim=-1)      # (N,M,2F+B)
-        msg = self.mlp(x)      
-                                 # (N,M,F)
-        # padding mask 
-        mask = (nbr_fea_idx < 0).unsqueeze(-1)   # (N,M,1)
-        msg = msg.masked_fill(mask, 0.0)
-        msg = msg.sum(dim=1)                            # (N,F)
-
-        out = atom_in_fea + msg                         # residual
-        if self.use_bn:
-            out = self.bn(out)
-        out = self.act(out)
         return out
 
 class CrystalGraphConvNet(nn.Module):
@@ -283,7 +314,11 @@ class CrystalGraphConvNet(nn.Module):
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_ELEMENTS = (*list(DEFAULT_ELEMENTS[:83]), "Po", "At", "Rn", "Fr", "Ra", *list(DEFAULT_ELEMENTS[83:]))
+if DEFAULT_ELEMENTS is None:
+    # Fallback to a common list if matgl is not installed
+    DEFAULT_ELEMENTS = ("H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne") # ... truncated for brevity or use full list
+else:
+    DEFAULT_ELEMENTS = (*list(DEFAULT_ELEMENTS[:83]), "Po", "At", "Rn", "Fr", "Ra", *list(DEFAULT_ELEMENTS[83:]))
 
 class CHGNetLayer(nn.Module):
     """Main CHGNet model."""
@@ -422,11 +457,11 @@ class CHGNetLayer(nn.Module):
         self.include_states = dim_state_feats is not None
         self.state_embedding = nn.Embedding(dim_state_feats, dim_state_embedding) if self.include_states else None  # type: ignore[arg-type]
         self.atom_embedding = nn.Embedding(len(element_types), dim_atom_embedding)
-        self.bond_embedding = MLP_norm(
+        self.bond_embedding = MLPNorm(
             [max_n, dim_bond_embedding], activation=activation, activate_last=non_linear_bond_embedding, bias_last=False
         )
         self.angle_embedding = (
-            MLP_norm(
+            MLPNorm(
                 [2 * max_f + 1, dim_angle_embedding],
                 activation=activation,
                 activate_last=non_linear_angle_embedding,
@@ -633,137 +668,27 @@ class M3GNetLayer(nn.Module):
             **m3gnet_kwargs,
         )
 
-    def forward(self, g, state_attr=None):
+    def forward(self, g, state_attr=None, l_g=None):
+        # M3GNet handles line graph and bond expansion internally if not provided
         fea_dict = self.m3gnet(
             g=g,
             state_attr=state_attr,
+            l_g=l_g,
             return_all_layer_output=True,
         )
+        # "readout" key contains the structure-level embedding (high-dimensional feature vector)
         crys_fea = fea_dict["readout"]   # (N0, readout_dim)
         return crys_fea
-
-
-class MatglGraphConvNet(nn.Module):
-    def __init__(self, element_types, atom_fea_len=64, h_fea_len=128, n_h=1, xrd=False, text=False, 
-                 cutoff=6.0, graph_type="chgnet", threebody_cutoff=4.0,**backbone_kwargs,):
-        
-        super().__init__()
-        self.graph_type = graph_type
-
-        if graph_type == "chgnet":
-            self.backbone = CHGNetLayer(
-                element_types=tuple(element_types),
-                dim_atom_embedding=atom_fea_len,
-                cutoff=cutoff,
-                **backbone_kwargs,
-            )
-
-        if graph_type == "m3gnet":
-           self.backbone = M3GNetLayer(
-                element_types=tuple(element_types),
-                atom_fea_len=atom_fea_len,
-                cutoff=cutoff,
-                threebody_cutoff=threebody_cutoff,
-                **backbone_kwargs,
-            )
-
-        conv_to_fc_input_dim = atom_fea_len
-
-        if xrd:
-            self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
-            conv_to_fc_input_dim += 64
-        if text:
-            self.text_model = TextFeatureExtractor(input_dim=768, output_dim=64, hidden_dim=128)
-            conv_to_fc_input_dim += 64
-        self.conv_to_fc = nn.Linear(conv_to_fc_input_dim, h_fea_len)
-        self.conv_to_fc_softplus = nn.Softplus()
-        if n_h > 1:
-            self.fcs = nn.ModuleList([nn.Linear(h_fea_len, h_fea_len)
-                                      for _ in range(n_h-1)])
-            self.softpluses = nn.ModuleList([nn.Softplus()
-                                             for _ in range(n_h-1)])
-        self.fc_out = nn.Linear(h_fea_len, 1)
-
-    def forward(self, graph_state, xrd_feature=None, text_feature=None):
-        g, state_feats = graph_state
-        crys_fea = self.backbone(g, state_attr=state_feats)  # (N0, atom_fea_len)
-    
-        # XRD feature extraction
-        if hasattr(self, 'xrd_model'):
-            xrd_fea = self.xrd_model(xrd_feature)
-            crys_fea = torch.cat((crys_fea, xrd_fea), dim=1)
-
-        # Text feature extraction
-        if hasattr(self, 'text_model'):
-            text_fea = self.text_model(text_feature)
-            crys_fea = torch.cat((crys_fea, text_fea), dim=1)
-
-        crys_fea = self.conv_to_fc(self.conv_to_fc_softplus(crys_fea))
-        crys_fea = self.conv_to_fc_softplus(crys_fea)
-        if hasattr(self, 'fcs') and hasattr(self, 'softpluses'):
-            for fc, softplus in zip(self.fcs, self.softpluses):
-                crys_fea = softplus(fc(crys_fea))
-        out = self.fc_out(crys_fea)
-        embedding = crys_fea
-        return out, embedding
 
 class AlignnGraphConvNet(nn.Module):
     """Graph neural network model based on the ALIGNN architecture with optional
     XRD and text feature encoders.
-
-    This model wraps an :class:`ALIGNN` backbone and, optionally, additional
-    feature extractors for X-ray diffraction (XRD) patterns and text-based
-    descriptors. The outputs of these components are concatenated and passed
-    through a small fully connected head to produce a scalar prediction.
-
-    Parameters
-    ----------
-    element_types : Sequence[str] or list
-        List of element symbols present in the dataset. This parameter is kept
-        for API compatibility with other models and is not used directly.
-    atom_fea_len : int, optional
-        Dimension of the atom input features expected by the ALIGNN backbone.
-    edge_fea_len : int, optional
-        Dimension of the edge (bond) input features expected by the ALIGNN
-        backbone.
-    h_fea_len : int, optional
-        Hidden and output feature dimension for the ALIGNN backbone and the
-        final fully connected output head.
-    xrd : bool, optional
-        If ``True``, enable the XRD feature extractor and concatenate its
-        output with the ALIGNN embeddings.
-    text : bool, optional
-        If ``True``, enable the text feature extractor and concatenate its
-        output with the ALIGNN embeddings.
-    graph_type : str, optional
-        Identifier for the underlying graph representation, kept for
-        consistency with other model classes.
-
-    Forward inputs
-    --------------
-    g : dgl.DGLGraph
-        Atomic graph used as input to the ALIGNN backbone.
-    lg : dgl.DGLGraph
-        Line graph (bond graph) corresponding to ``g``.
-    lattice : torch.Tensor
-        Lattice or state tensor required by the ALIGNN backbone.
-    xrd_feature : torch.Tensor, optional
-        XRD feature tensor. Used only when ``xrd`` is ``True`` and
-        ``self.use_xrd`` is enabled.
-    text_feature : torch.Tensor, optional
-        Text feature tensor. Used only when ``text`` is ``True`` and
-        ``self.use_text`` is enabled.
-
-    Returns
-    -------
-    tuple[torch.Tensor, torch.Tensor]
-        A tuple ``(prediction, embedding)`` where ``prediction`` is a scalar
-        property prediction and ``embedding`` is the ALIGNN latent
-        representation for each input structure.
     """
     def __init__(self, atom_fea_len=92, edge_fea_len=80, triplet_fea_len=40, h_fea_len=128, n_h=1,
                  xrd=True, text=True):
         super(AlignnGraphConvNet, self).__init__()
+        if not HAS_ALIGNN:
+            raise ImportError("ALIGNN is not installed in this environment. Please use 'env_alignn'.")
         self.use_xrd = xrd
         self.use_text = text
         
@@ -807,9 +732,160 @@ class AlignnGraphConvNet(nn.Module):
         combined = torch.cat(features, dim=1)
         crys_fea = self.conv_to_fc(self.conv_to_fc_softplus(combined))
         crys_fea = self.conv_to_fc_softplus(crys_fea)
-        if hasattr(self, 'fcs'):
+        if hasattr(self, 'fcs') and hasattr(self, 'softpluses'):
             for fc, softplus in zip(self.fcs, self.softpluses):
                 crys_fea = softplus(fc(crys_fea))
         out = self.fc_out(crys_fea)
         embedding = crys_fea 
+        return out, embedding
+
+class TensorNetLayer(nn.Module):
+    def __init__(
+        self,
+        element_types,
+        atom_fea_len=64,
+        cutoff=5.0,
+        **tensornet_kwargs,
+    ):
+        super().__init__()
+        self.tensornet = TensorNet(
+            element_types=tuple(element_types),
+            units=atom_fea_len,
+            cutoff=cutoff,
+            is_intensive=True,
+            **tensornet_kwargs,
+        )
+
+    def forward(self, g, state_attr=None):
+        # TensorNet forward returns a scalar (energy), but we need the 
+        # high-dimensional structure embedding for the multimodal model.
+        # Calling forward populates g.ndata["node_feat"]
+        _ = self.tensornet(
+            g=g,
+            state_attr=state_attr,
+        )
+        # Manually invoke the internal readout layer to get the pooled feature vector
+        crys_fea = self.tensornet.readout(g)
+        return crys_fea
+
+class QETLayer(nn.Module):
+    def __init__(
+        self,
+        element_types,
+        atom_fea_len=64,
+        cutoff=5.0,
+        **qet_kwargs,
+    ):
+        super().__init__()
+        self.qet = QET(
+            element_types=tuple(element_types),
+            units=atom_fea_len,
+            cutoff=cutoff,
+            return_features=True,
+            **qet_kwargs,
+        )
+
+    def forward(self, g, state_attr=None):
+        # QET requires total_charge tensor to avoid TypeError in electrostatics
+        total_charge = torch.zeros(g.batch_size, 1, device=g.device)
+        
+        # With return_features=True, qet(...) returns (node_feat, atomic_energy)
+        # node_feat is (N, D), and it's also set in g.ndata["node_feat"]
+        _ = self.qet(
+            g=g,
+            state_attr=state_attr,
+            total_charge=total_charge,
+        )
+        from dgl import readout_nodes
+        crys_fea = readout_nodes(g, "node_feat", op="mean")
+        return crys_fea
+
+class MatglGraphConvNet(nn.Module):
+    def __init__(self, element_types, atom_fea_len=64, h_fea_len=128, n_h=1, xrd=False, text=False, 
+                 cutoff=6.0, graph_type="chgnet", threebody_cutoff=4.0,**backbone_kwargs,):
+        
+        super().__init__()
+        if not HAS_MATGL:
+            raise ImportError("MatGL is not installed in this environment. Please use 'env_matgl'.")
+        self.graph_type = graph_type
+
+        if graph_type == "chgnet":
+            self.backbone = CHGNetLayer(
+                element_types=tuple(element_types),
+                dim_atom_embedding=atom_fea_len,
+                cutoff=cutoff,
+                **backbone_kwargs,
+            )
+
+        elif graph_type == "m3gnet":
+           self.backbone = M3GNetLayer(
+                element_types=tuple(element_types),
+                atom_fea_len=atom_fea_len,
+                cutoff=cutoff,
+                threebody_cutoff=threebody_cutoff,
+                **backbone_kwargs,
+            )
+            
+        elif graph_type == "tensornet":
+            self.backbone = TensorNetLayer(
+                element_types=tuple(element_types),
+                atom_fea_len=atom_fea_len,
+                cutoff=cutoff,
+                **backbone_kwargs,
+            )
+            
+        elif graph_type == "qet":
+            self.backbone = QETLayer(
+                element_types=tuple(element_types),
+                atom_fea_len=atom_fea_len,
+                cutoff=cutoff,
+                **backbone_kwargs,
+            )
+
+        conv_to_fc_input_dim = atom_fea_len
+        # QET adds charge and electrostatic potential (+2) and optionally magmom (+1)
+        if graph_type == "qet":
+            inc_mag = backbone_kwargs.get("include_magmom", False)
+            conv_to_fc_input_dim += (3 if inc_mag else 2)
+        
+        # Add state features if included (M3GNet, etc.)
+        if backbone_kwargs.get("include_state", False):
+            conv_to_fc_input_dim += backbone_kwargs.get("dim_state_feats", 0)
+
+        if xrd:
+            self.xrd_model = XRDFeatureExtractor(input_dim=128, output_dim=64, hidden_dim=128)
+            conv_to_fc_input_dim += 64
+        if text:
+            self.text_model = TextFeatureExtractor(input_dim=768, output_dim=64, hidden_dim=128)
+            conv_to_fc_input_dim += 64
+        self.conv_to_fc = nn.Linear(conv_to_fc_input_dim, h_fea_len)
+        self.conv_to_fc_softplus = nn.Softplus()
+        if n_h > 1:
+            self.fcs = nn.ModuleList([nn.Linear(h_fea_len, h_fea_len)
+                                      for _ in range(n_h-1)])
+            self.softpluses = nn.ModuleList([nn.Softplus()
+                                             for _ in range(n_h-1)])
+        self.fc_out = nn.Linear(h_fea_len, 1)
+
+    def forward(self, graph_state, xrd_feature=None, text_feature=None):
+        g, state_feats = graph_state
+        crys_fea = self.backbone(g, state_attr=state_feats)  # (N0, atom_fea_len)
+    
+        # XRD feature extraction
+        if hasattr(self, 'xrd_model'):
+            xrd_fea = self.xrd_model(xrd_feature)
+            crys_fea = torch.cat((crys_fea, xrd_fea), dim=1)
+
+        # Text feature extraction
+        if hasattr(self, 'text_model'):
+            text_fea = self.text_model(text_feature)
+            crys_fea = torch.cat((crys_fea, text_fea), dim=1)
+
+        crys_fea = self.conv_to_fc(self.conv_to_fc_softplus(crys_fea))
+        crys_fea = self.conv_to_fc_softplus(crys_fea)
+        if hasattr(self, 'fcs') and hasattr(self, 'softpluses'):
+            for fc, softplus in zip(self.fcs, self.softpluses):
+                crys_fea = softplus(fc(crys_fea))
+        out = self.fc_out(crys_fea)
+        embedding = crys_fea
         return out, embedding

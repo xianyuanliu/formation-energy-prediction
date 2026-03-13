@@ -59,7 +59,7 @@ def main():
     from data import collate_pool, collate_pool_matgl, collate_pool_alignn
     if model_args.graph_type in ("cgcnn", "mpnn"):
         collate_fn = collate_pool
-    elif model_args.graph_type in ("chgnet", "m3gnet"):
+    elif model_args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
         collate_fn = collate_pool_matgl
     elif model_args.graph_type == "alignn":
         collate_fn = collate_pool_alignn
@@ -88,7 +88,7 @@ def main():
                                     xrd=model_args.xrd,
                                     text=model_args.text,
                                     graph_type=model_args.graph_type)
-    elif model_args.graph_type in ("chgnet", "m3gnet"):
+    elif model_args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
         model = MatglGraphConvNet(
             element_types=dataset.element_types,
             atom_fea_len=model_args.atom_fea_len,

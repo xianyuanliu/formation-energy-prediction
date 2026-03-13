@@ -5,17 +5,20 @@ This repository predicts formation energy using a multimodal model built on a cr
 
 ## Environment Setup
 
-> **Important**: This repository is optimized for **PyTorch 2.2.1** and **DGL 1.1.1** to ensure full compatibility with `alignn` and other GNN models.
+> **Important**: To ensure optimal configuration for each model family, we recommend installing dependencies in separate virtual environments.
 
-1. Install all dependencies with a single command:
+1. **For ALIGNN Models**:
+   ```bash
+   pip install -r requirements_alignn.txt
+   ```
 
-```bash
-pip install -r requirements.txt
-```
+2. **For MatGL Models** (CHGNet, M3GNet, TensorNet, QET):
+   ```bash
+   pip install -r requirements_matgl.txt
+   ```
 
-By installing everything from `requirements.txt` at once, `pip`'s dependency resolver ensures all versions (including CUDA-enabled PyTorch and DGL) are compatible without manual intervention.
-
-> **Caution**: If you encounter a situation where `alignn` installation attempts to downgrade `torch` or `dgl`, ensure you are using the latest version of `pip` (`pip install --upgrade pip`) and try installing with the pinned `requirements.txt`.
+3. **Others (CGCNN, MPNN)**:
+   The base models `cgcnn` and `mpnn` are functional in both environments.
 
 ## Repository Layout
 - `main.py`: training + validation + test evaluation entrypoint.

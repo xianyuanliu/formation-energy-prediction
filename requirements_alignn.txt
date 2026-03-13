@@ -1,0 +1,29 @@
+# requirements_alignn.txt
+# Optimized for ALIGNN with CUDA 11.8 support
+
+--extra-index-url https://download.pytorch.org/whl/cu118
+--find-links https://data.dgl.ai/wheels/cu118/repo.html
+
+# Core Frameworks
+torch==2.2.1
+torchvision==0.17.1
+torchaudio==2.2.1
+dgl==1.1.1
+
+alignn==2025.4.1
+jarvis-tools>=2024.10.30
+pyyaml
+scipy
+numpy<2.0.0
+pymatgen
+ase
+tqdm
+pandas
+scikit-learn
+matplotlib
+networkx
+pydantic
+pydantic-settings
+wandb
+thop
+umap-learn
