@@ -24,7 +24,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiStepLR
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
@@ -105,7 +104,7 @@ def arg_parse():
     parser.add_argument('--n-conv', default=3, type=int, metavar='N', help='number of conv layers')
     parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
-    parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network')
+    parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (mpnn, cgcnn, chgnet, m3gnet, alignn, tensornet, qet)')
     args = parser.parse_args(sys.argv[1:])
     return args
 
@@ -149,12 +148,13 @@ def main():
         wandb.define_metric("learning_rate", step_metric="epoch")    
     
     start_total_time = time.time()
-    args.cuda = not args.disable_cuda and torch.cuda.is_available()
-    device = torch.device("cuda" if args.cuda else "cpu")
+    if not torch.cuda.is_available():
+        raise RuntimeError("GPU is required for training but no CUDA device was found. Strict GPU execution is enforced.")
+    device = torch.device("cuda")
 
     if args.graph_type in ("cgcnn", "mpnn"):
         collate_fn = collate_pool
-    elif args.graph_type in ("chgnet", "m3gnet"):
+    elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
         collate_fn = collate_pool_matgl
     elif args.graph_type == "alignn":
         collate_fn = collate_pool_alignn
@@ -207,15 +207,15 @@ def main():
         # Create DataLoaders
         train_loader = DataLoader(full_train_dataset, batch_size=args.batch_size,
                                   sampler=train_sampler, num_workers=args.workers,
-                                  collate_fn=collate_fn, pin_memory=args.cuda)
+                                  collate_fn=collate_fn, pin_memory=True)
         
         val_loader = DataLoader(full_train_dataset, batch_size=args.batch_size,
                                 sampler=val_sampler, num_workers=args.workers,
-                                collate_fn=collate_fn, pin_memory=args.cuda)
+                                collate_fn=collate_fn, pin_memory=True)
         
         test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
                                  shuffle=False, num_workers=args.workers,
-                                 collate_fn=collate_fn, pin_memory=args.cuda)
+                                 collate_fn=collate_fn, pin_memory=True)
         
         # Set representative dataset for model building
         dataset = full_train_dataset
@@ -274,7 +274,7 @@ def main():
                                     text=args.text,
                                     graph_type=args.graph_type)
         
-    elif args.graph_type in ("chgnet", "m3gnet"):
+    elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
         model = MatglGraphConvNet(
             element_types=dataset.element_types,
             atom_fea_len=args.atom_fea_len,
@@ -300,8 +300,7 @@ def main():
     else:
         raise ValueError(f"Unknown graph_type: {args.graph_type}")
         
-    if args.cuda:
-        model.cuda()
+    model.to(device)
 
     print("\n" + "="*30)
     print("      Calculating FLOPs")
@@ -319,7 +318,7 @@ def main():
                 sample_data[3].to(device),    # xrd_feature
                 sample_data[4].to(device)     # text_feature
             )
-        elif args.graph_type in ("chgnet", "m3gnet"):
+        elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
         # MatglGraphConvNet (graph_state, xrd, text)
             graph_state = (
                 sample_data[0][0].to(device), # batch_graph
@@ -388,10 +387,10 @@ def main():
 
     for epoch in range(args.start_epoch, args.epochs):
         # train for one epoch
-        train_loss_avg, train_mae_avg = train(args, train_loader, model, criterion, optimizer, epoch, normalizer)
+        train_loss_avg, train_mae_avg = train(args, train_loader, model, criterion, optimizer, epoch, normalizer, device)
 
         # evaluate on validation set
-        val_loss_avg, val_mae_avg = validate(args, val_loader, model, criterion, normalizer)
+        val_loss_avg, val_mae_avg = validate(args, val_loader, model, criterion, normalizer, device)
         mae_error = val_mae_avg
         
         if args.use_wandb:
@@ -427,7 +426,7 @@ def main():
     print('---------Evaluate Model on Test Set---------------')
     best_checkpoint = torch.load('model_best.pth.tar')
     model.load_state_dict(best_checkpoint['state_dict'])
-    validate(args, test_loader, model, criterion, normalizer, test=True)
+    validate(args, test_loader, model, criterion, normalizer, device, test=True)
     
     end_total_time = time.time()
     total_duration = end_total_time - start_total_time
@@ -443,41 +442,77 @@ def main():
     print(f"  ({total_duration:.2f} seconds)")
     print("="*30)
     
-    ytr, ypr, emb_tr, _ = collect_pred_emb(args, train_loader, model, normalizer, device)
-    yte, ype, emb_te, test_ids = collect_pred_emb(args, test_loader, model, normalizer, device)
+    print("\n" + "-"*30)
+    print("      Starting Post-Training Analysis")
+    print("-"*30)
+    try:
+        ytr, ypr, emb_tr, _ = collect_pred_emb(args, train_loader, model, normalizer, device)
+        yte, ype, emb_te, test_ids = collect_pred_emb(args, test_loader, model, normalizer, device)
 
-    np.save(os.path.join(out_dir, "train_emb.npy"), emb_tr)
-    np.save(os.path.join(out_dir, "test_emb.npy"), emb_te)
+        np.save(os.path.join(out_dir, "train_emb.npy"), emb_tr)
+        np.save(os.path.join(out_dir, "test_emb.npy"), emb_te)
+        print(f"=> Saved embeddings to {out_dir}")
 
-    fig_path = os.path.join(out_dir, "ood_umap_kde.png")
-    stats = make_ood_umap_figure(
-        train_emb=emb_tr,
-        test_emb=emb_te,
-        y_true_test=yte,
-        y_pred_test=ype,
-        out_png=fig_path,
-        density_threshold=1e-3, 
-        n_neighbors=50,          
-        min_dist=0.1             
-    )
+        fig_path = os.path.join(out_dir, "ood_umap_kde.png")
+        stats = make_ood_umap_figure(
+            train_emb=emb_tr,
+            test_emb=emb_te,
+            y_true_test=yte,
+            y_pred_test=ype,
+            out_png=fig_path,
+            density_threshold=1e-3, 
+            n_neighbors=50,          
+            min_dist=0.1             
+        )
+        print(f"=> Generated UMAP figure at {fig_path}")
+    except Exception as e:
+        print(f"[!] Warning: Post-training analysis failed: {e}")
     
     
     def collect_outputs(target_dir, files_to_move):
+        print("\n" + "="*30)
+        print(f"  Collecting Outputs to: {target_dir}")
+        print("="*30)
+        
         if target_dir == "." or not target_dir:
+            print("=> Output directory is current directory, skipping move.")
             return
+            
+        if not os.path.exists(target_dir):
+            os.makedirs(target_dir, exist_ok=True)
+            print(f"=> Created output directory: {target_dir}")
+
+        # Ensure files_to_move is a flat list of patterns
+        if isinstance(files_to_move, str):
+            files_to_move = files_to_move.split()
+        
+        total_moved = 0
         for pattern in files_to_move:
-            for f in glob.glob(pattern):
+            print(f"[*] Processing pattern: {pattern}")
+            found_files = glob.glob(pattern)
+            if not found_files:
+                print(f"    - No files found matching '{pattern}' in {os.getcwd()}")
+                continue
+                
+            for f in found_files:
                 if os.path.exists(f):
                     dest = os.path.join(target_dir, os.path.basename(f))
                     if os.path.abspath(f) != os.path.abspath(dest):
                         try:
+                            print(f"    - Moving: {f} -> {dest}")
                             shutil.move(f, dest)
+                            total_moved += 1
                         except Exception as e:
-                            print(f"[!] Warning: Could not move {f} to {target_dir}: {e}")
+                            print(f"    [!] Error moving {f}: {e}")
+                    else:
+                        print(f"    - File {f} is already in target directory.")
+        print(f"\n=> Finished collecting outputs. Total files moved: {total_moved}")
+        print("="*30 + "\n")
+
     collect_outputs(out_dir, args.result_files)
 
 
-def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
+def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, device):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
@@ -494,67 +529,49 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
 
 
         if args.graph_type in ("cgcnn", "mpnn"):
-            if args.cuda:
-                input_var = (Variable(input[0].cuda(non_blocking=True)),
-                            Variable(input[1].cuda(non_blocking=True)),
-                            input[2].cuda(non_blocking=True),
-                            [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
-                            xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None,
-                            text_fea.cuda(non_blocking=True) if text_fea is not None else None)
-            else:
-                input_var = (Variable(input[0]),
-                            Variable(input[1]),
-                            input[2],
-                            input[3],
-                            xrd_fea,
-                            text_fea)
-        elif args.graph_type in ("chgnet", "m3gnet"):
+            input_var = (input[0].to(device, non_blocking=True),
+                        input[1].to(device, non_blocking=True),
+                        input[2].to(device, non_blocking=True),
+                        [crys_idx.to(device, non_blocking=True) for crys_idx in input[3]],
+                        xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None,
+                        text_fea.to(device, non_blocking=True) if text_fea is not None else None)
+        elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
             batch_graph, batch_state = input
-
-            if args.cuda:
-                batch_graph = batch_graph.to("cuda") 
-                batch_state = batch_state.cuda(non_blocking=True)
-                xrd_fea = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
-                text_fea = text_fea.cuda(non_blocking=True) if text_fea is not None else None
+            batch_graph = batch_graph.to(device) 
+            batch_state = batch_state.to(device, non_blocking=True)
+            xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+            text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
             input_var = ((batch_graph, batch_state), xrd_fea, text_fea)
-
         elif args.graph_type == "alignn":
             batch_g, batch_lg, batch_lat = input
-            if args.cuda:
-                batch_g = batch_g.to("cuda")
-                batch_lg = batch_lg.to("cuda")
-                batch_lat = batch_lat.to("cuda")
-                xrd_fea = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
-                text_fea = text_fea.cuda(non_blocking=True) if text_fea is not None else None
+            batch_g = batch_g.to(device)
+            batch_lg = batch_lg.to(device)
+            batch_lat = batch_lat.to(device)
+            xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+            text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
             input_var = (batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
-
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
         
         target_normed = normalizer.norm(target)
-        if args.cuda:
-            target_var = Variable(target_normed.cuda(non_blocking=True))
-        else:
-            target_var = Variable(target_normed)
+        target_var = target_normed.to(device, non_blocking=True)
 
         if args.graph_type in ("cgcnn", "mpnn"):
             out, emb = model(*input_var)
-        elif args.graph_type in ("chgnet", "m3gnet"):
-            # input_var = (graph_state, xrd_fea, text_fea)
+        elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
             graph_state, xrd_in, text_in = input_var
             out, emb = model(graph_state, xrd_in, text_in)
         elif args.graph_type in ("alignn"):
-            # input_var = (batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
             batch_g, batch_lg, batch_lat, xrd_in, text_in = input_var
             out, emb = model(batch_g, batch_lg, batch_lat, xrd_in, text_in)
 
         loss = criterion(out, target_var)
 
         # measure accuracy and record loss
-        mae_error = mae(normalizer.denorm(out.data.cpu()), target)
+        mae_error = mae(normalizer.denorm(out.detach().cpu()), target)
         mre_error = mae_error / target.abs().mean()
 
-        losses.update(loss.data.cpu(), target.size(0))
+        losses.update(loss.detach().cpu(), target.size(0))
         mae_errors.update(mae_error, target.size(0))
         mre_errors.update(mre_error, target.size(0))
 
@@ -585,7 +602,7 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
             
     return float(losses.avg), float(mae_errors.avg)
 
-def validate(args, val_loader, model, criterion, normalizer, test=False):
+def validate(args, val_loader, model, criterion, normalizer, device, test=False):
     batch_time = AverageMeter()
     losses = AverageMeter()
     mae_errors = AverageMeter()
@@ -602,48 +619,31 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
     end = time.time()
     for i, (input, target, batch_cif_ids, xrd_fea, text_fea) in enumerate(val_loader):
         if args.graph_type in ("cgcnn", "mpnn"):
-            if args.cuda:
-                with torch.no_grad():
-                    input_var = (Variable(input[0].cuda(non_blocking=True)),
-                                Variable(input[1].cuda(non_blocking=True)),
-                                input[2].cuda(non_blocking=True),
-                                [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
-                                xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None,
-                                text_fea.cuda(non_blocking=True) if text_fea is not None else None)
-            else:
-                with torch.no_grad():
-                    input_var = (Variable(input[0]),
-                                Variable(input[1]),
-                                input[2],
-                                input[3],
-                                xrd_fea,
-                                text_fea)
-        elif args.graph_type in ("chgnet", "m3gnet"):
+            with torch.no_grad():
+                input_var = (input[0].to(device, non_blocking=True),
+                            input[1].to(device, non_blocking=True),
+                            input[2].to(device, non_blocking=True),
+                            [crys_idx.to(device, non_blocking=True) for crys_idx in input[3]],
+                            xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None,
+                            text_fea.to(device, non_blocking=True) if text_fea is not None else None)
+        elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
             graph_state = input 
-            if args.cuda:
-                with torch.no_grad():
-                    g, state_feats = graph_state
-                    g = g.to("cuda")
-                    state_feats = state_feats.cuda(non_blocking=True)
-                    xrd_fea_cuda = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
-                    text_fea_cuda = text_fea.cuda(non_blocking=True) if text_fea is not None else None
-                    input_var = ((g, state_feats), xrd_fea_cuda, text_fea_cuda)
-            else:
-                with torch.no_grad():
-                    input_var = (graph_state, xrd_fea, text_fea)
+            with torch.no_grad():
+                g, state_feats = graph_state
+                g = g.to(device)
+                state_feats = state_feats.to(device, non_blocking=True)
+                xrd_fea_cuda = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+                text_fea_cuda = text_fea.to(device, non_blocking=True) if text_fea is not None else None
+                input_var = ((g, state_feats), xrd_fea_cuda, text_fea_cuda)
         elif args.graph_type in ("alignn"):
             batch_g, batch_lg, batch_lat = input
-            if args.cuda:
-                with torch.no_grad():
-                    batch_g = batch_g.to("cuda")
-                    batch_lg = batch_lg.to("cuda")
-                    batch_lat = batch_lat.to("cuda")
-                    xrd_fea_cuda = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
-                    text_fea_cuda = text_fea.cuda(non_blocking=True) if text_fea is not None else None
-                    input_var = (batch_g, batch_lg, batch_lat, xrd_fea_cuda, text_fea_cuda)
-            else:
-                with torch.no_grad():
-                    input_var = (batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
+            with torch.no_grad():
+                batch_g = batch_g.to(device)
+                batch_lg = batch_lg.to(device)
+                batch_lat = batch_lat.to(device)
+                xrd_fea_cuda = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+                text_fea_cuda = text_fea.to(device, non_blocking=True) if text_fea is not None else None
+                input_var = (batch_g, batch_lg, batch_lat, xrd_fea_cuda, text_fea_cuda)
         
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
@@ -652,25 +652,21 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
             target_normed = normalizer.norm(target)
         else:
             target_normed = target.view(-1).long()
-        if args.cuda:
-            with torch.no_grad():
-                target_var = Variable(target_normed.cuda(non_blocking=True))
-        else:
-            with torch.no_grad():
-                target_var = Variable(target_normed)
+        with torch.no_grad():
+            target_var = target_normed.to(device, non_blocking=True)
 
         # compute output
         out, emb = model(*input_var)
         loss = criterion(out, target_var)
 
         # measure accuracy and record loss
-        mae_error = mae(normalizer.denorm(out.data.cpu()), target)
+        mae_error = mae(normalizer.denorm(out.detach().cpu()), target)
         mre_error = mae_error / target.abs().mean()
-        losses.update(loss.data.cpu().item(), target.size(0))
+        losses.update(loss.detach().cpu().item(), target.size(0))
         mae_errors.update(mae_error, target.size(0))
         mre_errors.update(mre_error, target.size(0))
         if test:
-            test_pred = normalizer.denorm(out.data.cpu())
+            test_pred = normalizer.denorm(out.detach().cpu())
             test_target = target
             test_preds += test_pred.view(-1).tolist()
             test_targets += test_target.view(-1).tolist()
@@ -729,37 +725,32 @@ def collect_pred_emb(args, loader, model, normalizer, device):
 
         # ---- input_var ----
         if args.graph_type in ("cgcnn", "mpnn"):
-            if args.cuda:
-                input_var = (
-                    input[0].to(device, non_blocking=True),
-                    input[1].to(device, non_blocking=True),
-                    input[2].to(device, non_blocking=True),
-                    [crys_idx.to(device, non_blocking=True) for crys_idx in input[3]],
-                    xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None,
-                    text_fea.to(device, non_blocking=True) if text_fea is not None else None,
-                )
-            else:
-                input_var = (input[0], input[1], input[2], input[3], xrd_fea, text_fea)
+            input_var = (
+                input[0].to(device, non_blocking=True),
+                input[1].to(device, non_blocking=True),
+                input[2].to(device, non_blocking=True),
+                [crys_idx.to(device, non_blocking=True) for crys_idx in input[3]],
+                xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None,
+                text_fea.to(device, non_blocking=True) if text_fea is not None else None,
+            )
 
             out, emb = model(*input_var)
 
-        elif args.graph_type in ("chgnet", "m3gnet"):
+        elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
             g, state_feats = input
-            if args.cuda:
-                g = g.to(device)
-                state_feats = state_feats.to(device, non_blocking=True)
-                xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
-                text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
+            g = g.to(device)
+            state_feats = state_feats.to(device, non_blocking=True)
+            xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+            text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
             out, emb = model((g, state_feats), xrd_fea, text_fea)
         
         elif args.graph_type in ("alignn"):
             batch_g, batch_lg, batch_lat = input
-            if args.cuda:
-                batch_g = batch_g.to(device)
-                batch_lg = batch_lg.to(device)
-                batch_lat = batch_lat.to(device)
-                xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
-                text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
+            batch_g = batch_g.to(device)
+            batch_lg = batch_lg.to(device)
+            batch_lat = batch_lat.to(device)
+            xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+            text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
             out, emb = model(batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
