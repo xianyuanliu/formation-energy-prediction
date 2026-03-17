@@ -14,33 +14,34 @@ mod.IterDataPipe = IterDataPipe
 sys.modules["torchdata.datapipes.iter"] = mod
 # -----------------------------------------------------------------------------
 
-import argparse
 import os
 import sys
 import time
+import datetime
+import warnings
+import yaml
+import shutil
+import glob
 from random import sample
-import numpy as np
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.optim.lr_scheduler import MultiStepLR
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
+from torch.optim.lr_scheduler import MultiStepLR
 
+from examples.config import get_cfg_defaults
 from data import CIFData
 from data import collate_pool, get_train_val_test_loader, collate_pool_matgl, collate_pool_alignn
-from models.cgcnn import CrystalGraphConvNet
-from models.cgcnn import MatglGraphConvNet
-from models.cgcnn import AlignnGraphConvNet
+from models.cgcnn import CrystalGraphConvNet, MatglGraphConvNet, AlignnGraphConvNet
 from utils.utils import Normalizer, mae, save_checkpoint, AverageMeter
 from thop import profile
-import datetime
 import wandb
-import shutil, glob
 
-import warnings
 warnings.filterwarnings("ignore", message=".*fractional coordinates rounded.*")
+
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -52,17 +53,20 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def arg_parse():
-    """Parsing arguments"""
+    """Parsing arguments with YAML"""
+    import argparse
     parser = argparse.ArgumentParser(description='Crystal Graph Convolutional Neural Networks')
 
-    # Basic parameters
+    # 1. Add --config flag
+    parser.add_argument('--config', default='', type=str, help='path to yaml config file')
+
+    # 2. Original Basic parameters
     parser.add_argument('--base_data_dir', default='data', help='path to common data files (atom_init, XRD, space_group_embeddings)')
     parser.add_argument('--data_path', default='data/split_both_hhi', help='path to csv files')
     parser.add_argument('--cif_path', default='data/cifs', help='path to cif files')
     parser.add_argument('--task', default='regression')
     parser.add_argument('--xrd', default=True, type=str2bool, help='use xrd features')
     parser.add_argument('--text', default=True, type=str2bool, help='use text features')
-    parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
     parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', help='number of data loading workers (default: 0)')
     parser.add_argument('--epochs', default=30, type=int, metavar='N', help='number of total epochs to run (default: 30)')
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N', help='manual epoch number (useful on restarts)')
@@ -75,13 +79,14 @@ def arg_parse():
     parser.add_argument('--resume', default='', type=str, metavar='PATH', help='path to latest checkpoint (default: none)')
     parser.add_argument('--train_file', default=None, nargs='+', help='train csv file name(s) in data_path')
     parser.add_argument('--test_file', default=None, nargs='+', help='test csv file name(s) in data_path')
-    # WandB parameters
+    
+    # 3. Original WandB parameters
     parser.add_argument('--use_wandb', action='store_true', help='Use WandB for logging')
     parser.add_argument('--wandb_project', default='formatin-energy-preiction-project', type=str, help='WandB project name')
     parser.add_argument('--wandb_group', default='baseline', type=str, help='WandB group name')
     parser.add_argument('--wandb_name', default=None, type=str, help='WandB run name (None = auto-generated)')
 
-    # Data split
+    # 4. Original Data split
     train_group = parser.add_mutually_exclusive_group()
     train_group.add_argument('--train-ratio', default=None, type=float, metavar='N', help='number of training data to be loaded (default none)')
     train_group.add_argument('--train-size', default=None, type=int, metavar='N', help='number of training data to be loaded (default none)')
@@ -96,7 +101,8 @@ def arg_parse():
 
     parser.add_argument('--result_dir', default=None, type=str, help='Directory to save results. If None, no folder is created.')
     parser.add_argument('--result_files', default=['checkpoint.pth.tar', 'model_best.pth.tar', 'test_results.csv'], nargs='+', help='List of files to move to result_dir')
-    # model parameters
+    
+    # 5. Original Model parameters
     parser.add_argument('--optim', default='SGD', type=str, metavar='SGD', help='choose an optimizer, SGD or Adam, (default: SGD)')
     parser.add_argument('--atom-fea-len', default=64, type=int, metavar='N', help='number of hidden atom features in conv layers')
     parser.add_argument('--h-fea-len', default=128, type=int, metavar='N', help='number of hidden features after pooling')
@@ -104,7 +110,13 @@ def arg_parse():
     parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
     parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (mpnn, cgcnn, chgnet, m3gnet, alignn, tensornet, qet)')
-    args = parser.parse_args(sys.argv[1:])
+    
+    args = parser.parse_args()
+
+    # 6. Load YAML and apply dynamic logic (keeps main.py clean)
+    from examples.config import load_and_apply_config
+    load_and_apply_config(args)
+
     return args
 
 best_mae_error = 1e10
@@ -129,6 +141,7 @@ def main():
     if args.result_dir:
         out_dir = args.result_dir
         os.makedirs(out_dir, exist_ok=True)
+        print(f"=> Result directory: {out_dir}")
     else:
         out_dir = "."
 
@@ -222,8 +235,6 @@ def main():
     else:
         # Mode B: Single file mode with ratio split
         print("=> Ratio split mode: Splitting one file into train/val/test")
-        # In this mode, we need at least one file. 
-        # Since id_prop.csv is gone, we check args.train_file or raise error.
         if not args.train_file:
              raise ValueError("Please provide a CSV file (e.g., --train_file my_data.csv) to split by ratio.")
         
@@ -237,7 +248,7 @@ def main():
             num_workers=args.workers,
             val_ratio=args.val_ratio,
             test_ratio=args.test_ratio,
-            pin_memory=args.cuda,
+            pin_memory=True,
             train_size=args.train_size,
             val_size=args.val_size,
             test_size=args.test_size,
@@ -318,7 +329,6 @@ def main():
                 sample_data[4].to(device)     # text_feature
             )
         elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
-        # MatglGraphConvNet (graph_state, xrd, text)
             graph_state = (
                 sample_data[0][0].to(device), # batch_graph
                 sample_data[0][1].to(device)  # state_feats
@@ -339,7 +349,7 @@ def main():
             )
         flops, params = profile(model, inputs=inputs, verbose=False)
         if args.use_wandb:
-            wandb.config.update({
+            wandb.run.summary.update({
                 "total_flops_g": flops / 1e9,
                 "total_params_m": params / 1e6
             })
@@ -353,7 +363,6 @@ def main():
     
     print("="*30 + "\n")
     model.train()
-
 
     # define loss func and optimizer
     criterion = nn.MSELoss()
@@ -526,7 +535,6 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, de
         # measure data loading time
         data_time.update(time.time() - end)
 
-
         if args.graph_type in ("cgcnn", "mpnn"):
             input_var = (input[0].to(device, non_blocking=True),
                         input[1].to(device, non_blocking=True),
@@ -584,11 +592,6 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, de
         end = time.time()
 
         if i % args.print_freq == 0:
-            #if args.use_wandb:
-                #wandb.log({
-                #    "train/batch_loss": losses.val,
-                #    "train/batch_mae": mae_errors.val
-                #})
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
@@ -643,10 +646,9 @@ def validate(args, val_loader, model, criterion, normalizer, device, test=False)
                 xrd_fea_cuda = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
                 text_fea_cuda = text_fea.to(device, non_blocking=True) if text_fea is not None else None
                 input_var = (batch_g, batch_lg, batch_lat, xrd_fea_cuda, text_fea_cuda)
-        
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
-
+        
         if args.task == 'regression':
             target_normed = normalizer.norm(target)
         else:

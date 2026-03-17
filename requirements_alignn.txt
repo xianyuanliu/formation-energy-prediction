@@ -5,10 +5,10 @@
 --find-links https://data.dgl.ai/wheels/cu118/repo.html
 
 # Core Frameworks
-torch==2.2.1
-torchvision==0.17.1
-torchaudio==2.2.1
-dgl==1.1.1
+torch==2.2.1+cu118
+torchvision==0.17.1+cu118
+torchaudio==2.2.1+cu118
+dgl==1.1.1+cu118
 
 alignn==2025.4.1
 jarvis-tools>=2024.10.30
@@ -25,5 +25,6 @@ networkx
 pydantic
 pydantic-settings
 wandb
+yacs
 thop
 umap-learn

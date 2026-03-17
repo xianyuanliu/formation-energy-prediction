@@ -1,0 +1,10 @@
+DATASET:
+  DATA_PATH: "data/split_both_hhi"
+  TRAIN_FILE: "train.csv"
+  TEST_FILE: "test.csv"
+
+MODEL:
+  GRAPH_TYPE: "tensornet"
+
+MISC:
+  USE_WANDB: true
