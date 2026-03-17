@@ -29,7 +29,7 @@ from torch.optim.lr_scheduler import MultiStepLR
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
 
-from data import CIFData
+from data import CIFData, MatbenchData
 from data import collate_pool, get_train_val_test_loader, collate_pool_matgl, collate_pool_alignn
 from models.cgcnn import CrystalGraphConvNet
 from models.cgcnn import MatglGraphConvNet
@@ -106,6 +106,8 @@ def arg_parse():
     parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
     parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network')
+    parser.add_argument('--data-source', default='cif', choices=['cif', 'matbench'], help='data source type (default: cif)')
+    parser.add_argument('--matbench-json', default=None, type=str, help='path to matbench JSON file (required when --data-source=matbench)')
     args = parser.parse_args(sys.argv[1:])
     return args
 
@@ -160,7 +162,33 @@ def main():
         collate_fn = collate_pool_alignn
 
     # Data loader generation (Conditional branching)
-    if args.train_file or args.test_file:
+    if args.data_source == 'matbench':
+        # Mode M: Matbench JSON dataset
+        if not args.matbench_json:
+            raise ValueError("--matbench-json is required when --data-source=matbench")
+        print(f"=> Matbench mode: loading from {args.matbench_json}")
+        args.xrd = False  # matbench mode always disables XRD
+        dataset = MatbenchData(
+            json_path=args.matbench_json,
+            base_data_dir=args.base_data_dir,
+            graph_type=args.graph_type,
+            use_text=args.text,
+        )
+        train_loader, val_loader, test_loader = get_train_val_test_loader(
+            dataset=dataset,
+            collate_fn=collate_fn,
+            batch_size=args.batch_size,
+            train_ratio=args.train_ratio,
+            num_workers=args.workers,
+            val_ratio=args.val_ratio,
+            test_ratio=args.test_ratio,
+            pin_memory=args.cuda,
+            train_size=args.train_size,
+            val_size=args.val_size,
+            test_size=args.test_size,
+            return_test=True)
+
+    elif args.train_file or args.test_file:
         # Mode A: Use separate files for training and testing
         if args.test_file and not args.train_file:
             all_csvs = [f for f in os.listdir(args.data_path) if f.endswith('.csv')]

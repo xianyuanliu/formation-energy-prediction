@@ -547,3 +547,141 @@ class CIFData(Dataset):
             )
             lattice = torch.tensor(jarvis_atoms.lattice_mat).float()
             return (g, lg, lattice), target, cif_id, space_group, xrd_fea, text_fea
+
+
+class MatbenchData(Dataset):
+    def __init__(self, json_path, base_data_dir='data', max_num_nbr=12,
+                 radius=8, dmin=0, step=0.2, random_seed=123,
+                 graph_type="cgcnn", cutoff=6.0, element_types=None,
+                 use_text=True):
+        self.max_num_nbr = max_num_nbr
+        self.radius = radius
+        self.graph_type = graph_type
+        self.cutoff = cutoff
+
+        with open(json_path, 'r') as f:
+            raw = json.load(f)
+
+        self.columns = raw['columns']
+        struct_col = self.columns.index('structure')
+        target_col = self.columns.index('e_form')
+
+        self.entries = [
+            (row[struct_col], row[target_col])
+            for row in raw['data']
+        ]
+
+        random.seed(random_seed)
+        random.shuffle(self.entries)
+
+        atom_init_file = os.path.join(base_data_dir, 'atom_init.json')
+        if not os.path.exists(atom_init_file):
+            raise FileNotFoundError(f"Missing essential file: {atom_init_file}")
+        self.ari = AtomCustomJSONInitializer(atom_init_file)
+
+        self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
+
+        self.use_text = use_text
+        if self.use_text:
+            text_data_file = os.path.join(base_data_dir, 'space_group_embeddings.csv')
+            if os.path.exists(text_data_file):
+                self.text_data = TextEmbeddingDataset(csv_path=text_data_file)
+            else:
+                warnings.warn(f"Text data not found at {text_data_file}. Disabling text features.")
+                self.use_text = False
+                self.text_data = None
+        else:
+            self.text_data = None
+
+        if element_types is not None:
+            self.element_types = tuple(element_types)
+        else:
+            from matgl.config import DEFAULT_ELEMENTS
+            self.element_types = tuple(DEFAULT_ELEMENTS)
+
+        self._sg_cache = {}
+
+        if self.graph_type in ("chgnet", "m3gnet"):
+            from matgl.ext.pymatgen import Structure2Graph
+            self.graph_converter = Structure2Graph(
+                element_types=self.element_types,
+                cutoff=self.cutoff,
+            )
+
+    def __len__(self):
+        return len(self.entries)
+
+    def _get_space_group(self, idx, structure):
+        if idx in self._sg_cache:
+            return self._sg_cache[idx]
+        try:
+            from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+            sga = SpacegroupAnalyzer(structure)
+            sg_symbol = sga.get_space_group_symbol()
+        except Exception:
+            sg_symbol = "P1"
+        self._sg_cache[idx] = sg_symbol
+        return sg_symbol
+
+    def __getitem__(self, idx):
+        struct_dict, e_form = self.entries[idx]
+        crystal = Structure.from_dict(struct_dict)
+        target = torch.Tensor([float(e_form)])
+        cif_id = str(idx)
+
+        space_group = self._get_space_group(idx, crystal)
+
+        if self.use_text:
+            try:
+                text_fea = self.text_data[space_group]
+            except (KeyError, TypeError):
+                text_fea = torch.zeros(self.text_data.num_text_features)
+        else:
+            text_fea = torch.zeros(768)
+
+        xrd_fea = torch.zeros(128)
+
+        if self.graph_type in ("cgcnn", "mpnn"):
+            atom_fea = np.vstack([
+                self.ari.get_atom_fea(crystal[i].specie.number)
+                for i in range(len(crystal))
+            ])
+            atom_fea = torch.Tensor(atom_fea)
+            all_nbrs = crystal.get_all_neighbors(self.radius, include_index=True)
+            all_nbrs = [sorted(nbrs, key=lambda x: x[1]) for nbrs in all_nbrs]
+            nbr_fea_idx, nbr_fea = [], []
+            for nbr in all_nbrs:
+                if len(nbr) < self.max_num_nbr:
+                    warnings.warn(f'{cif_id} not find enough neighbors to build graph.')
+                    nbr_fea_idx.append(
+                        list(map(lambda x: x[2], nbr)) +
+                        [-1] * (self.max_num_nbr - len(nbr)))
+                    nbr_fea.append(
+                        list(map(lambda x: x[1], nbr)) +
+                        [self.radius + 1.] * (self.max_num_nbr - len(nbr)))
+                else:
+                    nbr_fea_idx.append(list(map(lambda x: x[2], nbr[:self.max_num_nbr])))
+                    nbr_fea.append(list(map(lambda x: x[1], nbr[:self.max_num_nbr])))
+            nbr_fea_idx, nbr_fea = np.array(nbr_fea_idx), np.array(nbr_fea)
+            nbr_fea = self.gdf.expand(nbr_fea)
+            nbr_fea = torch.Tensor(nbr_fea)
+            nbr_fea_idx = torch.LongTensor(nbr_fea_idx)
+            return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea, text_fea
+
+        elif self.graph_type in ("chgnet", "m3gnet"):
+            graph, lattice, state_feats_default = self.graph_converter.get_graph(crystal)
+            graph.edata["pbc_offshift"] = torch.matmul(graph.edata["pbc_offset"], lattice[0])
+            graph.ndata["pos"] = graph.ndata["frac_coords"] @ lattice[0]
+            state_feats = torch.tensor(state_feats_default)
+            return (graph, state_feats), target, cif_id, space_group, xrd_fea, text_fea
+
+        elif self.graph_type == "alignn":
+            jarvis_atoms = pmg_to_atoms(crystal)
+            g, lg = Graph.atom_dgl_multigraph(
+                jarvis_atoms,
+                cutoff=self.radius,
+                max_neighbors=self.max_num_nbr,
+                compute_line_graph=True
+            )
+            lattice = torch.tensor(jarvis_atoms.lattice_mat).float()
+            return (g, lg, lattice), target, cif_id, space_group, xrd_fea, text_fea
