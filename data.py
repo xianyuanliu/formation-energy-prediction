@@ -13,11 +13,31 @@ from pymatgen.core.structure import Structure
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataloader import default_collate
 from torch.utils.data.sampler import SubsetRandomSampler
-from models.xrd_module import XRDDataset  
-from models.sg_text_module import TextEmbeddingDataset
 import dgl
-from jarvis.core.atoms import pmg_to_atoms
-from alignn.graphs import Graph
+from models.xrd_module import XRDDataset
+from models.sg_text_module import TextEmbeddingDataset
+# Optimized Environment-based Imports
+try:
+    from jarvis.core.atoms import pmg_to_atoms
+    from alignn.graphs import Graph
+    HAS_ALIGNN_DATA = True
+except ImportError:
+    HAS_ALIGNN_DATA = False
+
+try:
+    import os
+    # MUST be set before importing matgl to load DGL modules correctly
+    os.environ["MATGL_BACKEND"] = "dgl"
+    import matgl
+    # In MatGL 2.0.6, Structure2Graph is the correct proxy in matgl.ext.pymatgen
+    from matgl.ext.pymatgen import Structure2Graph
+    from matgl.graph.converters import GraphConverter
+    HAS_MATGL_DATA = True
+except Exception as e:
+    print(f"[!] Critical: MatGL initialization failed in data.py: {e}")
+    # import traceback
+    # traceback.print_exc()
+    HAS_MATGL_DATA = False
 
 def get_train_val_test_loader(dataset, collate_fn=default_collate,
                               batch_size=64, train_ratio=None,
@@ -389,6 +409,7 @@ class CIFData(Dataset):
         self.root_dir = root_dir
         self.cif_path = cif_path if cif_path else root_dir
         self.max_num_nbr, self.radius = max_num_nbr, radius
+        self.graph_type = graph_type
 
         # Support for multiple CSV files
         if isinstance(csv_filename, str):
@@ -409,13 +430,14 @@ class CIFData(Dataset):
 
         random.seed(random_seed)
         random.shuffle(self.id_prop_data)
-        atom_init_file = os.path.join(base_data_dir, 'atom_init.json')
+        if self.graph_type in ("cgcnn", "mpnn"):
+            atom_init_file = os.path.join(base_data_dir, 'atom_init.json')
+            if not os.path.exists(atom_init_file):
+                raise FileNotFoundError(f"Missing essential file: {atom_init_file}")
+            self.ari = AtomCustomJSONInitializer(atom_init_file)
+            
         xrd_data_file = os.path.join(base_data_dir, 'XRD_data.csv')
         text_data_file = os.path.join(base_data_dir, 'space_group_embeddings.csv')
-        if not os.path.exists(atom_init_file):
-            raise FileNotFoundError(f"Missing essential file: {atom_init_file}")
-        self.ari = AtomCustomJSONInitializer(atom_init_file)
-
         self.use_xrd = use_xrd
         if self.use_xrd:
             if os.path.exists(xrd_data_file):
@@ -438,8 +460,8 @@ class CIFData(Dataset):
         else:
             self.text_data = None
 
-        self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
-        self.graph_type = graph_type
+        if self.graph_type in ("cgcnn", "mpnn"):
+            self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
 
         # Strict column check
         if self.id_prop_data:
@@ -469,9 +491,10 @@ class CIFData(Dataset):
         
         self.cutoff = cutoff
 
-        if self.graph_type in ("chgnet", "m3gnet"):
-            from matgl.ext.pymatgen import Structure2Graph
-            from matgl.graph.converters import GraphConverter
+        if self.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
+            if not HAS_MATGL_DATA:
+                raise ImportError("MatGL is required for chgnet/m3gnet/tensornet/qet but not installed.")
+            # MatGL 2.0.6+: backend argument removed
             self.graph_converter = Structure2Graph(
                 element_types=self.element_types,
                 cutoff=self.cutoff,
@@ -530,14 +553,18 @@ class CIFData(Dataset):
             nbr_fea_idx = torch.LongTensor(nbr_fea_idx)
             return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id, space_group, xrd_fea, text_fea
         
-        elif self.graph_type in ("chgnet", "m3gnet"):
-            graph, lattice, state_feats_default = self.graph_converter.get_graph(crystal)
-            graph.edata["pbc_offshift"] = torch.matmul(graph.edata["pbc_offset"], lattice[0])
-            graph.ndata["pos"] = graph.ndata["frac_coords"] @ lattice[0]
+        elif self.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
+            # MatGL DGL Structure2Graph returns (graph, lattice, state_feats)
+            # lattice is returned as (1, 3, 3), we need (3, 3) for standard ops
+            graph, lattice_mat, state_feats_default = self.graph_converter.get_graph(crystal)
+            graph.edata["pbc_offshift"] = torch.matmul(graph.edata["pbc_offset"].float(), lattice_mat[0])
+            graph.ndata["pos"] = graph.ndata["frac_coords"] @ lattice_mat[0]
             state_feats = torch.tensor(state_feats_default)
             return (graph, state_feats), target, cif_id, space_group, xrd_fea, text_fea
 
         elif self.graph_type in ("alignn"):
+            if not HAS_ALIGNN_DATA:
+                raise ImportError("ALIGNN/Jarvis-tools is required for alignn but not installed.")
             jarvis_atoms = pmg_to_atoms(crystal)
             g, lg = Graph.atom_dgl_multigraph(
                 jarvis_atoms, 

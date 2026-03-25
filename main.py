@@ -24,7 +24,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiStepLR
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
@@ -81,7 +80,7 @@ def arg_parse():
     parser.add_argument('--wandb_project', default='formation-energy-krict', type=str, help='WandB project name')
     parser.add_argument('--wandb_group', default='baseline', type=str, help='WandB group name')
     parser.add_argument('--wandb_name', default=None, type=str, help='WandB run name (None = auto-generated)')
-    parser.add_argument('--online_mode', default=False, type=str2bool, help='Use WandB online mode for web monitoring (default: False)')
+    parser.add_argument('--online_mode', action='store_true', help='Use WandB online mode for web monitoring')
 
     # Data split
     train_group = parser.add_mutually_exclusive_group()
@@ -105,9 +104,10 @@ def arg_parse():
     parser.add_argument('--n-conv', default=3, type=int, metavar='N', help='number of conv layers')
     parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
-    parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network')
+    parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (mpnn, cgcnn, chgnet, m3gnet, alignn, tensornet, qet)')
     parser.add_argument('--data-source', default='cif', choices=['cif', 'matbench'], help='data source type (default: cif)')
     parser.add_argument('--matbench-json', default=None, type=str, help='path to matbench JSON file (required when --data-source=matbench)')
+    parser.add_argument('--loco_cv', action='store_true', help='Leave-One-Cluster-Out CV: iterate over all csv chunks in data_path')
     args = parser.parse_args(sys.argv[1:])
     return args
 
@@ -143,7 +143,8 @@ def main():
             name=args.wandb_name,
             config=vars(args),
             mode="online" if args.online_mode else "offline",
-            settings=wandb.Settings(console="off")
+            settings=wandb.Settings(console="off"),
+            reinit=True
         )
         wandb.define_metric("epoch")
         wandb.define_metric("train/*", step_metric="epoch")
@@ -151,12 +152,13 @@ def main():
         wandb.define_metric("learning_rate", step_metric="epoch")    
     
     start_total_time = time.time()
-    args.cuda = not args.disable_cuda and torch.cuda.is_available()
-    device = torch.device("cuda" if args.cuda else "cpu")
+    if not torch.cuda.is_available():
+        raise RuntimeError("GPU is required for training but no CUDA device was found. Strict GPU execution is enforced.")
+    device = torch.device("cuda")
 
     if args.graph_type in ("cgcnn", "mpnn"):
         collate_fn = collate_pool
-    elif args.graph_type in ("chgnet", "m3gnet"):
+    elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
         collate_fn = collate_pool_matgl
     elif args.graph_type == "alignn":
         collate_fn = collate_pool_alignn
@@ -193,7 +195,7 @@ def main():
         if args.test_file and not args.train_file:
             all_csvs = [f for f in os.listdir(args.data_path) if f.endswith('.csv')]
             train_files = [f for f in all_csvs if f not in args.test_file]
-            aux_files = ['XRD_data.csv', 'space_group_embeddings.csv', 'id_prop.csv']
+            aux_files = ['XRD_data.csv', 'space_group_embeddings.csv']
             train_files = [f for f in train_files if f not in aux_files]
             test_files = args.test_file
             print(f"=> Auto-detected train files: {train_files}")
@@ -235,24 +237,29 @@ def main():
         # Create DataLoaders
         train_loader = DataLoader(full_train_dataset, batch_size=args.batch_size,
                                   sampler=train_sampler, num_workers=args.workers,
-                                  collate_fn=collate_fn, pin_memory=args.cuda)
+                                  collate_fn=collate_fn, pin_memory=True)
         
         val_loader = DataLoader(full_train_dataset, batch_size=args.batch_size,
                                 sampler=val_sampler, num_workers=args.workers,
-                                collate_fn=collate_fn, pin_memory=args.cuda)
+                                collate_fn=collate_fn, pin_memory=True)
         
         test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
                                  shuffle=False, num_workers=args.workers,
-                                 collate_fn=collate_fn, pin_memory=args.cuda)
+                                 collate_fn=collate_fn, pin_memory=True)
         
         # Set representative dataset for model building
         dataset = full_train_dataset
 
     else:
-        # Mode B: Original behavior (Split single file by ratios)
-        print("=> Combined file mode: Using file with ratio split")
-        target_csv = args.train_file[0] if (args.train_file and len(args.train_file) > 0) else 'id_prop.csv'
-        dataset = CIFData(args.data_path, cif_path=args.cif_path, csv_filename=target_csv, base_data_dir=args.base_data_dir, graph_type=args.graph_type, use_xrd=args.xrd, use_text=args.text)
+        # Mode B: Single file mode with ratio split
+        print("=> Ratio split mode: Splitting one file into train/val/test")
+        # In this mode, we need at least one file. 
+        # Since id_prop.csv is gone, we check args.train_file or raise error.
+        if not args.train_file:
+             raise ValueError("Please provide a CSV file (e.g., --train_file my_data.csv) to split by ratio.")
+        
+        target_csv = args.train_file[0]
+        dataset = CIFData(args.data_path, csv_filename=target_csv, base_data_dir=args.base_data_dir, graph_type=args.graph_type, use_xrd=args.xrd, use_text=args.text)
         train_loader, val_loader, test_loader = get_train_val_test_loader(
             dataset=dataset,
             collate_fn=collate_fn,
@@ -297,7 +304,7 @@ def main():
                                     text=args.text,
                                     graph_type=args.graph_type)
         
-    elif args.graph_type in ("chgnet", "m3gnet"):
+    elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
         model = MatglGraphConvNet(
             element_types=dataset.element_types,
             atom_fea_len=args.atom_fea_len,
@@ -323,8 +330,7 @@ def main():
     else:
         raise ValueError(f"Unknown graph_type: {args.graph_type}")
         
-    if args.cuda:
-        model.cuda()
+    model.to(device)
 
     print("\n" + "="*30)
     print("      Calculating FLOPs")
@@ -342,7 +348,7 @@ def main():
                 sample_data[3].to(device),    # xrd_feature
                 sample_data[4].to(device)     # text_feature
             )
-        elif args.graph_type in ("chgnet", "m3gnet"):
+        elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
         # MatglGraphConvNet (graph_state, xrd, text)
             graph_state = (
                 sample_data[0][0].to(device), # batch_graph
@@ -411,10 +417,10 @@ def main():
 
     for epoch in range(args.start_epoch, args.epochs):
         # train for one epoch
-        train_loss_avg, train_mae_avg = train(args, train_loader, model, criterion, optimizer, epoch, normalizer)
+        train_loss_avg, train_mae_avg = train(args, train_loader, model, criterion, optimizer, epoch, normalizer, device)
 
         # evaluate on validation set
-        val_loss_avg, val_mae_avg = validate(args, val_loader, model, criterion, normalizer)
+        val_loss_avg, val_mae_avg = validate(args, val_loader, model, criterion, normalizer, device)
         mae_error = val_mae_avg
         
         if args.use_wandb:
@@ -450,7 +456,7 @@ def main():
     print('---------Evaluate Model on Test Set---------------')
     best_checkpoint = torch.load('model_best.pth.tar')
     model.load_state_dict(best_checkpoint['state_dict'])
-    validate(args, test_loader, model, criterion, normalizer, test=True)
+    test_metrics = validate(args, test_loader, model, criterion, normalizer, device, test=True)
     
     end_total_time = time.time()
     total_duration = end_total_time - start_total_time
@@ -466,41 +472,79 @@ def main():
     print(f"  ({total_duration:.2f} seconds)")
     print("="*30)
     
-    ytr, ypr, emb_tr, _ = collect_pred_emb(args, train_loader, model, normalizer, device)
-    yte, ype, emb_te, test_ids = collect_pred_emb(args, test_loader, model, normalizer, device)
+    print("\n" + "-"*30)
+    print("      Starting Post-Training Analysis")
+    print("-"*30)
+    try:
+        ytr, ypr, emb_tr, _ = collect_pred_emb(args, train_loader, model, normalizer, device)
+        yte, ype, emb_te, test_ids = collect_pred_emb(args, test_loader, model, normalizer, device)
 
-    np.save(os.path.join(out_dir, "train_emb.npy"), emb_tr)
-    np.save(os.path.join(out_dir, "test_emb.npy"), emb_te)
+        np.save(os.path.join(out_dir, "train_emb.npy"), emb_tr)
+        np.save(os.path.join(out_dir, "test_emb.npy"), emb_te)
+        print(f"=> Saved embeddings to {out_dir}")
 
-    fig_path = os.path.join(out_dir, "ood_umap_kde.png")
-    stats = make_ood_umap_figure(
-        train_emb=emb_tr,
-        test_emb=emb_te,
-        y_true_test=yte,
-        y_pred_test=ype,
-        out_png=fig_path,
-        density_threshold=1e-3, 
-        n_neighbors=50,          
-        min_dist=0.1             
-    )
+        fig_path = os.path.join(out_dir, "ood_umap_kde.png")
+        stats = make_ood_umap_figure(
+            train_emb=emb_tr,
+            test_emb=emb_te,
+            y_true_test=yte,
+            y_pred_test=ype,
+            out_png=fig_path,
+            density_threshold=1e-3, 
+            n_neighbors=50,          
+            min_dist=0.1             
+        )
+        print(f"=> Generated UMAP figure at {fig_path}")
+    except Exception as e:
+        print(f"[!] Warning: Post-training analysis failed: {e}")
     
     
     def collect_outputs(target_dir, files_to_move):
+        print("\n" + "="*30)
+        print(f"  Collecting Outputs to: {target_dir}")
+        print("="*30)
+        
         if target_dir == "." or not target_dir:
+            print("=> Output directory is current directory, skipping move.")
             return
+            
+        if not os.path.exists(target_dir):
+            os.makedirs(target_dir, exist_ok=True)
+            print(f"=> Created output directory: {target_dir}")
+
+        # Ensure files_to_move is a flat list of patterns
+        if isinstance(files_to_move, str):
+            files_to_move = files_to_move.split()
+        
+        total_moved = 0
         for pattern in files_to_move:
-            for f in glob.glob(pattern):
+            print(f"[*] Processing pattern: {pattern}")
+            found_files = glob.glob(pattern)
+            if not found_files:
+                print(f"    - No files found matching '{pattern}' in {os.getcwd()}")
+                continue
+                
+            for f in found_files:
                 if os.path.exists(f):
                     dest = os.path.join(target_dir, os.path.basename(f))
                     if os.path.abspath(f) != os.path.abspath(dest):
                         try:
+                            print(f"    - Moving: {f} -> {dest}")
                             shutil.move(f, dest)
+                            total_moved += 1
                         except Exception as e:
-                            print(f"[!] Warning: Could not move {f} to {target_dir}: {e}")
+                            print(f"    [!] Error moving {f}: {e}")
+                    else:
+                        print(f"    - File {f} is already in target directory.")
+        print(f"\n=> Finished collecting outputs. Total files moved: {total_moved}")
+        print("="*30 + "\n")
+
     collect_outputs(out_dir, args.result_files)
 
+    return test_metrics
 
-def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
+
+def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, device):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
@@ -517,67 +561,49 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
 
 
         if args.graph_type in ("cgcnn", "mpnn"):
-            if args.cuda:
-                input_var = (Variable(input[0].cuda(non_blocking=True)),
-                            Variable(input[1].cuda(non_blocking=True)),
-                            input[2].cuda(non_blocking=True),
-                            [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
-                            xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None,
-                            text_fea.cuda(non_blocking=True) if text_fea is not None else None)
-            else:
-                input_var = (Variable(input[0]),
-                            Variable(input[1]),
-                            input[2],
-                            input[3],
-                            xrd_fea,
-                            text_fea)
-        elif args.graph_type in ("chgnet", "m3gnet"):
+            input_var = (input[0].to(device, non_blocking=True),
+                        input[1].to(device, non_blocking=True),
+                        input[2].to(device, non_blocking=True),
+                        [crys_idx.to(device, non_blocking=True) for crys_idx in input[3]],
+                        xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None,
+                        text_fea.to(device, non_blocking=True) if text_fea is not None else None)
+        elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
             batch_graph, batch_state = input
-
-            if args.cuda:
-                batch_graph = batch_graph.to("cuda") 
-                batch_state = batch_state.cuda(non_blocking=True)
-                xrd_fea = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
-                text_fea = text_fea.cuda(non_blocking=True) if text_fea is not None else None
+            batch_graph = batch_graph.to(device) 
+            batch_state = batch_state.to(device, non_blocking=True)
+            xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+            text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
             input_var = ((batch_graph, batch_state), xrd_fea, text_fea)
-
         elif args.graph_type == "alignn":
             batch_g, batch_lg, batch_lat = input
-            if args.cuda:
-                batch_g = batch_g.to("cuda")
-                batch_lg = batch_lg.to("cuda")
-                batch_lat = batch_lat.to("cuda")
-                xrd_fea = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
-                text_fea = text_fea.cuda(non_blocking=True) if text_fea is not None else None
+            batch_g = batch_g.to(device)
+            batch_lg = batch_lg.to(device)
+            batch_lat = batch_lat.to(device)
+            xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+            text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
             input_var = (batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
-
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
         
         target_normed = normalizer.norm(target)
-        if args.cuda:
-            target_var = Variable(target_normed.cuda(non_blocking=True))
-        else:
-            target_var = Variable(target_normed)
+        target_var = target_normed.to(device, non_blocking=True)
 
         if args.graph_type in ("cgcnn", "mpnn"):
             out, emb = model(*input_var)
-        elif args.graph_type in ("chgnet", "m3gnet"):
-            # input_var = (graph_state, xrd_fea, text_fea)
+        elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
             graph_state, xrd_in, text_in = input_var
             out, emb = model(graph_state, xrd_in, text_in)
         elif args.graph_type in ("alignn"):
-            # input_var = (batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
             batch_g, batch_lg, batch_lat, xrd_in, text_in = input_var
             out, emb = model(batch_g, batch_lg, batch_lat, xrd_in, text_in)
 
         loss = criterion(out, target_var)
 
         # measure accuracy and record loss
-        mae_error = mae(normalizer.denorm(out.data.cpu()), target)
+        mae_error = mae(normalizer.denorm(out.detach().cpu()), target)
         mre_error = mae_error / target.abs().mean()
 
-        losses.update(loss.data.cpu(), target.size(0))
+        losses.update(loss.detach().cpu(), target.size(0))
         mae_errors.update(mae_error, target.size(0))
         mre_errors.update(mre_error, target.size(0))
 
@@ -608,7 +634,7 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer):
             
     return float(losses.avg), float(mae_errors.avg)
 
-def validate(args, val_loader, model, criterion, normalizer, test=False):
+def validate(args, val_loader, model, criterion, normalizer, device, test=False):
     batch_time = AverageMeter()
     losses = AverageMeter()
     mae_errors = AverageMeter()
@@ -625,48 +651,31 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
     end = time.time()
     for i, (input, target, batch_cif_ids, xrd_fea, text_fea) in enumerate(val_loader):
         if args.graph_type in ("cgcnn", "mpnn"):
-            if args.cuda:
-                with torch.no_grad():
-                    input_var = (Variable(input[0].cuda(non_blocking=True)),
-                                Variable(input[1].cuda(non_blocking=True)),
-                                input[2].cuda(non_blocking=True),
-                                [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
-                                xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None,
-                                text_fea.cuda(non_blocking=True) if text_fea is not None else None)
-            else:
-                with torch.no_grad():
-                    input_var = (Variable(input[0]),
-                                Variable(input[1]),
-                                input[2],
-                                input[3],
-                                xrd_fea,
-                                text_fea)
-        elif args.graph_type in ("chgnet", "m3gnet"):
+            with torch.no_grad():
+                input_var = (input[0].to(device, non_blocking=True),
+                            input[1].to(device, non_blocking=True),
+                            input[2].to(device, non_blocking=True),
+                            [crys_idx.to(device, non_blocking=True) for crys_idx in input[3]],
+                            xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None,
+                            text_fea.to(device, non_blocking=True) if text_fea is not None else None)
+        elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
             graph_state = input 
-            if args.cuda:
-                with torch.no_grad():
-                    g, state_feats = graph_state
-                    g = g.to("cuda")
-                    state_feats = state_feats.cuda(non_blocking=True)
-                    xrd_fea_cuda = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
-                    text_fea_cuda = text_fea.cuda(non_blocking=True) if text_fea is not None else None
-                    input_var = ((g, state_feats), xrd_fea_cuda, text_fea_cuda)
-            else:
-                with torch.no_grad():
-                    input_var = (graph_state, xrd_fea, text_fea)
+            with torch.no_grad():
+                g, state_feats = graph_state
+                g = g.to(device)
+                state_feats = state_feats.to(device, non_blocking=True)
+                xrd_fea_cuda = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+                text_fea_cuda = text_fea.to(device, non_blocking=True) if text_fea is not None else None
+                input_var = ((g, state_feats), xrd_fea_cuda, text_fea_cuda)
         elif args.graph_type in ("alignn"):
             batch_g, batch_lg, batch_lat = input
-            if args.cuda:
-                with torch.no_grad():
-                    batch_g = batch_g.to("cuda")
-                    batch_lg = batch_lg.to("cuda")
-                    batch_lat = batch_lat.to("cuda")
-                    xrd_fea_cuda = xrd_fea.cuda(non_blocking=True) if xrd_fea is not None else None
-                    text_fea_cuda = text_fea.cuda(non_blocking=True) if text_fea is not None else None
-                    input_var = (batch_g, batch_lg, batch_lat, xrd_fea_cuda, text_fea_cuda)
-            else:
-                with torch.no_grad():
-                    input_var = (batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
+            with torch.no_grad():
+                batch_g = batch_g.to(device)
+                batch_lg = batch_lg.to(device)
+                batch_lat = batch_lat.to(device)
+                xrd_fea_cuda = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+                text_fea_cuda = text_fea.to(device, non_blocking=True) if text_fea is not None else None
+                input_var = (batch_g, batch_lg, batch_lat, xrd_fea_cuda, text_fea_cuda)
         
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
@@ -675,25 +684,21 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
             target_normed = normalizer.norm(target)
         else:
             target_normed = target.view(-1).long()
-        if args.cuda:
-            with torch.no_grad():
-                target_var = Variable(target_normed.cuda(non_blocking=True))
-        else:
-            with torch.no_grad():
-                target_var = Variable(target_normed)
+        with torch.no_grad():
+            target_var = target_normed.to(device, non_blocking=True)
 
         # compute output
         out, emb = model(*input_var)
         loss = criterion(out, target_var)
 
         # measure accuracy and record loss
-        mae_error = mae(normalizer.denorm(out.data.cpu()), target)
+        mae_error = mae(normalizer.denorm(out.detach().cpu()), target)
         mre_error = mae_error / target.abs().mean()
-        losses.update(loss.data.cpu().item(), target.size(0))
+        losses.update(loss.detach().cpu().item(), target.size(0))
         mae_errors.update(mae_error, target.size(0))
         mre_errors.update(mre_error, target.size(0))
         if test:
-            test_pred = normalizer.denorm(out.data.cpu())
+            test_pred = normalizer.denorm(out.detach().cpu())
             test_target = target
             test_preds += test_pred.view(-1).tolist()
             test_targets += test_target.view(-1).tolist()
@@ -737,6 +742,7 @@ def validate(args, val_loader, model, criterion, normalizer, test=False):
             for cid, t, p in zip(test_cif_ids, test_targets, test_preds):
                 table.add_data(cid, t, p)
             wandb.log({"test/results_table": table})
+        return {"test/mae": test_mae, "test/rmse": test_rmse, "test/r2": test_r2}
     else:
         star_label = '*'
         print(' {star} MAE {mae_errors.avg:.3f}'.format(star=star_label, mae_errors=mae_errors))
@@ -752,37 +758,32 @@ def collect_pred_emb(args, loader, model, normalizer, device):
 
         # ---- input_var ----
         if args.graph_type in ("cgcnn", "mpnn"):
-            if args.cuda:
-                input_var = (
-                    input[0].to(device, non_blocking=True),
-                    input[1].to(device, non_blocking=True),
-                    input[2].to(device, non_blocking=True),
-                    [crys_idx.to(device, non_blocking=True) for crys_idx in input[3]],
-                    xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None,
-                    text_fea.to(device, non_blocking=True) if text_fea is not None else None,
-                )
-            else:
-                input_var = (input[0], input[1], input[2], input[3], xrd_fea, text_fea)
+            input_var = (
+                input[0].to(device, non_blocking=True),
+                input[1].to(device, non_blocking=True),
+                input[2].to(device, non_blocking=True),
+                [crys_idx.to(device, non_blocking=True) for crys_idx in input[3]],
+                xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None,
+                text_fea.to(device, non_blocking=True) if text_fea is not None else None,
+            )
 
             out, emb = model(*input_var)
 
-        elif args.graph_type in ("chgnet", "m3gnet"):
+        elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
             g, state_feats = input
-            if args.cuda:
-                g = g.to(device)
-                state_feats = state_feats.to(device, non_blocking=True)
-                xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
-                text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
+            g = g.to(device)
+            state_feats = state_feats.to(device, non_blocking=True)
+            xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+            text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
             out, emb = model((g, state_feats), xrd_fea, text_fea)
         
         elif args.graph_type in ("alignn"):
             batch_g, batch_lg, batch_lat = input
-            if args.cuda:
-                batch_g = batch_g.to(device)
-                batch_lg = batch_lg.to(device)
-                batch_lat = batch_lat.to(device)
-                xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
-                text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
+            batch_g = batch_g.to(device)
+            batch_lg = batch_lg.to(device)
+            batch_lat = batch_lat.to(device)
+            xrd_fea = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
+            text_fea = text_fea.to(device, non_blocking=True) if text_fea is not None else None
             out, emb = model(batch_g, batch_lg, batch_lat, xrd_fea, text_fea)
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
@@ -848,5 +849,174 @@ def make_ood_umap_figure(train_emb, test_emb, y_true_test, y_pred_test, out_png,
     }
 
 
+def loco_cv_main():
+    """Leave-One-Cluster-Out Cross Validation wrapper.
+
+    Iterates over all CSV chunks in data_path, using each as the test set
+    while the rest serve as training data. Logs per-fold and averaged
+    metrics to WandB (as a group) and prints a summary table.
+    """
+    args = arg_parse()
+
+    # Convert to absolute paths to avoid issues after cwd changes
+    args.data_path = os.path.abspath(args.data_path)
+    args.base_data_dir = os.path.abspath(args.base_data_dir)
+    args.cif_path = os.path.abspath(args.cif_path)
+    if args.result_dir:
+        args.result_dir = os.path.abspath(args.result_dir)
+
+    # Discover all data chunks
+    aux_files = ['XRD_data.csv', 'space_group_embeddings.csv']
+    all_csvs = sorted([f for f in os.listdir(args.data_path)
+                        if f.endswith('.csv') and f not in aux_files])
+    n_folds = len(all_csvs)
+    print(f"\n{'='*50}")
+    print(f"  LOCO-CV: {n_folds} folds in {args.data_path}")
+    print(f"  Chunks: {all_csvs}")
+    print(f"{'='*50}\n")
+
+    # Determine wandb group name for this CV run
+    data_split_name = os.path.basename(args.data_path.rstrip('/\\'))
+    cv_group = args.wandb_group if args.wandb_group != 'baseline' \
+        else f"loco_{data_split_name}_{args.graph_type}"
+    if args.text:
+        cv_group += "_text"
+
+    fold_metrics = []
+
+    for fold_idx, test_chunk in enumerate(all_csvs):
+        print(f"\n{'#'*50}")
+        print(f"  Fold {fold_idx+1}/{n_folds}: test = {test_chunk}")
+        print(f"{'#'*50}\n")
+
+        # Override sys.argv for this fold
+        fold_result_dir = f"{args.result_dir}_fold{fold_idx+1}" if args.result_dir else None
+        fold_argv = [
+            'main.py',
+            '--data_path', str(args.data_path),
+            '--base_data_dir', str(args.base_data_dir),
+            '--cif_path', str(args.cif_path),
+            '--test_file', test_chunk,
+            '--graph_type', args.graph_type,
+            '--lr', str(args.lr),
+            '--batch-size', str(args.batch_size),
+            '--optim', args.optim,
+            '--epochs', str(args.epochs),
+            '--xrd', str(args.xrd),
+            '--text', str(args.text),
+            '--val-ratio', str(args.val_ratio),
+            '--atom-fea-len', str(args.atom_fea_len),
+            '--h-fea-len', str(args.h_fea_len),
+            '--n-conv', str(args.n_conv),
+            '--n-h', str(args.n_h),
+            '--print-freq', str(args.print_freq),
+        ]
+        if fold_result_dir:
+            fold_argv += ['--result_dir', fold_result_dir]
+        if args.use_wandb:
+            fold_name = f"fold{fold_idx+1}_{test_chunk.replace('.csv','')}"
+            fold_argv += [
+                '--use_wandb',
+                '--wandb_project', args.wandb_project,
+                '--wandb_group', cv_group,
+                '--wandb_name', fold_name,
+            ]
+            if args.online_mode:
+                fold_argv += ['--online_mode']
+
+        # Patch sys.argv and reset global state
+        original_argv = sys.argv
+        sys.argv = fold_argv
+
+        global best_mae_error
+        best_mae_error = 1e10
+
+        try:
+            metrics = main()
+            if metrics:
+                metrics['fold'] = fold_idx + 1
+                metrics['test_chunk'] = test_chunk
+                fold_metrics.append(metrics)
+                print(f"\n  Fold {fold_idx+1} results: MAE={metrics['test/mae']:.4f}, "
+                      f"RMSE={metrics['test/rmse']:.4f}, R2={metrics['test/r2']:.4f}")
+        except Exception as e:
+            print(f"\n[!] Fold {fold_idx+1} ({test_chunk}) failed: {e}")
+            fold_metrics.append({
+                'fold': fold_idx + 1, 'test_chunk': test_chunk,
+                'test/mae': float('nan'), 'test/rmse': float('nan'), 'test/r2': float('nan')
+            })
+        finally:
+            sys.argv = original_argv
+
+    # ---- Summary ----
+    print(f"\n{'='*60}")
+    print(f"  LOCO-CV Summary ({n_folds} folds)")
+    print(f"{'='*60}")
+    print(f"  {'Fold':<6} {'Chunk':<20} {'MAE':<10} {'RMSE':<10} {'R2':<10}")
+    print(f"  {'-'*56}")
+    for m in fold_metrics:
+        print(f"  {m['fold']:<6} {m['test_chunk']:<20} "
+              f"{m['test/mae']:<10.4f} {m['test/rmse']:<10.4f} {m['test/r2']:<10.4f}")
+
+    valid_metrics = [m for m in fold_metrics if not np.isnan(m['test/mae'])]
+    if valid_metrics:
+        avg_mae = np.mean([m['test/mae'] for m in valid_metrics])
+        std_mae = np.std([m['test/mae'] for m in valid_metrics])
+        avg_rmse = np.mean([m['test/rmse'] for m in valid_metrics])
+        std_rmse = np.std([m['test/rmse'] for m in valid_metrics])
+        avg_r2 = np.mean([m['test/r2'] for m in valid_metrics])
+        std_r2 = np.std([m['test/r2'] for m in valid_metrics])
+
+        print(f"  {'-'*56}")
+        print(f"  {'AVG':<6} {'':<20} {avg_mae:<10.4f} {avg_rmse:<10.4f} {avg_r2:<10.4f}")
+        print(f"  {'STD':<6} {'':<20} {std_mae:<10.4f} {std_rmse:<10.4f} {std_r2:<10.4f}")
+        print(f"{'='*60}")
+
+        # Log summary to a separate wandb run
+        if args.use_wandb:
+            wandb.init(
+                project=args.wandb_project,
+                group=cv_group,
+                name=f"LOCO_CV_summary",
+                config=vars(args),
+                mode="online" if args.online_mode else "offline",
+                settings=wandb.Settings(console="off")
+            )
+            wandb.run.summary["cv/mae_mean"] = avg_mae
+            wandb.run.summary["cv/mae_std"] = std_mae
+            wandb.run.summary["cv/rmse_mean"] = avg_rmse
+            wandb.run.summary["cv/rmse_std"] = std_rmse
+            wandb.run.summary["cv/r2_mean"] = avg_r2
+            wandb.run.summary["cv/r2_std"] = std_r2
+            wandb.run.summary["cv/n_folds"] = len(valid_metrics)
+
+            # Log per-fold table
+            table = wandb.Table(columns=["fold", "test_chunk", "mae", "rmse", "r2"])
+            for m in fold_metrics:
+                table.add_data(m['fold'], m['test_chunk'],
+                               m['test/mae'], m['test/rmse'], m['test/r2'])
+            wandb.log({"cv/fold_results": table})
+            wandb.finish()
+
+        # Save summary CSV
+        if args.result_dir:
+            import csv
+            os.makedirs(args.result_dir, exist_ok=True)
+            summary_path = os.path.join(args.result_dir, "loco_cv_summary.csv")
+            with open(summary_path, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(["fold", "test_chunk", "mae", "rmse", "r2"])
+                for m in fold_metrics:
+                    writer.writerow([m['fold'], m['test_chunk'],
+                                     m['test/mae'], m['test/rmse'], m['test/r2']])
+                writer.writerow(["AVG", "", avg_mae, avg_rmse, avg_r2])
+                writer.writerow(["STD", "", std_mae, std_rmse, std_r2])
+            print(f"\n=> Saved CV summary to {summary_path}")
+
+
 if __name__ == "__main__":
-    main()
+    args = arg_parse()
+    if args.loco_cv:
+        loco_cv_main()
+    else:
+        main()

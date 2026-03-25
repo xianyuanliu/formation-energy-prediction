@@ -19,7 +19,9 @@ from models.cgcnn import CrystalGraphConvNet
 
 parser = argparse.ArgumentParser(description='Crystal gated neural networks')
 parser.add_argument('--modelpath', help='path to the trained model.', default="pretrained_models/formation-energy-per-atom.pth")
-parser.add_argument('--cifpath', help='path to the directory of cifs files.', default="data/test_cifs/")
+parser.add_argument('--data_path', help='path to the directory containing CSV files.', default="data/split_both_hhi/")
+parser.add_argument('--cif_path', help='path to the directory containing CIF files.', default="data/cifs/")
+parser.add_argument('--test_file', help='test csv file name.', default="test.csv")
 parser.add_argument('-b', '--batch-size', default=256, type=int,
                     metavar='N', help='mini-batch size (default: 256)')
 parser.add_argument('-j', '--workers', default=0, type=int, metavar='N',
@@ -49,45 +51,80 @@ else:
 
 def main():
     global args, model_args, best_mae_error
+    
+    # device
+    device = torch.device("cuda" if args.cuda else "cpu")
+
+    # decide collate_fn
+    from data import collate_pool, collate_pool_matgl, collate_pool_alignn
+    if model_args.graph_type in ("cgcnn", "mpnn"):
+        collate_fn = collate_pool
+    elif model_args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
+        collate_fn = collate_pool_matgl
+    elif model_args.graph_type == "alignn":
+        collate_fn = collate_pool_alignn
 
     # load data
-    dataset = CIFData(args.cifpath)
-    collate_fn = collate_pool
-    test_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True,
+    dataset = CIFData(args.data_path, csv_filename=args.test_file, cif_path=args.cif_path, 
+                     graph_type=model_args.graph_type, 
+                     use_xrd=model_args.xrd, use_text=model_args.text)
+    
+    test_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False,
                              num_workers=args.workers, collate_fn=collate_fn,
                              pin_memory=args.cuda)
 
     # build model
-    structures, _, _ = dataset[0]
-    orig_atom_fea_len = structures[0].shape[-1]
-    nbr_fea_len = structures[1].shape[-1]
-    model = CrystalGraphConvNet(orig_atom_fea_len, nbr_fea_len,
-                                atom_fea_len=model_args.atom_fea_len,
-                                n_conv=model_args.n_conv,
-                                h_fea_len=model_args.h_fea_len,
-                                n_h=model_args.n_h,
-                                classification=True if model_args.task ==
-                                'classification' else False)
+    from models.cgcnn import MatglGraphConvNet, AlignnGraphConvNet
+    
+    if model_args.graph_type in ("cgcnn", "mpnn"):
+        structures, _, _, _, _, _ = dataset[0]
+        orig_atom_fea_len = structures[0].shape[-1]
+        nbr_fea_len = structures[1].shape[-1]
+        model = CrystalGraphConvNet(orig_atom_fea_len, nbr_fea_len,
+                                    atom_fea_len=model_args.atom_fea_len,
+                                    n_conv=model_args.n_conv,
+                                    h_fea_len=model_args.h_fea_len,
+                                    n_h=model_args.n_h,
+                                    xrd=model_args.xrd,
+                                    text=model_args.text,
+                                    graph_type=model_args.graph_type)
+    elif model_args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
+        model = MatglGraphConvNet(
+            element_types=dataset.element_types,
+            atom_fea_len=model_args.atom_fea_len,
+            h_fea_len=model_args.h_fea_len,
+            n_h=model_args.n_h,
+            xrd=model_args.xrd,
+            text=model_args.text,
+            cutoff=dataset.cutoff,
+            graph_type=model_args.graph_type
+        )
+    elif model_args.graph_type == "alignn":
+        model = AlignnGraphConvNet(
+            atom_fea_len=92, 
+            edge_fea_len=80,
+            triplet_fea_len=40,
+            h_fea_len=model_args.h_fea_len,
+            n_h=model_args.n_h,
+            xrd=model_args.xrd,
+            text=model_args.text
+        )
+
     if args.cuda:
         model.cuda()
 
-    # define loss func and optimizer
+    # define loss func
     criterion = nn.MSELoss()
-
     normalizer = Normalizer(torch.zeros(3))
 
-    # optionally resume from a checkpoint
-    if os.path.isfile(args.modelpath):
-        print("=> loading model '{}'".format(args.modelpath))
-        checkpoint = torch.load(args.modelpath,
-                                map_location=lambda storage, loc: storage)
-        model.load_state_dict(checkpoint['state_dict'])
-        normalizer.load_state_dict(checkpoint['normalizer'])
-        print("=> loaded model '{}' (epoch {}, validation {})"
-              .format(args.modelpath, checkpoint['epoch'],
-                      checkpoint['best_mae_error']))
-    else:
-        print("=> no model found at '{}'".format(args.modelpath))
+    # load checkpoint
+    print("=> loading model weight from '{}'".format(args.modelpath))
+    checkpoint = torch.load(args.modelpath, map_location=device)
+    model.load_state_dict(checkpoint['state_dict'])
+    normalizer.load_state_dict(checkpoint['normalizer'])
+    
+    print("=> loaded model (epoch {}, best_mae_error {})"
+          .format(checkpoint['epoch'], checkpoint['best_mae_error']))
 
     validate(test_loader, model, criterion, normalizer, test=True)
 
@@ -112,18 +149,22 @@ def validate(val_loader, model, criterion, normalizer, test=False):
     model.eval()
 
     end = time.time()
-    for i, (input, target, batch_cif_ids) in enumerate(val_loader):
+    for i, (input, target, batch_cif_ids, batch_xrd_fea, batch_text_fea) in enumerate(val_loader):
         with torch.no_grad():
             if args.cuda:
                 input_var = (Variable(input[0].cuda(non_blocking=True)),
                              Variable(input[1].cuda(non_blocking=True)),
                              input[2].cuda(non_blocking=True),
-                             [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]])
+                             [crys_idx.cuda(non_blocking=True) for crys_idx in input[3]],
+                             batch_xrd_fea.cuda(non_blocking=True),
+                             batch_text_fea.cuda(non_blocking=True))
             else:
                 input_var = (Variable(input[0]),
                              Variable(input[1]),
                              input[2],
-                             input[3])
+                             input[3],
+                             batch_xrd_fea,
+                             batch_text_fea)
         if model_args.task == 'regression':
             target_normed = normalizer.norm(target)
         else:
@@ -135,7 +176,7 @@ def validate(val_loader, model, criterion, normalizer, test=False):
                 target_var = Variable(target_normed)
 
         # compute output
-        output = model(*input_var)
+        output, _ = model(*input_var)
         loss = criterion(output, target_var)
 
         # measure accuracy and record loss

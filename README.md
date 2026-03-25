@@ -4,29 +4,21 @@
 This repository predicts formation energy using a multimodal model built on a crystal graph (CIF structure) plus optional XRD features and space-group text embeddings. It was developed for the [KRICT Hackathon 2025](https://gitlab.chemdx.org/global-network/2025-krict-chemdx-hackathon/-/wikis/home).
 
 ## Environment Setup
-1. Install PyTorch with CUDA support:
 
-```bash
-pip install torch==2.4.0+cu121 torchvision==0.19.0+cu121 torchaudio==2.4.0+cu121 --index-url https://download.pytorch.org/whl/cu121
-```
+> **Important**: To ensure optimal configuration for each model family, we recommend installing dependencies in separate virtual environments.
 
-2. Install torchdata (required by matgl):
+1. **For ALIGNN Models**:
+   ```bash
+   pip install -r requirements_alignn.txt
+   ```
 
-```bash
-pip install torchdata==0.8.0
-```
+2. **For MatGL Models** (CHGNet, M3GNet, TensorNet, QET):
+   ```bash
+   pip install -r requirements_matgl.txt
+   ```
 
-3. Install DGL with CUDA support:
-
-```bash
-pip install dgl -f https://data.dgl.ai/wheels/cu121/repo.html
-```
-
-4. Install remaining dependencies:
-
-```bash
-pip install -r requirements.txt
-```
+3. **Others (CGCNN, MPNN)**:
+   The base models `cgcnn` and `mpnn` are functional in both environments.
 
 ## Repository Layout
 - `main.py`: training + validation + test evaluation entrypoint.
@@ -100,6 +92,8 @@ You can choose from several Graph Neural Network architectures via the `--graph_
 - `mpnn`: Message Passing Neural Network
 - `chgnet`: Crystalline Hamiltonian Graph Network (via MatGL)
 - `m3gnet`: Materials 3-body Graph Network (via MatGL)
+- `tensornet`: TensorNet (via MatGL)
+- `qet`: Quantum Electrostatic Transformer (via MatGL)
 - `alignn`: Atomistic Line Graph Neural Network (via ALIGNN)
 
 Example:
