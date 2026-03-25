@@ -80,7 +80,7 @@ def arg_parse():
     parser.add_argument('--wandb_project', default='formation-energy-krict', type=str, help='WandB project name')
     parser.add_argument('--wandb_group', default='baseline', type=str, help='WandB group name')
     parser.add_argument('--wandb_name', default=None, type=str, help='WandB run name (None = auto-generated)')
-    parser.add_argument('--online_mode', default=False, type=str2bool, help='Use WandB online mode for web monitoring (default: False)')
+    parser.add_argument('--online_mode', action='store_true', help='Use WandB online mode for web monitoring')
 
     # Data split
     train_group = parser.add_mutually_exclusive_group()
@@ -107,6 +107,7 @@ def arg_parse():
     parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (mpnn, cgcnn, chgnet, m3gnet, alignn, tensornet, qet)')
     parser.add_argument('--data-source', default='cif', choices=['cif', 'matbench'], help='data source type (default: cif)')
     parser.add_argument('--matbench-json', default=None, type=str, help='path to matbench JSON file (required when --data-source=matbench)')
+    parser.add_argument('--loco_cv', action='store_true', help='Leave-One-Cluster-Out CV: iterate over all csv chunks in data_path')
     args = parser.parse_args(sys.argv[1:])
     return args
 
@@ -142,7 +143,8 @@ def main():
             name=args.wandb_name,
             config=vars(args),
             mode="online" if args.online_mode else "offline",
-            settings=wandb.Settings(console="off")
+            settings=wandb.Settings(console="off"),
+            reinit=True
         )
         wandb.define_metric("epoch")
         wandb.define_metric("train/*", step_metric="epoch")
@@ -454,7 +456,7 @@ def main():
     print('---------Evaluate Model on Test Set---------------')
     best_checkpoint = torch.load('model_best.pth.tar')
     model.load_state_dict(best_checkpoint['state_dict'])
-    validate(args, test_loader, model, criterion, normalizer, device, test=True)
+    test_metrics = validate(args, test_loader, model, criterion, normalizer, device, test=True)
     
     end_total_time = time.time()
     total_duration = end_total_time - start_total_time
@@ -538,6 +540,8 @@ def main():
         print("="*30 + "\n")
 
     collect_outputs(out_dir, args.result_files)
+
+    return test_metrics
 
 
 def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, device):
@@ -738,6 +742,7 @@ def validate(args, val_loader, model, criterion, normalizer, device, test=False)
             for cid, t, p in zip(test_cif_ids, test_targets, test_preds):
                 table.add_data(cid, t, p)
             wandb.log({"test/results_table": table})
+        return {"test/mae": test_mae, "test/rmse": test_rmse, "test/r2": test_r2}
     else:
         star_label = '*'
         print(' {star} MAE {mae_errors.avg:.3f}'.format(star=star_label, mae_errors=mae_errors))
@@ -844,5 +849,174 @@ def make_ood_umap_figure(train_emb, test_emb, y_true_test, y_pred_test, out_png,
     }
 
 
+def loco_cv_main():
+    """Leave-One-Cluster-Out Cross Validation wrapper.
+
+    Iterates over all CSV chunks in data_path, using each as the test set
+    while the rest serve as training data. Logs per-fold and averaged
+    metrics to WandB (as a group) and prints a summary table.
+    """
+    args = arg_parse()
+
+    # Convert to absolute paths to avoid issues after cwd changes
+    args.data_path = os.path.abspath(args.data_path)
+    args.base_data_dir = os.path.abspath(args.base_data_dir)
+    args.cif_path = os.path.abspath(args.cif_path)
+    if args.result_dir:
+        args.result_dir = os.path.abspath(args.result_dir)
+
+    # Discover all data chunks
+    aux_files = ['XRD_data.csv', 'space_group_embeddings.csv']
+    all_csvs = sorted([f for f in os.listdir(args.data_path)
+                        if f.endswith('.csv') and f not in aux_files])
+    n_folds = len(all_csvs)
+    print(f"\n{'='*50}")
+    print(f"  LOCO-CV: {n_folds} folds in {args.data_path}")
+    print(f"  Chunks: {all_csvs}")
+    print(f"{'='*50}\n")
+
+    # Determine wandb group name for this CV run
+    data_split_name = os.path.basename(args.data_path.rstrip('/\\'))
+    cv_group = args.wandb_group if args.wandb_group != 'baseline' \
+        else f"loco_{data_split_name}_{args.graph_type}"
+    if args.text:
+        cv_group += "_text"
+
+    fold_metrics = []
+
+    for fold_idx, test_chunk in enumerate(all_csvs):
+        print(f"\n{'#'*50}")
+        print(f"  Fold {fold_idx+1}/{n_folds}: test = {test_chunk}")
+        print(f"{'#'*50}\n")
+
+        # Override sys.argv for this fold
+        fold_result_dir = f"{args.result_dir}_fold{fold_idx+1}" if args.result_dir else None
+        fold_argv = [
+            'main.py',
+            '--data_path', str(args.data_path),
+            '--base_data_dir', str(args.base_data_dir),
+            '--cif_path', str(args.cif_path),
+            '--test_file', test_chunk,
+            '--graph_type', args.graph_type,
+            '--lr', str(args.lr),
+            '--batch-size', str(args.batch_size),
+            '--optim', args.optim,
+            '--epochs', str(args.epochs),
+            '--xrd', str(args.xrd),
+            '--text', str(args.text),
+            '--val-ratio', str(args.val_ratio),
+            '--atom-fea-len', str(args.atom_fea_len),
+            '--h-fea-len', str(args.h_fea_len),
+            '--n-conv', str(args.n_conv),
+            '--n-h', str(args.n_h),
+            '--print-freq', str(args.print_freq),
+        ]
+        if fold_result_dir:
+            fold_argv += ['--result_dir', fold_result_dir]
+        if args.use_wandb:
+            fold_name = f"fold{fold_idx+1}_{test_chunk.replace('.csv','')}"
+            fold_argv += [
+                '--use_wandb',
+                '--wandb_project', args.wandb_project,
+                '--wandb_group', cv_group,
+                '--wandb_name', fold_name,
+            ]
+            if args.online_mode:
+                fold_argv += ['--online_mode']
+
+        # Patch sys.argv and reset global state
+        original_argv = sys.argv
+        sys.argv = fold_argv
+
+        global best_mae_error
+        best_mae_error = 1e10
+
+        try:
+            metrics = main()
+            if metrics:
+                metrics['fold'] = fold_idx + 1
+                metrics['test_chunk'] = test_chunk
+                fold_metrics.append(metrics)
+                print(f"\n  Fold {fold_idx+1} results: MAE={metrics['test/mae']:.4f}, "
+                      f"RMSE={metrics['test/rmse']:.4f}, R2={metrics['test/r2']:.4f}")
+        except Exception as e:
+            print(f"\n[!] Fold {fold_idx+1} ({test_chunk}) failed: {e}")
+            fold_metrics.append({
+                'fold': fold_idx + 1, 'test_chunk': test_chunk,
+                'test/mae': float('nan'), 'test/rmse': float('nan'), 'test/r2': float('nan')
+            })
+        finally:
+            sys.argv = original_argv
+
+    # ---- Summary ----
+    print(f"\n{'='*60}")
+    print(f"  LOCO-CV Summary ({n_folds} folds)")
+    print(f"{'='*60}")
+    print(f"  {'Fold':<6} {'Chunk':<20} {'MAE':<10} {'RMSE':<10} {'R2':<10}")
+    print(f"  {'-'*56}")
+    for m in fold_metrics:
+        print(f"  {m['fold']:<6} {m['test_chunk']:<20} "
+              f"{m['test/mae']:<10.4f} {m['test/rmse']:<10.4f} {m['test/r2']:<10.4f}")
+
+    valid_metrics = [m for m in fold_metrics if not np.isnan(m['test/mae'])]
+    if valid_metrics:
+        avg_mae = np.mean([m['test/mae'] for m in valid_metrics])
+        std_mae = np.std([m['test/mae'] for m in valid_metrics])
+        avg_rmse = np.mean([m['test/rmse'] for m in valid_metrics])
+        std_rmse = np.std([m['test/rmse'] for m in valid_metrics])
+        avg_r2 = np.mean([m['test/r2'] for m in valid_metrics])
+        std_r2 = np.std([m['test/r2'] for m in valid_metrics])
+
+        print(f"  {'-'*56}")
+        print(f"  {'AVG':<6} {'':<20} {avg_mae:<10.4f} {avg_rmse:<10.4f} {avg_r2:<10.4f}")
+        print(f"  {'STD':<6} {'':<20} {std_mae:<10.4f} {std_rmse:<10.4f} {std_r2:<10.4f}")
+        print(f"{'='*60}")
+
+        # Log summary to a separate wandb run
+        if args.use_wandb:
+            wandb.init(
+                project=args.wandb_project,
+                group=cv_group,
+                name=f"LOCO_CV_summary",
+                config=vars(args),
+                mode="online" if args.online_mode else "offline",
+                settings=wandb.Settings(console="off")
+            )
+            wandb.run.summary["cv/mae_mean"] = avg_mae
+            wandb.run.summary["cv/mae_std"] = std_mae
+            wandb.run.summary["cv/rmse_mean"] = avg_rmse
+            wandb.run.summary["cv/rmse_std"] = std_rmse
+            wandb.run.summary["cv/r2_mean"] = avg_r2
+            wandb.run.summary["cv/r2_std"] = std_r2
+            wandb.run.summary["cv/n_folds"] = len(valid_metrics)
+
+            # Log per-fold table
+            table = wandb.Table(columns=["fold", "test_chunk", "mae", "rmse", "r2"])
+            for m in fold_metrics:
+                table.add_data(m['fold'], m['test_chunk'],
+                               m['test/mae'], m['test/rmse'], m['test/r2'])
+            wandb.log({"cv/fold_results": table})
+            wandb.finish()
+
+        # Save summary CSV
+        if args.result_dir:
+            import csv
+            os.makedirs(args.result_dir, exist_ok=True)
+            summary_path = os.path.join(args.result_dir, "loco_cv_summary.csv")
+            with open(summary_path, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(["fold", "test_chunk", "mae", "rmse", "r2"])
+                for m in fold_metrics:
+                    writer.writerow([m['fold'], m['test_chunk'],
+                                     m['test/mae'], m['test/rmse'], m['test/r2']])
+                writer.writerow(["AVG", "", avg_mae, avg_rmse, avg_r2])
+                writer.writerow(["STD", "", std_mae, std_rmse, std_r2])
+            print(f"\n=> Saved CV summary to {summary_path}")
+
+
 if __name__ == "__main__":
-    main()
+    args = arg_parse()
+    if args.loco_cv:
+        loco_cv_main()
+    else:
+        main()
