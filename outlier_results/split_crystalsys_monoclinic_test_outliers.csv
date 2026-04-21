@@ -1,0 +1,3 @@
+file_name,value_per_atom,space_group,outlier_type
+1568_Cs16Bi16,-4.954624199,P2_1/c,under_1st_percentile
+4467_Ba4Fe2,0.968027989,C2/m,over_99th_percentile

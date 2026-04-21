@@ -1,0 +1,13 @@
+file_name,formula,space_group,value_per_atom,composition,HHI_P,HHI_R,outlier_type
+2482_Ac3Mn,Ac3Mn,I4/mmm,-53.62881943695404,Ac3Mn,indeterminable,indeterminable,under_1st_percentile
+1459_CsW,CsW,F-43m,-11.82074013651485,CsW,6580.402966790001,5013.314956456996,under_1st_percentile
+1568_Cs16Bi16,Cs16Bi16,P2_1/c,-4.954624198783083,CsBi,5572.119527067214,6000,under_1st_percentile
+2915_Ce2Br6,Ce2Br6,P6_3/m,-2.11548569156943,CeBr3,5587.138388955002,5498.20550354371,under_1st_percentile
+1445_CsI,CsI,P-6m2,-1.619871335866558,CsI,5462.703672057107,5413.858551335024,under_1st_percentile
+657_CsI,CsI,P-6m2,-1.618852980774196,CsI,5462.703672057107,5413.858551335024,under_1st_percentile
+1924_AuNp,AuNp,F-43m,2.1495720761711983,NpAu,indeterminable,indeterminable,over_99th_percentile
+2489_RbU,RbU,Fm-3m,2.376284508072093,RbU,indeterminable,indeterminable,over_99th_percentile
+969_CsW,CsW,P-6m2,2.3783873322065965,CsW,6580.402966790001,5013.314956456996,over_99th_percentile
+200_CsW,CsW,P-6m2,2.392753487086816,CsW,6580.402966790001,5013.314956456996,over_99th_percentile
+1832_Ni4U6,Ni4U6,R-3c,2.4319144975516,U3Ni2,indeterminable,indeterminable,over_99th_percentile
+2131_Cr3Nb,Cr3Nb,Pm-3m,2.842053501474326,NbCr3,5115.689736719162,5854.396622700011,over_99th_percentile

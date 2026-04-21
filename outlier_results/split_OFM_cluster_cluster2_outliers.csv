@@ -1,0 +1,15 @@
+file_name,space_group,value_per_atom,outlier_type
+2482_Ac3Mn,I4/mmm,-53.62881944,under_1st_percentile
+2947_PtSm,Pm-3m,-1.431870928,under_1st_percentile
+26_PtSm,Pm-3m,-1.289351259,under_1st_percentile
+4288_AuYb,Pm-3m,-1.027786314,under_1st_percentile
+2450_CePt,P-6m2,-0.656573059,under_1st_percentile
+1165_Nb10Ge6,I4/mcm,-0.61443826,under_1st_percentile
+2038_Nb10Ge6,P6_3/mcm,-0.562090112,under_1st_percentile
+1161_AuMo,F-43m,2.201538088,over_99th_percentile
+1125_AlMo2,Fmmm,2.233849459,over_99th_percentile
+2643_MnW3,Pm-3m,2.35015678,over_99th_percentile
+2836_CaW4,Im-3m,2.831124458,over_99th_percentile
+2131_Cr3Nb,Pm-3m,2.842053501,over_99th_percentile
+4560_CuW3,Pm-3m,3.104170629,over_99th_percentile
+1964_SrW4,Im-3m,3.295389824,over_99th_percentile

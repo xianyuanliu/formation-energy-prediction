@@ -1,0 +1,9 @@
+file_name,space_group,value_per_atom,outlier_type
+3496_V3P,Pm-3m,-0.486440196,under_1st_percentile
+3124_Pd3Ta,I4/mmm,-0.478961572,under_1st_percentile
+1950_Ta10Ge6,I4/mcm,-0.475601148,under_1st_percentile
+4574_Pt2V2,Imma,-0.441586733,under_1st_percentile
+118_CrTa,F-43m,2.666075834,over_99th_percentile
+1997_BaTa2,P4/mmm,2.674288856,over_99th_percentile
+1167_AgTa3,Pm-3m,3.130992589,over_99th_percentile
+676_AgTa3,Pm-3m,3.185028116,over_99th_percentile
