@@ -59,6 +59,11 @@ def arg_parse():
 
     # 1. Add --config flag
     parser.add_argument('--config', default='', type=str, help='path to yaml config file')
+    
+    # Optuna parameters (Distributed SQLite)
+    parser.add_argument('--optuna_study', default='', type=str, help='Optuna study DB url, e.g., sqlite:///optuna_hpo.db')
+    parser.add_argument('--optuna_study_name', default='optuna_study', type=str, help='Optuna study name')
+    parser.add_argument('--optuna_n_trials', default=1, type=int, help='Number of trials for this worker to run')
 
     # 2. Original Basic parameters
     parser.add_argument('--base_data_dir', default='data', help='path to common data files (atom_init, XRD, space_group_embeddings)')
@@ -69,6 +74,8 @@ def arg_parse():
     parser.add_argument('--text', default=True, type=str2bool, help='use text features')
     parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', help='number of data loading workers (default: 0)')
     parser.add_argument('--epochs', default=30, type=int, metavar='N', help='number of total epochs to run (default: 30)')
+    parser.add_argument('--use_early_stopping', default=False, type=str2bool, help='use early stopping (default: False)')
+    parser.add_argument('--patience', default=30, type=int, help='early stopping patience (default: 30)')
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N', help='manual epoch number (useful on restarts)')
     parser.add_argument('-b', '--batch-size', default=256, type=int, metavar='N', help='mini-batch size (default: 256)')
     parser.add_argument('--lr', '--learning-rate', default=0.01, type=float, metavar='LR', help='initial learning rate (default: 0.01)')
@@ -135,9 +142,10 @@ def r2_score(pred, target):
     ss_tot = float(np.sum((target - np.mean(target)) ** 2))
     return float(1.0 - ss_res / ss_tot) if ss_tot > 0 else float("nan")
 
-def main():
+def main(args=None):
     global best_mae_error
-    args = arg_parse()
+    if args is None:
+        args = arg_parse()
 
     if args.result_dir:
         out_dir = args.result_dir
@@ -366,7 +374,7 @@ def main():
     model.train()
 
     # define loss func and optimizer
-    criterion = nn.MSELoss()
+    criterion = nn.SmoothL1Loss(beta=1.0)
     if args.optim == 'SGD':
         optimizer = optim.SGD(model.parameters(), args.lr,
                               momentum=args.momentum,
@@ -393,6 +401,8 @@ def main():
             print("=> no checkpoint found at '{}'".format(args.resume))
 
     scheduler = MultiStepLR(optimizer, milestones=args.lr_milestones, gamma=0.1)
+
+    patience_counter = 0
 
     for epoch in range(args.start_epoch, args.epochs):
         # train for one epoch
@@ -421,6 +431,13 @@ def main():
 
         # remember the best mae_eror and save checkpoint
         is_best = mae_error < best_mae_error
+        
+        if args.use_early_stopping and args.patience > 0:
+            if is_best:
+                patience_counter = 0
+            else:
+                patience_counter += 1
+
         best_mae_error = min(mae_error, best_mae_error)
         save_checkpoint({
             'epoch': epoch + 1,
@@ -430,6 +447,11 @@ def main():
             'normalizer': normalizer.state_dict(),
             'args': vars(args)
         }, is_best)
+        
+        if args.use_early_stopping and args.patience > 0:
+            if patience_counter >= args.patience:
+                print(f"\n[Early Stopping] Validation MAE no improvement for {args.patience} epochs. Stopping early at epoch {epoch}.")
+                break
 
     # test best model
     print('---------Evaluate Model on Test Set---------------')
@@ -519,6 +541,9 @@ def main():
         print("="*30 + "\n")
 
     collect_outputs(out_dir, args.result_files)
+    
+    # Return the objective value for Optuna optimization
+    return best_mae_error
 
 
 def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, device):
@@ -819,4 +844,45 @@ def make_ood_umap_figure(train_emb, test_emb, y_true_test, y_pred_test, out_png,
 
 
 if __name__ == "__main__":
-    main()
+    args = arg_parse()
+    
+    # Check if Optuna distributed optimization flag is active
+    if args.optuna_study:
+        import optuna
+        import copy
+        
+        def objective(trial):
+            # 1. Clone original arguments to prevent trial pollution
+            trial_args = copy.deepcopy(args)
+            
+            # 2. Define hyperparameter search space
+            trial_args.batch_size = trial.suggest_categorical('batch_size', [64, 128, 256])
+            trial_args.lr = trial.suggest_categorical('lr', [0.01, 0.001, 0.0001])
+            trial_args.optim = trial.suggest_categorical('optim', ['Adam', 'SGD'])
+            
+            # GNN specific parameter (n_conv)
+            if hasattr(trial_args, 'n_conv'):
+                trial_args.n_conv = trial.suggest_int('n_conv', 3, 5)
+
+            # Assign dynamic WandB run name based on parameters
+            trial_args.wandb_name = f"optuna_t{trial.number}_bs{trial_args.batch_size}_lr{trial_args.lr}_{trial_args.optim}_nc{trial_args.n_conv}"
+            
+            # 3. Reset global best_mae_error to prevent evaluation carry-over
+            global best_mae_error
+            best_mae_error = 1e10
+            
+            # 4. Execute the main training loop with the suggested parameters
+            val_error = main(trial_args)
+            return val_error
+            
+        print(f"[Optuna Worker] DB: {args.optuna_study} | Study: {args.optuna_study_name}")
+        
+        # Join the distributed SQLite database optimization study
+        study = optuna.load_study(
+            study_name=args.optuna_study_name, 
+            storage=args.optuna_study
+        )
+        study.optimize(objective, n_trials=args.optuna_n_trials)
+    else:
+        # Standard execution mode (Single run without Optuna)
+        main(args)
