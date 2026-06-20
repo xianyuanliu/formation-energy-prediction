@@ -1,0 +1,8 @@
+DATASET:
+  DATA_PATH: data/split_OFM_isolation
+  TRAIN_FILE: train.csv
+  TEST_FILE: test.csv
+MODEL:
+  GRAPH_TYPE: mpnn
+MISC:
+  USE_WANDB: true

@@ -1,0 +1,8 @@
+DATASET:
+  DATA_PATH: data/split_structural_complexity
+  TRAIN_FILE: train.csv
+  TEST_FILE: test.csv
+MODEL:
+  GRAPH_TYPE: cgcnn
+MISC:
+  USE_WANDB: true

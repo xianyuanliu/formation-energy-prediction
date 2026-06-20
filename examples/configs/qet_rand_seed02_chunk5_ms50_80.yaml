@@ -1,0 +1,11 @@
+DATASET:
+  DATA_PATH: data/split_rand/seed02
+  TRAIN_FILE:
+  TEST_FILE: chunk5.csv
+SOLVER:
+  LR_MILESTONES: [50, 80]
+  EPOCHS: 100
+MODEL:
+  GRAPH_TYPE: qet
+MISC:
+  USE_WANDB: true

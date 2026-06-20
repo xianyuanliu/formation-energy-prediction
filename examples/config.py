@@ -16,7 +16,7 @@ _C.DATASET.BASE_DATA_DIR = "data"
 _C.DATASET.DATA_PATH = "data/split_both_hhi"
 _C.DATASET.CIF_PATH = "data/cifs"
 _C.DATASET.TASK = "regression"
-_C.DATASET.XRD = True
+_C.DATASET.XRD = False
 _C.DATASET.TEXT = True
 _C.DATASET.TRAIN_FILE = "train.csv"
 _C.DATASET.TEST_FILE = "test.csv"
@@ -27,13 +27,17 @@ _C.DATASET.TEST_RATIO = 0.1
 # Solver (Optimizer, Learning Rate, etc.)
 # -----------------------------------------------------------------------------
 _C.SOLVER = CN()
-_C.SOLVER.OPTIM = "SGD"
-_C.SOLVER.LR = 0.01
+_C.SOLVER.OPTIM = "Adam"
+_C.SOLVER.LR = 0.001
 _C.SOLVER.LR_MILESTONES = [100]
+_C.SOLVER.SCHEDULER = "multistep"  # 스케줄러 옵션을 선택할 수 있도록 추가 (multistep 또는 cosine)
 _C.SOLVER.MOMENTUM = 0.9
 _C.SOLVER.WEIGHT_DECAY = 0.0
+_C.SOLVER.GRAD_CLIP = 0.0
+_C.SOLVER.USE_EARLY_STOPPING = False
+_C.SOLVER.PATIENCE = 30
 _C.SOLVER.BATCH_SIZE = 256
-_C.SOLVER.EPOCHS = 30
+_C.SOLVER.EPOCHS = 100
 _C.SOLVER.PRINT_FREQ = 10
 _C.SOLVER.WORKERS = 0
 

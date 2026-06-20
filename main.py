@@ -82,7 +82,9 @@ def arg_parse():
     parser.add_argument('--lr-milestones', default=[100], nargs='+', type=int, metavar='N', help='milestones for scheduler (default: [100])')
     parser.add_argument('--momentum', default=0.9, type=float, metavar='M', help='momentum')
     parser.add_argument('--weight-decay', '--wd', default=0, type=float, metavar='W', help='weight decay (default: 0)')
+    parser.add_argument('--grad-clip', default=0.0, type=float, help='gradient clipping max norm (default: 0.0, disable)')
     parser.add_argument('--print-freq', '-p', default=10, type=int, metavar='N', help='print frequency (default: 10)')
+    parser.add_argument('--scheduler', default='multistep', type=str, help='Learning rate scheduler: multistep or cosine (default: multistep)')
     parser.add_argument('--resume', default='', type=str, metavar='PATH', help='path to latest checkpoint (default: none)')
     parser.add_argument('--train_file', default=None, nargs='+', help='train csv file name(s) in data_path')
     parser.add_argument('--test_file', default=None, nargs='+', help='test csv file name(s) in data_path')
@@ -400,7 +402,11 @@ def main(args=None):
         else:
             print("=> no checkpoint found at '{}'".format(args.resume))
 
-    scheduler = MultiStepLR(optimizer, milestones=args.lr_milestones, gamma=0.1)
+    if args.scheduler == 'cosine':
+        from torch.optim.lr_scheduler import CosineAnnealingLR
+        scheduler = CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=1e-6)
+    else:
+        scheduler = MultiStepLR(optimizer, milestones=args.lr_milestones, gamma=0.1)
 
     patience_counter = 0
 
@@ -611,6 +617,8 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, de
         # compute gradient and do SGD step
         optimizer.zero_grad()
         loss.backward()
+        if getattr(args, 'grad_clip', 0.0) > 0.0:
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=args.grad_clip)
         optimizer.step()
 
         # measure elapsed time

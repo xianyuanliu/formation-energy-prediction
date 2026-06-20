@@ -1,0 +1,8 @@
+DATASET:
+  DATA_PATH: data/split_rand/seed12
+  TRAIN_FILE:
+  TEST_FILE: chunk5.csv
+MODEL:
+  GRAPH_TYPE: m3gnet
+MISC:
+  USE_WANDB: true

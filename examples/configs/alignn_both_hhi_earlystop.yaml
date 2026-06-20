@@ -1,0 +1,15 @@
+DATASET:
+  DATA_PATH: "data/split_both_hhi"
+  TRAIN_FILE: "train.csv"
+  TEST_FILE: "test.csv"
+
+MODEL:
+  GRAPH_TYPE: "alignn"
+
+MISC:
+  USE_WANDB: true
+
+SOLVER:
+  EPOCHS: 300
+  USE_EARLY_STOPPING: true
+  PATIENCE: 10
