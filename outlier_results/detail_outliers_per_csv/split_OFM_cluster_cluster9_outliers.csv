@@ -1,0 +1,7 @@
+file_name,space_group,value_per_atom,outlier_type
+3454_Rh4Sm2,Fd-3m,-0.914720719,under_1st_percentile
+1960_AlRh2,I4/mmm,-0.642703431,under_1st_percentile
+1685_Al5Rh7,Fmmm,-0.638331802,under_1st_percentile
+146_RbRh,P-6m2,1.051903901,over_99th_percentile
+945_RbRh,P-6m2,1.052037411,over_99th_percentile
+4125_InRh4,Im-3m,1.096745902,over_99th_percentile

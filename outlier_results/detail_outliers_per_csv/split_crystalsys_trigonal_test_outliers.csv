@@ -1,0 +1,3 @@
+file_name,value_per_atom,space_group,outlier_type
+998_KI,-1.585206425,R-3m,under_1st_percentile
+2375_Ga13Mn13,5.485676899,R-3m,over_99th_percentile

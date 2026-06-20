@@ -1,0 +1,3 @@
+file_name,value_per_atom,space_group,outlier_type
+4373_Ca2As6,-0.95386108,P-1,under_1st_percentile
+3653_Ag5Pt5,0.045171744,P-1,over_99th_percentile

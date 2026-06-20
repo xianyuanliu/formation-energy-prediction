@@ -1,0 +1,3 @@
+file_name,space_group,value_per_atom,outlier_type
+4999_Pt2Th2,Cmcm,-1.235065504,under_1st_percentile
+148_CrTh,F-43m,1.709790453,over_99th_percentile

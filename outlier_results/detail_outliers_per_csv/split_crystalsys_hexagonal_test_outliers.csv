@@ -1,0 +1,7 @@
+file_name,value_per_atom,space_group,outlier_type
+56_CsMn,-5.420664132,P-6m2,under_1st_percentile
+2915_Ce2Br6,-2.115485692,P6_3/m,under_1st_percentile
+1445_CsI,-1.619871336,P-6m2,under_1st_percentile
+3735_Cs2Fe2,1.637443423,P6_3/mmc,over_99th_percentile
+969_CsW,2.378387332,P-6m2,over_99th_percentile
+200_CsW,2.392753487,P-6m2,over_99th_percentile

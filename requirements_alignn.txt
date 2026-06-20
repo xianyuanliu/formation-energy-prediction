@@ -25,5 +25,6 @@ networkx
 pydantic
 pydantic-settings
 wandb
+yacs
 thop
 umap-learn

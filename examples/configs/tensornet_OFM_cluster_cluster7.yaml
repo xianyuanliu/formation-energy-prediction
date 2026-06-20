@@ -1,0 +1,8 @@
+DATASET:
+  DATA_PATH: data/split_OFM_cluster
+  TRAIN_FILE:
+  TEST_FILE: cluster7.csv
+MODEL:
+  GRAPH_TYPE: tensornet
+MISC:
+  USE_WANDB: true

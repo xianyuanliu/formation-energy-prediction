@@ -1,0 +1,8 @@
+DATASET:
+  DATA_PATH: data/split_rand/seed32
+  TRAIN_FILE:
+  TEST_FILE: chunk5.csv
+MODEL:
+  GRAPH_TYPE: cgcnn
+MISC:
+  USE_WANDB: true

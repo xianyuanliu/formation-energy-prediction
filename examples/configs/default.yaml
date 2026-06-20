@@ -1,0 +1,17 @@
+DATASET:
+  DATA_PATH: "data/split_both_hhi"
+  XRD: true
+  TEXT: true
+  TRAIN_FILE: "train.csv"
+  TEST_FILE: "test.csv"
+
+SOLVER:
+  LR: 0.01
+  EPOCHS: 30
+  BATCH_SIZE: 256
+
+MODEL:
+  GRAPH_TYPE: "cgcnn"
+
+MISC:
+  USE_WANDB: true

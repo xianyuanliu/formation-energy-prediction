@@ -25,13 +25,11 @@ except ImportError:
     HAS_ALIGNN_DATA = False
 
 try:
-    import os
     # MUST be set before importing matgl to load DGL modules correctly
     os.environ["MATGL_BACKEND"] = "dgl"
     import matgl
     # In MatGL 2.0.6, Structure2Graph is the correct proxy in matgl.ext.pymatgen
     from matgl.ext.pymatgen import Structure2Graph
-    from matgl.graph.converters import GraphConverter
     HAS_MATGL_DATA = True
 except Exception as e:
     print(f"[!] Critical: MatGL initialization failed in data.py: {e}")

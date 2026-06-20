@@ -14,33 +14,34 @@ mod.IterDataPipe = IterDataPipe
 sys.modules["torchdata.datapipes.iter"] = mod
 # -----------------------------------------------------------------------------
 
-import argparse
 import os
 import sys
 import time
+import datetime
+import warnings
+import yaml
+import shutil
+import glob
 from random import sample
-import numpy as np
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.optim.lr_scheduler import MultiStepLR
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
+from torch.optim.lr_scheduler import MultiStepLR
 
+from examples.config import get_cfg_defaults
 from data import CIFData
 from data import collate_pool, get_train_val_test_loader, collate_pool_matgl, collate_pool_alignn
-from models.cgcnn import CrystalGraphConvNet
-from models.cgcnn import MatglGraphConvNet
-from models.cgcnn import AlignnGraphConvNet
+from models.cgcnn import CrystalGraphConvNet, MatglGraphConvNet, AlignnGraphConvNet
 from utils.utils import Normalizer, mae, save_checkpoint, AverageMeter
 from thop import profile
-import datetime
 import wandb
-import shutil, glob
 
-import warnings
 warnings.filterwarnings("ignore", message=".*fractional coordinates rounded.*")
+
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -52,37 +53,50 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def arg_parse():
-    """Parsing arguments"""
+    """Parsing arguments with YAML"""
+    import argparse
     parser = argparse.ArgumentParser(description='Crystal Graph Convolutional Neural Networks')
 
-    # Basic parameters
+    # 1. Add --config flag
+    parser.add_argument('--config', default='', type=str, help='path to yaml config file')
+    
+    # Optuna parameters (Distributed SQLite)
+    parser.add_argument('--optuna_study', default='', type=str, help='Optuna study DB url, e.g., sqlite:///optuna_hpo.db')
+    parser.add_argument('--optuna_study_name', default='optuna_study', type=str, help='Optuna study name')
+    parser.add_argument('--optuna_n_trials', default=1, type=int, help='Number of trials for this worker to run')
+
+    # 2. Original Basic parameters
     parser.add_argument('--base_data_dir', default='data', help='path to common data files (atom_init, XRD, space_group_embeddings)')
     parser.add_argument('--data_path', default='data/split_both_hhi', help='path to csv files')
     parser.add_argument('--cif_path', default='data/cifs', help='path to cif files')
     parser.add_argument('--task', default='regression')
     parser.add_argument('--xrd', default=True, type=str2bool, help='use xrd features')
     parser.add_argument('--text', default=True, type=str2bool, help='use text features')
-    parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
     parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', help='number of data loading workers (default: 0)')
     parser.add_argument('--epochs', default=30, type=int, metavar='N', help='number of total epochs to run (default: 30)')
+    parser.add_argument('--use_early_stopping', default=False, type=str2bool, help='use early stopping (default: False)')
+    parser.add_argument('--patience', default=30, type=int, help='early stopping patience (default: 30)')
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N', help='manual epoch number (useful on restarts)')
     parser.add_argument('-b', '--batch-size', default=256, type=int, metavar='N', help='mini-batch size (default: 256)')
     parser.add_argument('--lr', '--learning-rate', default=0.01, type=float, metavar='LR', help='initial learning rate (default: 0.01)')
     parser.add_argument('--lr-milestones', default=[100], nargs='+', type=int, metavar='N', help='milestones for scheduler (default: [100])')
     parser.add_argument('--momentum', default=0.9, type=float, metavar='M', help='momentum')
     parser.add_argument('--weight-decay', '--wd', default=0, type=float, metavar='W', help='weight decay (default: 0)')
+    parser.add_argument('--grad-clip', default=0.0, type=float, help='gradient clipping max norm (default: 0.0, disable)')
     parser.add_argument('--print-freq', '-p', default=10, type=int, metavar='N', help='print frequency (default: 10)')
+    parser.add_argument('--scheduler', default='multistep', type=str, help='Learning rate scheduler: multistep or cosine (default: multistep)')
     parser.add_argument('--resume', default='', type=str, metavar='PATH', help='path to latest checkpoint (default: none)')
     parser.add_argument('--train_file', default=None, nargs='+', help='train csv file name(s) in data_path')
     parser.add_argument('--test_file', default=None, nargs='+', help='test csv file name(s) in data_path')
-    # WandB parameters
+    
+    # 3. Original WandB parameters
     parser.add_argument('--use_wandb', action='store_true', help='Use WandB for logging')
     parser.add_argument('--wandb_project', default='formation-energy-krict', type=str, help='WandB project name')
     parser.add_argument('--wandb_group', default='baseline', type=str, help='WandB group name')
     parser.add_argument('--wandb_name', default=None, type=str, help='WandB run name (None = auto-generated)')
     parser.add_argument('--online_mode', default=False, type=str2bool, help='Use WandB online mode for web monitoring (default: False)')
 
-    # Data split
+    # 4. Original Data split
     train_group = parser.add_mutually_exclusive_group()
     train_group.add_argument('--train-ratio', default=None, type=float, metavar='N', help='number of training data to be loaded (default none)')
     train_group.add_argument('--train-size', default=None, type=int, metavar='N', help='number of training data to be loaded (default none)')
@@ -97,7 +111,8 @@ def arg_parse():
 
     parser.add_argument('--result_dir', default=None, type=str, help='Directory to save results. If None, no folder is created.')
     parser.add_argument('--result_files', default=['checkpoint.pth.tar', 'model_best.pth.tar', 'test_results.csv'], nargs='+', help='List of files to move to result_dir')
-    # model parameters
+    
+    # 5. Original Model parameters
     parser.add_argument('--optim', default='SGD', type=str, metavar='SGD', help='choose an optimizer, SGD or Adam, (default: SGD)')
     parser.add_argument('--atom-fea-len', default=64, type=int, metavar='N', help='number of hidden atom features in conv layers')
     parser.add_argument('--h-fea-len', default=128, type=int, metavar='N', help='number of hidden features after pooling')
@@ -105,7 +120,13 @@ def arg_parse():
     parser.add_argument('--n-h', default=1, type=int, metavar='N', help='number of hidden layers after pooling')
     parser.add_argument('--best_mae_error', default=1e10, type=float, metavar='N', help='best mae error (default: 1e10)')
     parser.add_argument('--graph_type', default="cgcnn", type=str, metavar="GRAPH", help='type of graph convolutional network (mpnn, cgcnn, chgnet, m3gnet, alignn, tensornet, qet)')
-    args = parser.parse_args(sys.argv[1:])
+    
+    args = parser.parse_args()
+
+    # 6. Load YAML and apply dynamic logic (keeps main.py clean)
+    from examples.config import load_and_apply_config
+    load_and_apply_config(args)
+
     return args
 
 best_mae_error = 1e10
@@ -123,13 +144,15 @@ def r2_score(pred, target):
     ss_tot = float(np.sum((target - np.mean(target)) ** 2))
     return float(1.0 - ss_res / ss_tot) if ss_tot > 0 else float("nan")
 
-def main():
+def main(args=None):
     global best_mae_error
-    args = arg_parse()
+    if args is None:
+        args = arg_parse()
 
     if args.result_dir:
         out_dir = args.result_dir
         os.makedirs(out_dir, exist_ok=True)
+        print(f"=> Result directory: {out_dir}")
     else:
         out_dir = "."
 
@@ -223,8 +246,6 @@ def main():
     else:
         # Mode B: Single file mode with ratio split
         print("=> Ratio split mode: Splitting one file into train/val/test")
-        # In this mode, we need at least one file. 
-        # Since id_prop.csv is gone, we check args.train_file or raise error.
         if not args.train_file:
              raise ValueError("Please provide a CSV file (e.g., --train_file my_data.csv) to split by ratio.")
         
@@ -238,7 +259,7 @@ def main():
             num_workers=args.workers,
             val_ratio=args.val_ratio,
             test_ratio=args.test_ratio,
-            pin_memory=args.cuda,
+            pin_memory=True,
             train_size=args.train_size,
             val_size=args.val_size,
             test_size=args.test_size,
@@ -319,7 +340,6 @@ def main():
                 sample_data[4].to(device)     # text_feature
             )
         elif args.graph_type in ("chgnet", "m3gnet", "tensornet", "qet"):
-        # MatglGraphConvNet (graph_state, xrd, text)
             graph_state = (
                 sample_data[0][0].to(device), # batch_graph
                 sample_data[0][1].to(device)  # state_feats
@@ -340,7 +360,7 @@ def main():
             )
         flops, params = profile(model, inputs=inputs, verbose=False)
         if args.use_wandb:
-            wandb.config.update({
+            wandb.run.summary.update({
                 "total_flops_g": flops / 1e9,
                 "total_params_m": params / 1e6
             })
@@ -355,9 +375,8 @@ def main():
     print("="*30 + "\n")
     model.train()
 
-
     # define loss func and optimizer
-    criterion = nn.MSELoss()
+    criterion = nn.SmoothL1Loss(beta=1.0)
     if args.optim == 'SGD':
         optimizer = optim.SGD(model.parameters(), args.lr,
                               momentum=args.momentum,
@@ -383,7 +402,13 @@ def main():
         else:
             print("=> no checkpoint found at '{}'".format(args.resume))
 
-    scheduler = MultiStepLR(optimizer, milestones=args.lr_milestones, gamma=0.1)
+    if args.scheduler == 'cosine':
+        from torch.optim.lr_scheduler import CosineAnnealingLR
+        scheduler = CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=1e-6)
+    else:
+        scheduler = MultiStepLR(optimizer, milestones=args.lr_milestones, gamma=0.1)
+
+    patience_counter = 0
 
     for epoch in range(args.start_epoch, args.epochs):
         # train for one epoch
@@ -412,6 +437,13 @@ def main():
 
         # remember the best mae_eror and save checkpoint
         is_best = mae_error < best_mae_error
+        
+        if args.use_early_stopping and args.patience > 0:
+            if is_best:
+                patience_counter = 0
+            else:
+                patience_counter += 1
+
         best_mae_error = min(mae_error, best_mae_error)
         save_checkpoint({
             'epoch': epoch + 1,
@@ -421,6 +453,11 @@ def main():
             'normalizer': normalizer.state_dict(),
             'args': vars(args)
         }, is_best)
+        
+        if args.use_early_stopping and args.patience > 0:
+            if patience_counter >= args.patience:
+                print(f"\n[Early Stopping] Validation MAE no improvement for {args.patience} epochs. Stopping early at epoch {epoch}.")
+                break
 
     # test best model
     print('---------Evaluate Model on Test Set---------------')
@@ -510,6 +547,9 @@ def main():
         print("="*30 + "\n")
 
     collect_outputs(out_dir, args.result_files)
+    
+    # Return the objective value for Optuna optimization
+    return best_mae_error
 
 
 def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, device):
@@ -526,7 +566,6 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, de
     for i, (input, target, _, xrd_fea, text_fea) in enumerate(train_loader):
         # measure data loading time
         data_time.update(time.time() - end)
-
 
         if args.graph_type in ("cgcnn", "mpnn"):
             input_var = (input[0].to(device, non_blocking=True),
@@ -578,6 +617,8 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, de
         # compute gradient and do SGD step
         optimizer.zero_grad()
         loss.backward()
+        if getattr(args, 'grad_clip', 0.0) > 0.0:
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=args.grad_clip)
         optimizer.step()
 
         # measure elapsed time
@@ -585,11 +626,6 @@ def train(args, train_loader, model, criterion, optimizer, epoch, normalizer, de
         end = time.time()
 
         if i % args.print_freq == 0:
-            #if args.use_wandb:
-                #wandb.log({
-                #    "train/batch_loss": losses.val,
-                #    "train/batch_mae": mae_errors.val
-                #})
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
@@ -644,10 +680,9 @@ def validate(args, val_loader, model, criterion, normalizer, device, test=False)
                 xrd_fea_cuda = xrd_fea.to(device, non_blocking=True) if xrd_fea is not None else None
                 text_fea_cuda = text_fea.to(device, non_blocking=True) if text_fea is not None else None
                 input_var = (batch_g, batch_lg, batch_lat, xrd_fea_cuda, text_fea_cuda)
-        
         else:
             raise ValueError(f"Unknown graph_type: {args.graph_type}")
-
+        
         if args.task == 'regression':
             target_normed = normalizer.norm(target)
         else:
@@ -817,4 +852,45 @@ def make_ood_umap_figure(train_emb, test_emb, y_true_test, y_pred_test, out_png,
 
 
 if __name__ == "__main__":
-    main()
+    args = arg_parse()
+    
+    # Check if Optuna distributed optimization flag is active
+    if args.optuna_study:
+        import optuna
+        import copy
+        
+        def objective(trial):
+            # 1. Clone original arguments to prevent trial pollution
+            trial_args = copy.deepcopy(args)
+            
+            # 2. Define hyperparameter search space
+            trial_args.batch_size = trial.suggest_categorical('batch_size', [64, 128, 256])
+            trial_args.lr = trial.suggest_categorical('lr', [0.01, 0.001, 0.0001])
+            trial_args.optim = trial.suggest_categorical('optim', ['Adam', 'SGD'])
+            
+            # GNN specific parameter (n_conv)
+            if hasattr(trial_args, 'n_conv'):
+                trial_args.n_conv = trial.suggest_int('n_conv', 3, 5)
+
+            # Assign dynamic WandB run name based on parameters
+            trial_args.wandb_name = f"optuna_t{trial.number}_bs{trial_args.batch_size}_lr{trial_args.lr}_{trial_args.optim}_nc{trial_args.n_conv}"
+            
+            # 3. Reset global best_mae_error to prevent evaluation carry-over
+            global best_mae_error
+            best_mae_error = 1e10
+            
+            # 4. Execute the main training loop with the suggested parameters
+            val_error = main(trial_args)
+            return val_error
+            
+        print(f"[Optuna Worker] DB: {args.optuna_study} | Study: {args.optuna_study_name}")
+        
+        # Join the distributed SQLite database optimization study
+        study = optuna.load_study(
+            study_name=args.optuna_study_name, 
+            storage=args.optuna_study
+        )
+        study.optimize(objective, n_trials=args.optuna_n_trials)
+    else:
+        # Standard execution mode (Single run without Optuna)
+        main(args)

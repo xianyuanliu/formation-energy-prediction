@@ -9,8 +9,21 @@ class Normalizer(object):
 
     def __init__(self, tensor):
         """tensor is taken as a sample to calculate the mean and std"""
-        self.mean = torch.mean(tensor)
-        self.std = torch.std(tensor)
+        median = torch.median(tensor)
+        mad = torch.median(torch.abs(tensor - median))
+        
+        mask = torch.abs(tensor - median) < 5 * mad
+        filtered_tensor = tensor[mask]
+        
+        if len(filtered_tensor) > 1 and mad > 0:
+            self.mean = torch.mean(filtered_tensor)
+            self.std = torch.std(filtered_tensor)
+        else:
+            self.mean = torch.mean(tensor)
+            self.std = torch.std(tensor)
+            
+        if self.std == 0 or torch.isnan(self.std):
+            self.std = torch.tensor(1.0)
 
     def norm(self, tensor):
         return (tensor - self.mean) / self.std

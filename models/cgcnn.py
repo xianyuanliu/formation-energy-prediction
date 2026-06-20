@@ -60,9 +60,8 @@ try:
         from matgl.models import QET
     HAS_MATGL = True
 except Exception as e:
-    print(f"[!] Critical: MatGL initialization failed in models/cgcnn.py: {e}")
-    import traceback
-    traceback.print_exc()
+    # Optional dependency: Silence or log as info to avoid clutter in ALIGNN-only envs
+    print(f"[!] Optional dependency MatGL not loaded: {e}")
     HAS_MATGL = False
     DEFAULT_ELEMENTS = None
 
@@ -315,8 +314,15 @@ class CrystalGraphConvNet(nn.Module):
 logger = logging.getLogger(__name__)
 
 if DEFAULT_ELEMENTS is None:
-    # Fallback to a common list if matgl is not installed
-    DEFAULT_ELEMENTS = ("H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne") # ... truncated for brevity or use full list
+    # MatGL (and its DEFAULT_ELEMENTS) is not available. Do not use a
+    # truncated fallback here to avoid silently misconfiguring the model.
+    # CHGNetLayer will require an explicit `element_types` argument in
+    # this case.
+    warnings.warn(
+        "MatGL DEFAULT_ELEMENTS is not available. "
+        "CHGNetLayer will require an explicit `element_types` argument.",
+        RuntimeWarning,
+    )
 else:
     DEFAULT_ELEMENTS = (*list(DEFAULT_ELEMENTS[:83]), "Po", "At", "Rn", "Fr", "Ra", *list(DEFAULT_ELEMENTS[83:]))
 
@@ -436,7 +442,15 @@ class CHGNetLayer(nn.Module):
                 f"Invalid activation type, please try using one of {[af.name for af in ActivationFunction]}"
             ) from None
 
-        element_types = DEFAULT_ELEMENTS
+        # Resolve element types: prefer explicit argument, then MatGL defaults.
+        if element_types is None:
+            if DEFAULT_ELEMENTS is None:
+                raise RuntimeError(
+                    "CHGNetLayer requires `element_types` when MatGL "
+                    "DEFAULT_ELEMENTS is not available. Install MatGL or "
+                    "pass `element_types` explicitly."
+                )
+            element_types = DEFAULT_ELEMENTS
         self.use_bond_graph = threebody_cutoff > 0
         if not self.use_bond_graph and readout_field == "angle_feat":
             raise ValueError(

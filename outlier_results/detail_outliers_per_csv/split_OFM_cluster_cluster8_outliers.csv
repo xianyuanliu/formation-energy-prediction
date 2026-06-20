@@ -1,0 +1,5 @@
+file_name,space_group,value_per_atom,outlier_type
+3333_Al3Pt5,Cmmm,-0.915859397,under_1st_percentile
+3682_Al4Pt8,Pnma,-0.862773874,under_1st_percentile
+2842_Pt2Rh,Fm-3m,0.489593873,over_99th_percentile
+1088_NaPt4,Im-3m,0.927623544,over_99th_percentile

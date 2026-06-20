@@ -1,0 +1,5 @@
+file_name,space_group,value_per_atom,outlier_type
+4133_Ir6Ta6,Pmma,-0.593499913,under_1st_percentile
+2340_Ir4Ta4,Pnma,-0.567636996,under_1st_percentile
+4244_AgIr3,Pm-3m,3.460465851,over_99th_percentile
+4483_Ir2Mo,Fmmm,3.592244712,over_99th_percentile
