@@ -5,14 +5,20 @@ This repository predicts formation energy using a multimodal model built on a cr
 
 ## Environment Setup
 
-> **Important**: To ensure optimal configuration for each model family, we recommend installing dependencies in separate virtual environments.
+Choose the setup path based on the GPU architecture.
 
-1. **For ALIGNN Models**:
+### Pre-Blackwell GPUs: virtual environment setup
+
+For GPUs with readily available PyTorch/DGL CUDA wheels, use the original
+virtual-environment workflow. To ensure optimal configuration for each model
+family, install dependencies in separate environments.
+
+1. **ALIGNN Models**:
    ```bash
    pip install -r requirements_alignn.txt
    ```
 
-2. **For MatGL Models** (CHGNet, M3GNet, TensorNet, QET):
+2. **MatGL Models** (CHGNet, M3GNet, TensorNet, QET):
    ```bash
    pip install -r requirements_matgl.txt
    ```
@@ -20,11 +26,58 @@ This repository predicts formation energy using a multimodal model built on a cr
 3. **Others (CGCNN, MPNN)**:
    The base models `cgcnn` and `mpnn` are functional in both environments.
 
+### Blackwell GPUs / CUDA 13.0 hosts: container setup
+
+On Blackwell-generation GPUs such as RTX PRO 6000 Blackwell, the host driver may
+report CUDA 13.0 while public DGL pip wheels lag behind the required CUDA/PyTorch
+stack. The SJK branch therefore uses a container workflow based on NVIDIA's DGL
+image so CUDA, PyTorch, and DGL remain matched.
+
+Install Docker Engine and NVIDIA Container Toolkit on the host. On Ubuntu:
+
+```bash
+./scripts/setup_host_container_runtime_ubuntu.sh --yes
+newgrp docker
+```
+
+Validate GPU access from Docker:
+
+```bash
+docker run --rm --gpus all nvcr.io/nvidia/cuda:13.0.0-base-ubuntu24.04 nvidia-smi
+```
+
+Build the project image:
+
+```bash
+./scripts/build_dgl_container.sh
+```
+
+Run smoke tests:
+
+```bash
+./scripts/run_dgl_container.sh python scripts/check_dgl_container_env.py
+./scripts/run_dgl_container.sh python main.py --help
+```
+
+Run training through the container wrapper:
+
+```bash
+./scripts/run_dgl_container.sh python main.py \
+  --config examples/configs/133/cgcnn_crystalsys.yaml
+```
+
+The wrapper mounts this repository into the container and runs as the host
+UID/GID by default, so outputs written under the repository remain editable from
+the host. See [`CONTAINER.md`](CONTAINER.md) for the full container manual.
+
 ## Repository Layout
 - `main.py`: training + validation + test evaluation entrypoint.
 - `data.py`: CIF dataset loader and batching utilities.
 - `models/`: CGCNN backbone and XRD/text feature extractors.
 - `scripts/train.sh`: example training command.
+- `scripts/build_dgl_container.sh`, `scripts/run_dgl_container.sh`: Blackwell
+  container build/run helpers.
+- `CONTAINER.md`: detailed container setup notes for Blackwell/CUDA 13.0 hosts.
 - `pretrained_models/`: pre-trained CGCNN weights.
 - `data_preprocessing/`, `data_preprocessing_update/`: dataset prep scripts and artifacts.
 - `data/`: expected dataset location.
@@ -99,6 +152,16 @@ You can choose from several Graph Neural Network architectures via the `--graph_
 Example:
 ```bash
 python main.py --data_path data/split_folder --graph_type chgnet --epochs 50
+```
+
+When using the Blackwell container workflow, prefix the same command with
+`./scripts/run_dgl_container.sh`:
+
+```bash
+./scripts/run_dgl_container.sh python main.py \
+  --data_path data/split_folder \
+  --graph_type chgnet \
+  --epochs 50
 ```
 
 ### Multimodal Features
