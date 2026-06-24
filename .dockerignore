@@ -1,0 +1,22 @@
+.git
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+# Runtime data is mounted from the host, not baked into the image.
+data
+MatFold_Test
+pretrained_models
+outlier_results
+*.pth
+*.pt
+*.tar
+*.npy
+*.npz
+*.csv
+*.cif
+

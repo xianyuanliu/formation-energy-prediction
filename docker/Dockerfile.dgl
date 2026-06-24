@@ -1,0 +1,18 @@
+ARG BASE_IMAGE=nvcr.io/nvidia/dgl:25.01-py3
+FROM ${BASE_IMAGE}
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    MATGL_BACKEND=dgl
+
+WORKDIR /workspace/formation-energy-prediction
+
+COPY docker/requirements-dgl-container.txt /tmp/requirements-dgl-container.txt
+
+# The NVIDIA DGL image already provides the matched CUDA, PyTorch, and DGL
+# binaries. Do not reinstall torch, torchvision, torchaudio, or dgl here.
+RUN python -m pip install --no-cache-dir --upgrade pip && \
+    python -m pip install --no-cache-dir -r /tmp/requirements-dgl-container.txt && \
+    python -m pip install --no-cache-dir --no-deps matgl==2.0.6 alignn==2026.5.20
+
+CMD ["python", "main.py", "--help"]
