@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_3343_Ag6Pt6
+_symmetry_space_group_name_H-M   'P-1'
+_cell_length_a   4.98746251
+_cell_length_b   5.73865583
+_cell_length_c   7.53768541
+_cell_angle_alpha   100.69649100
+_cell_angle_beta   96.54200024
+_cell_angle_gamma   107.74590814
+_chemical_formula_structural   Ag6Pt6
+_chemical_formula_sum   'Ag6 Pt6'
+_cell_volume   198.52386110
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ag
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ag  Ag0  1  0.00191304  0.99888768  0.00139675  1
+  Ag  Ag1  1  0.50210501  0.08264895  0.83383225  1
+  Ag  Ag2  1  0.49171196  0.25367814  0.50112366  1
+  Ag  Ag3  1  0.50828804  0.41298853  0.16554301  1
+  Ag  Ag4  1  0.49789499  0.58401771  0.83283441  1
+  Ag  Ag5  1  0.99808696  0.66777899  0.66526992  1
+  Pt  Pt0  1  0.98821202  0.16665265  0.66240665  1
+  Pt  Pt1  1  0.00000000  0.33333333  0.33333333  1
+  Pt  Pt2  1  0.01178798  0.50001402  0.00426001  1
+  Pt  Pt3  1  0.49718460  0.75337273  0.49290565  1
+  Pt  Pt4  1  0.00000000  0.83333333  0.33333333  1
+  Pt  Pt5  1  0.50281540  0.91329393  0.17376101  1

@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_2155_AgGe2
+_symmetry_space_group_name_H-M   'Immm'
+_cell_length_a   5.14008276
+_cell_length_b   5.14008276
+_cell_length_c   5.14008276
+_cell_angle_alpha   146.27293564
+_cell_angle_beta   131.50200334
+_cell_angle_gamma   60.37388157
+_chemical_formula_structural   AgGe2
+_chemical_formula_sum   'Ag1 Ge2'
+_cell_volume   55.94290482
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ag
+  Ge
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ag  Ag0  1  0.00000000  0.00000000  0.00000000  1
+  Ge  Ge0  1  0.33372305  0.33372305  1.00000000  1
+  Ge  Ge1  1  0.66627695  0.66627695  0.00000000  1

@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_2178_Ir4Ta8
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   5.46214546
+_cell_length_b   4.51742703
+_cell_length_c   8.28502518
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Ir4Ta8
+_chemical_formula_sum   'Ir4 Ta8'
+_cell_volume   204.43170006
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ir
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ir  Ir0  1  0.18742395  0.25000000  0.93163152  1
+  Ir  Ir1  1  0.31257605  0.75000000  0.43163152  1
+  Ir  Ir2  1  0.68742395  0.25000000  0.56836848  1
+  Ir  Ir3  1  0.81257605  0.75000000  0.06836848  1
+  Ta  Ta0  1  0.03146338  0.25000000  0.24733621  1
+  Ta  Ta1  1  0.17570965  0.25000000  0.59068607  1
+  Ta  Ta2  1  0.32429035  0.75000000  0.09068607  1
+  Ta  Ta3  1  0.46853662  0.75000000  0.74733621  1
+  Ta  Ta4  1  0.53146338  0.25000000  0.25266379  1
+  Ta  Ta5  1  0.67570965  0.25000000  0.90931393  1
+  Ta  Ta6  1  0.82429035  0.75000000  0.40931393  1
+  Ta  Ta7  1  0.96853662  0.75000000  0.75266379  1

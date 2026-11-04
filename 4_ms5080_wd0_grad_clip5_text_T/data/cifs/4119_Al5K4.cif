@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_4119_Al5K4
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   9.67189393
+_cell_length_b   9.67189393
+_cell_length_c   9.67189393
+_cell_angle_alpha   92.67372401
+_cell_angle_beta   92.67372401
+_cell_angle_gamma   155.05367432
+_chemical_formula_structural   Al5K4
+_chemical_formula_sum   'Al5 K4'
+_cell_volume   372.59399067
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  K
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.00000000  0.00000000  0.00000000  1
+  Al  Al1  1  0.59970773  0.40029227  0.00000000  1
+  Al  Al2  1  0.40029227  0.59970773  0.00000000  1
+  Al  Al3  1  0.40029227  0.40029227  0.80058454  1
+  Al  Al4  1  0.59970773  0.59970773  0.19941546  1
+  K  K0  1  0.70898901  1.00000000  0.70898901  1
+  K  K1  1  0.29101099  1.00000000  0.29101099  1
+  K  K2  1  0.00000000  0.29101099  0.29101099  1
+  K  K3  1  0.00000000  0.70898901  0.70898901  1

@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_3803_K2Nb
+_symmetry_space_group_name_H-M   'Immm'
+_cell_length_a   6.81259823
+_cell_length_b   6.81259823
+_cell_length_c   6.81259823
+_cell_angle_alpha   152.49128074
+_cell_angle_beta   124.99050753
+_cell_angle_gamma   62.58828713
+_chemical_formula_structural   K2Nb
+_chemical_formula_sum   'K2 Nb1'
+_cell_volume   118.66689629
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  K
+  Nb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  K  K0  1  0.33844860  0.33844860  0.00000000  1
+  K  K1  1  0.66155140  0.66155140  0.00000000  1
+  Nb  Nb0  1  0.00000000  0.00000000  0.00000000  1

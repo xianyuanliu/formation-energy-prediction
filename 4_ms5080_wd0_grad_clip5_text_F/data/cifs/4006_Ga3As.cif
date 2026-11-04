@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_4006_Ga3As
+_symmetry_space_group_name_H-M   'Imm2'
+_cell_length_a   5.91874687
+_cell_length_b   5.91874687
+_cell_length_c   5.91874687
+_cell_angle_alpha   150.39361793
+_cell_angle_beta   130.67033788
+_cell_angle_gamma   58.59086352
+_chemical_formula_structural   Ga3As
+_chemical_formula_sum   'As1 Ga3'
+_cell_volume   77.12018116
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  As
+  Ga
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  As  As0  1  0.99631746  0.00000000  0.99631746  1
+  Ga  Ga0  1  0.49694490  0.50000000  0.99694490  1
+  Ga  Ga1  1  0.08121267  0.74451052  0.33670215  1
+  Ga  Ga2  1  0.59219164  0.25548948  0.33670215  1

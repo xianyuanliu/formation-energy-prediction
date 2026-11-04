@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_3197_Cu4W8
+_symmetry_space_group_name_H-M   'Pa -3'
+_cell_length_a   5.83550259
+_cell_length_b   5.83550259
+_cell_length_c   5.83550259
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Cu4W8
+_chemical_formula_sum   'Cu4 W8'
+_cell_volume   198.71689768
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  W
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.00000000  0.00000000  0.00000000  1
+  Cu  Cu1  1  0.50000000  0.50000000  0.00000000  1
+  Cu  Cu2  1  0.50000000  0.00000000  0.50000000  1
+  Cu  Cu3  1  0.00000000  0.50000000  0.50000000  1
+  W  W0  1  0.37516425  0.37516425  0.37516425  1
+  W  W1  1  0.62483575  0.62483575  0.62483575  1
+  W  W2  1  0.87516425  0.12483575  0.62483575  1
+  W  W3  1  0.12483575  0.87516425  0.37516425  1
+  W  W4  1  0.62483575  0.87516425  0.12483575  1
+  W  W5  1  0.37516425  0.12483575  0.87516425  1
+  W  W6  1  0.12483575  0.62483575  0.87516425  1
+  W  W7  1  0.87516425  0.37516425  0.12483575  1

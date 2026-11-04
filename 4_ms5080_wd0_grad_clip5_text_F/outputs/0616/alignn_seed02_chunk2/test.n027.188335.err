@@ -1,0 +1,30 @@
+wandb: Tracking run with wandb version 0.27.2
+wandb: W&B syncing is set to `offline` in this directory. Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+wandb: Run data is saved locally in /home/guswl/6_multimodal/after_mdf_Loss/0_text_False/4_ms5080_wd0_grad_clip5/wandb/offline-run-20260616_155116-h0x81thy
+wandb: 
+wandb: Run history:
+wandb:         epoch ▁▁▁▁▁▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇████
+wandb: learning_rate ██████████████████▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁
+wandb:    train/loss █▆▄▃▃▃▃▃▃▃▃▃▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁
+wandb:     train/mae █▆▆▅▄▄▃▃▄▃▃▃▃▃▃▃▃▂▃▃▂▂▂▂▂▂▁▁▂▁▁▁▁▁▁▁▁▁▁▁
+wandb:      val/loss █▄▄▄▃▂▂▁▂▂▃▂▂▄▂▂▂▆▁▁▁▁▁▁▁▁▁▂▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:       val/mae █▅▄▃▃▂▂▁▂▂▁▁▁▁▂▂▂▂▁▂▃▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:          best_mae_error 0.12947
+wandb:                   epoch 99
+wandb:           learning_rate 1e-05
+wandb:                test/mae 0.14682
+wandb:                 test/r2 0.16871
+wandb:               test/rmse 0.93624
+wandb:           total_flops_g 39.33524
+wandb:          total_params_m 1.09184
+wandb: total_training_time_sec 111.5725
+wandb:              train/loss 0.03164
+wandb:                      +3 ...
+wandb: 
+wandb: You can sync this run to the cloud by running:
+wandb: wandb sync /home/guswl/6_multimodal/after_mdf_Loss/0_text_False/4_ms5080_wd0_grad_clip5/wandb/offline-run-20260616_155116-h0x81thy
+wandb: Find logs at: ./wandb/offline-run-20260616_155116-h0x81thy/logs
+/home/guswl/anaconda3/envs/alignn/lib/python3.10/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(

@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_3504_Al4Pt6
+_symmetry_space_group_name_H-M   'Fdd2'
+_cell_length_a   8.02231850
+_cell_length_b   6.87746979
+_cell_length_c   5.38691839
+_cell_angle_alpha   80.71052254
+_cell_angle_beta   57.78450015
+_cell_angle_gamma   41.50497731
+_chemical_formula_structural   Al4Pt6
+_chemical_formula_sum   'Al4 Pt6'
+_cell_volume   150.90337497
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.20619553  0.89784712  0.37062815  1
+  Al  Al1  1  0.52532921  0.37062815  0.89784712  1
+  Al  Al2  1  0.35215288  0.04380447  0.72467079  1
+  Al  Al3  1  0.87937185  0.72467079  0.04380447  1
+  Pt  Pt0  1  0.74711385  0.47567887  0.33747563  1
+  Pt  Pt1  1  0.43973165  0.33747563  0.47567887  1
+  Pt  Pt2  1  0.77432113  0.50288615  0.81026835  1
+  Pt  Pt3  1  0.91252437  0.81026835  0.50288615  1
+  Pt  Pt4  1  0.08162977  0.91837023  0.91837023  1
+  Pt  Pt5  1  0.33162977  0.16837023  0.16837023  1

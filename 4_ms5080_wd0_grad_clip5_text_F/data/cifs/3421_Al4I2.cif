@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3421_Al4I2
+_symmetry_space_group_name_H-M   'P4_2/mnm'
+_cell_length_a   8.24231200
+_cell_length_b   8.24231200
+_cell_length_c   3.56995700
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Al4I2
+_chemical_formula_sum   'Al4 I2'
+_cell_volume   242.52755313
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  I
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.28057660  0.28057660  0.00000000  1
+  Al  Al1  1  0.71942431  0.71942431  0.00000000  1
+  Al  Al2  1  0.78057706  0.21942386  0.50000039  1
+  Al  Al3  1  0.21942386  0.78057706  0.50000039  1
+  I  I0  1  0.00000000  0.00000000  0.00000000  1
+  I  I1  1  0.50000046  0.50000046  0.50000039  1

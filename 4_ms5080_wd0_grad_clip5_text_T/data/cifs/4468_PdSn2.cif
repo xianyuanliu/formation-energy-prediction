@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_4468_PdSn2
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   6.63009579
+_cell_length_b   6.63009579
+_cell_length_c   6.63009579
+_cell_angle_alpha   151.38107317
+_cell_angle_beta   151.38107317
+_cell_angle_gamma   40.91783744
+_chemical_formula_structural   PdSn2
+_chemical_formula_sum   'Pd1 Sn2'
+_cell_volume   66.72312697
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Pd
+  Sn
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pd  Pd0  1  0.00000000  0.00000000  0.00000000  1
+  Sn  Sn0  1  0.64069952  0.64069952  0.00000000  1
+  Sn  Sn1  1  0.35930048  0.35930048  0.00000000  1

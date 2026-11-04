@@ -1,0 +1,35 @@
+# generated using pymatgen
+data_3719_Au3Fe4
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   3.04048147
+_cell_length_b   11.31339972
+_cell_length_c   3.04048147
+_cell_angle_alpha   82.27750571
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   97.72249429
+_chemical_formula_structural   Au3Fe4
+_chemical_formula_sum   'Au3 Fe4'
+_cell_volume   102.68117346
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Au
+  Fe
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Au  Au0  1  0.00000000  0.00000000  0.00000000  1
+  Au  Au1  1  0.29511358  0.59022717  0.70488642  1
+  Au  Au2  1  0.70488642  0.40977283  0.29511358  1
+  Fe  Fe0  1  0.13001687  0.26003374  0.86998313  1
+  Fe  Fe1  1  0.42414046  0.84828091  0.57585954  1
+  Fe  Fe2  1  0.57585954  0.15171909  0.42414046  1
+  Fe  Fe3  1  0.86998313  0.73996626  0.13001687  1

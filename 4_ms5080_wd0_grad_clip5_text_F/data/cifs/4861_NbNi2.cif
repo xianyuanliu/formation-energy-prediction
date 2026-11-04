@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_4861_NbNi2
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   3.18432545
+_cell_length_b   4.55170034
+_cell_length_c   3.18432545
+_cell_angle_alpha   69.52521367
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   110.47478633
+_chemical_formula_structural   NbNi2
+_chemical_formula_sum   'Nb1 Ni2'
+_cell_volume   40.11109120
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Nb
+  Ni
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Nb  Nb0  1  0.00000000  0.00000000  0.00000000  1
+  Ni  Ni0  1  0.33307172  0.66614343  0.66692828  1
+  Ni  Ni1  1  0.66692828  0.33385657  0.33307172  1

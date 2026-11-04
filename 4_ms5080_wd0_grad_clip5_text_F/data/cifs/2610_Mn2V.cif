@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2610_Mn2V
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   2.84710042
+_cell_length_b   4.71646467
+_cell_length_c   5.68561536
+_cell_angle_alpha   72.50829651
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   72.43270858
+_chemical_formula_structural   Mn2V
+_chemical_formula_sum   'Mn4 V2'
+_cell_volume   69.07520599
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mn
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mn  Mn0  1  0.97011832  0.05976337  0.94344774  1
+  Mn  Mn1  1  0.64099279  0.71801441  0.77877449  1
+  Mn  Mn2  1  0.97001750  0.05996500  0.44339642  1
+  Mn  Mn3  1  0.64109361  0.71781278  0.27882581  1
+  V  V0  1  0.30530429  0.38939143  0.61086451  1
+  V  V1  1  0.30580682  0.38838635  0.11135771  1

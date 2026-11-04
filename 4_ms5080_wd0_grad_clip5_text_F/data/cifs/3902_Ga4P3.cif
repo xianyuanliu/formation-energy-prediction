@@ -1,0 +1,35 @@
+# generated using pymatgen
+data_3902_Ga4P3
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   10.58378141
+_cell_length_b   10.58378141
+_cell_length_c   10.58378141
+_cell_angle_alpha   160.58367555
+_cell_angle_beta   160.58367555
+_cell_angle_gamma   27.59352092
+_chemical_formula_structural   Ga4P3
+_chemical_formula_sum   'Ga4 P3'
+_cell_volume   130.95935730
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ga
+  P
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ga  Ga0  1  0.80771135  0.80771135  0.00000000  1
+  Ga  Ga1  1  0.19228865  0.19228865  0.00000000  1
+  Ga  Ga2  1  0.56132063  0.56132063  0.00000000  1
+  Ga  Ga3  1  0.43867937  0.43867937  0.00000000  1
+  P  P0  1  0.00000000  0.00000000  0.00000000  1
+  P  P1  1  0.67995408  0.67995408  0.00000000  1
+  P  P2  1  0.32004592  0.32004592  0.00000000  1

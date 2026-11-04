@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_4543_Mo2Nb2
+_symmetry_space_group_name_H-M   'Imma'
+_cell_length_a   4.53863131
+_cell_length_b   5.37706766
+_cell_length_c   3.22663299
+_cell_angle_alpha   72.54020537
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   114.96319007
+_chemical_formula_structural   Mo2Nb2
+_chemical_formula_sum   'Mo2 Nb2'
+_cell_volume   67.36512307
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mo
+  Nb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mo  Mo0  1  0.00403392  0.00806783  0.99596608  1
+  Mo  Mo1  1  0.24596608  0.49193217  0.25403392  1
+  Nb  Nb0  1  0.49579969  0.99159937  0.50420031  1
+  Nb  Nb1  1  0.75420031  0.50840063  0.74579969  1

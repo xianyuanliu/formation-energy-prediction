@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_2960_Cu4Mn8
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   5.32789783
+_cell_length_b   4.14477371
+_cell_length_c   7.55954875
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Cu4Mn8
+_chemical_formula_sum   'Cu4 Mn8'
+_cell_volume   166.93699234
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Mn
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.21192883  0.25000000  0.89391271  1
+  Cu  Cu1  1  0.28807117  0.75000000  0.39391271  1
+  Cu  Cu2  1  0.71192883  0.25000000  0.60608729  1
+  Cu  Cu3  1  0.78807117  0.75000000  0.10608729  1
+  Mn  Mn0  1  0.03239857  0.25000000  0.21400516  1
+  Mn  Mn1  1  0.17969861  0.25000000  0.56631162  1
+  Mn  Mn2  1  0.32030139  0.75000000  0.06631162  1
+  Mn  Mn3  1  0.46760143  0.75000000  0.71400516  1
+  Mn  Mn4  1  0.53239857  0.25000000  0.28599484  1
+  Mn  Mn5  1  0.67969861  0.25000000  0.93368838  1
+  Mn  Mn6  1  0.82030139  0.75000000  0.43368838  1
+  Mn  Mn7  1  0.96760143  0.75000000  0.78599484  1

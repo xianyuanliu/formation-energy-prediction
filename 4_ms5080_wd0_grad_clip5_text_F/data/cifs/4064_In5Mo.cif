@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_4064_In5Mo
+_symmetry_space_group_name_H-M   'Amm2'
+_cell_length_a   9.14000773
+_cell_length_b   9.14000773
+_cell_length_c   5.02282288
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   160.32882934
+_chemical_formula_structural   In5Mo
+_chemical_formula_sum   'In5 Mo1'
+_cell_volume   141.24817323
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  In
+  Mo
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  In  In0  1  0.00705085  0.99294915  0.00000000  1
+  In  In1  1  0.34154317  0.65845683  0.00000000  1
+  In  In2  1  0.65179679  0.34820321  0.00000000  1
+  In  In3  1  0.46219318  0.53780682  0.50000000  1
+  In  In4  1  0.75824373  0.24175627  0.50000000  1
+  Mo  Mo0  1  0.11250562  0.88749438  0.50000000  1

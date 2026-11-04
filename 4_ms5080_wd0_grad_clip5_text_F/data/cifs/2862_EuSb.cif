@@ -1,0 +1,30 @@
+# generated using pymatgen
+data_2862_EuSb
+_symmetry_space_group_name_H-M   'P-6m2'
+_cell_length_a   4.09972300
+_cell_length_b   4.09962256
+_cell_length_c   4.62587500
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   120.00081851
+_chemical_formula_structural   EuSb
+_chemical_formula_sum   'Eu1 Sb1'
+_cell_volume   67.33166152
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Eu
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Eu  Eu0  1  0.66666782  0.33333637  0.75000077  1
+  Sb  Sb0  1  0.33333214  0.66666428  0.25000026  1

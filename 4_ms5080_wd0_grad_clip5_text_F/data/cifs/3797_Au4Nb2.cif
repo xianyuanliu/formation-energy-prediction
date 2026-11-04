@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3797_Au4Nb2
+_symmetry_space_group_name_H-M   'Cm'
+_cell_length_a   5.78648149
+_cell_length_b   5.78648149
+_cell_length_c   11.62157705
+_cell_angle_alpha   141.79722826
+_cell_angle_beta   141.79722826
+_cell_angle_gamma   28.32801178
+_chemical_formula_structural   Au4Nb2
+_chemical_formula_sum   'Au4 Nb2'
+_cell_volume   108.16493275
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Au
+  Nb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Au  Au0  1  0.01613155  0.01613155  0.00799079  1
+  Au  Au1  1  0.11123259  0.11123259  0.72565581  1
+  Au  Au2  1  0.32057385  0.32057385  0.65882566  1
+  Au  Au3  1  0.66476590  0.66476590  0.33300831  1
+  Nb  Nb0  1  0.43759757  0.43759757  0.38199218  1
+  Nb  Nb1  1  0.78303188  0.78303188  0.05919392  1

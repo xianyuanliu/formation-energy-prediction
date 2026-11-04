@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_3099_Al3Ir
+_symmetry_space_group_name_H-M   'Imm2'
+_cell_length_a   5.07709763
+_cell_length_b   5.07709763
+_cell_length_c   5.07709763
+_cell_angle_alpha   145.90805918
+_cell_angle_beta   123.89017824
+_cell_angle_gamma   67.31018751
+_chemical_formula_structural   Al3Ir
+_chemical_formula_sum   'Al3 Ir1'
+_cell_volume   60.07549268
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Ir
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.02050450  0.01556789  0.00493661  1
+  Al  Al1  1  0.48936872  0.48443211  0.00493661  1
+  Al  Al2  1  0.88488947  0.25000000  0.63488947  1
+  Ir  Ir0  1  0.43857064  0.75000000  0.68857064  1

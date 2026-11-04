@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_3468_Ni4Pd8
+_symmetry_space_group_name_H-M   'I4_1/amd'
+_cell_length_a   11.85693287
+_cell_length_b   11.85693287
+_cell_length_c   11.85693287
+_cell_angle_alpha   161.53288848
+_cell_angle_beta   161.53288848
+_cell_angle_gamma   26.23204859
+_chemical_formula_structural   Ni4Pd8
+_chemical_formula_sum   'Ni4 Pd8'
+_cell_volume   167.19632887
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ni
+  Pd
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ni  Ni0  1  0.91451587  0.91451588  0.00000000  1
+  Ni  Ni1  1  0.08548413  0.08548412  0.00000000  1
+  Ni  Ni2  1  0.16451587  0.66451588  0.50000000  1
+  Ni  Ni3  1  0.33548413  0.83548412  0.50000000  1
+  Pd  Pd0  1  0.74966204  0.74966204  0.00000000  1
+  Pd  Pd1  1  0.25033796  0.25033796  0.00000000  1
+  Pd  Pd2  1  0.99966204  0.49966204  0.50000000  1
+  Pd  Pd3  1  0.50033796  0.00033796  0.50000000  1
+  Pd  Pd4  1  0.58511770  0.58511771  0.00000000  1
+  Pd  Pd5  1  0.41488230  0.41488229  0.00000000  1
+  Pd  Pd6  1  0.83511770  0.33511771  0.50000000  1
+  Pd  Pd7  1  0.66488230  0.16488229  0.50000000  1

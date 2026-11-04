@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2790_Al4Sb2
+_symmetry_space_group_name_H-M   'I4_1/amd'
+_cell_length_a   9.99796222
+_cell_length_b   9.99796222
+_cell_length_c   9.99796222
+_cell_angle_alpha   158.48043921
+_cell_angle_beta   158.46227846
+_cell_angle_gamma   30.63077714
+_chemical_formula_structural   Al4Sb2
+_chemical_formula_sum   'Al4 Sb2'
+_cell_volume   134.49398256
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.69834276  0.94834276  0.75000000  1
+  Al  Al1  1  0.30165724  0.05165724  0.25000000  1
+  Al  Al2  1  0.55197748  0.80197748  0.75000000  1
+  Al  Al3  1  0.44802252  0.19802252  0.25000000  1
+  Sb  Sb0  1  0.12550228  0.37550228  0.75000000  1
+  Sb  Sb1  1  0.87449772  0.62449772  0.25000000  1

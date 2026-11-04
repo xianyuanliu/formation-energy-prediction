@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_193_Eu8Ge4
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   7.59058244
+_cell_length_b   4.98588510
+_cell_length_c   9.22880878
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Eu8Ge4
+_chemical_formula_sum   'Eu8 Ge4'
+_cell_volume   349.27139189
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Eu
+  Ge
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Eu  Eu0  1  0.15800032  0.24999977  0.08136964  1
+  Eu  Eu1  1  0.48150190  0.74999931  0.18191300  1
+  Eu  Eu2  1  0.98150102  0.74999931  0.31808737  1
+  Eu  Eu3  1  0.65799944  0.24999977  0.41863074  1
+  Eu  Eu4  1  0.34200011  0.74999931  0.58136893  1
+  Eu  Eu5  1  0.01849853  0.24999977  0.68191338  1
+  Eu  Eu6  1  0.51849895  0.24999977  0.81808667  1
+  Eu  Eu7  1  0.84200053  0.74999931  0.91863111  1
+  Ge  Ge0  1  0.74958593  0.24999977  0.09893414  1
+  Ge  Ge1  1  0.24958550  0.24999977  0.40106516  1
+  Ge  Ge2  1  0.75041404  0.74999931  0.59893451  1
+  Ge  Ge3  1  0.25041361  0.74999931  0.90106553  1

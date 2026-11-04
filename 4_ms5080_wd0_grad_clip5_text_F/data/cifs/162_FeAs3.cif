@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_162_FeAs3
+_symmetry_space_group_name_H-M   'Imm2'
+_cell_length_a   6.29539381
+_cell_length_b   6.29539381
+_cell_length_c   6.29539381
+_cell_angle_alpha   153.40286737
+_cell_angle_beta   135.69356595
+_cell_angle_gamma   52.42561159
+_chemical_formula_structural   FeAs3
+_chemical_formula_sum   'As3 Fe1'
+_cell_volume   77.66280796
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  As
+  Fe
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  As  As0  1  0.89683463  0.90200382  0.99483081  1
+  As  As1  1  0.59282699  0.59799618  0.99483081  1
+  As  As2  1  0.13912391  0.75000000  0.38912391  1
+  Fe  Fe0  1  0.53788113  0.25000000  0.28788113  1

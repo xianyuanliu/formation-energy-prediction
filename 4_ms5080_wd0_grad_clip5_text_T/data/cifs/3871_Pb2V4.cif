@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3871_Pb2V4
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   6.94624315
+_cell_length_b   6.94624315
+_cell_length_c   5.02602600
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   153.30681757
+_chemical_formula_structural   Pb2V4
+_chemical_formula_sum   'Pb2 V4'
+_cell_volume   108.93732673
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Pb
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pb  Pb0  1  0.99588558  0.00411442  0.00000000  1
+  Pb  Pb1  1  0.44855886  0.55144114  0.50000000  1
+  V  V0  1  0.30089533  0.69910467  0.00000000  1
+  V  V1  1  0.67026124  0.32973876  0.00000000  1
+  V  V2  1  0.77418320  0.22581680  0.50000000  1
+  V  V3  1  0.14354912  0.85645088  0.50000000  1

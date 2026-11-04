@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_219_Ag4Al2
+_symmetry_space_group_name_H-M   'I4_1/amd'
+_cell_length_a   12.21285178
+_cell_length_b   12.21285178
+_cell_length_c   12.21285178
+_cell_angle_alpha   166.03450928
+_cell_angle_beta   166.03450928
+_cell_angle_gamma   19.79970382
+_chemical_formula_structural   Ag4Al2
+_chemical_formula_sum   'Ag4 Al2'
+_cell_volume   106.08446696
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ag
+  Al
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ag  Ag0  1  0.57363827  0.57363827  0.00000000  1
+  Ag  Ag1  1  0.67636173  0.17636173  0.50000000  1
+  Ag  Ag2  1  0.42636173  0.42636173  0.00000000  1
+  Ag  Ag3  1  0.82363827  0.32363827  0.50000000  1
+  Al  Al0  1  0.00000000  0.00000000  0.00000000  1
+  Al  Al1  1  0.25000000  0.75000000  0.50000000  1

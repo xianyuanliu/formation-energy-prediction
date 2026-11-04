@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3028_Cu5W
+_symmetry_space_group_name_H-M   'Cmmm'
+_cell_length_a   3.84320611
+_cell_length_b   5.76876033
+_cell_length_c   3.67247200
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   70.54265333
+_chemical_formula_structural   Cu5W
+_chemical_formula_sum   'Cu5 W1'
+_cell_volume   76.77071244
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  W
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.19758133  0.60483734  0.50000000  1
+  Cu  Cu1  1  0.35961645  0.28076710  0.00000000  1
+  Cu  Cu2  1  0.52777831  0.94444338  0.50000000  1
+  Cu  Cu3  1  0.69584789  0.60830422  0.00000000  1
+  Cu  Cu4  1  0.85806297  0.28387406  0.50000000  1
+  W  W0  1  0.02777971  0.94444057  0.00000000  1

@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_1425_Mn6Sb2
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   8.00957101
+_cell_length_b   8.00957101
+_cell_length_c   8.00957101
+_cell_angle_alpha   152.50699446
+_cell_angle_beta   152.50699446
+_cell_angle_gamma   39.27338080
+_chemical_formula_structural   Mn6Sb2
+_chemical_formula_sum   'Mn6 Sb2'
+_cell_volume   109.30905449
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mn
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mn  Mn0  1  0.50000000  1.00000000  0.50000000  1
+  Mn  Mn1  1  0.00000000  0.50000000  0.50000000  1
+  Mn  Mn2  1  0.25000000  0.75000000  0.50000000  1
+  Mn  Mn3  1  0.75000000  0.25000000  0.50000000  1
+  Mn  Mn4  1  0.87557795  0.87557795  0.00000000  1
+  Mn  Mn5  1  0.12442205  0.12442205  0.00000000  1
+  Sb  Sb0  1  0.62580913  0.62580913  0.00000000  1
+  Sb  Sb1  1  0.37419087  0.37419087  0.00000000  1

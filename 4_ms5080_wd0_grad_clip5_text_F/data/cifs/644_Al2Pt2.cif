@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_644_Al2Pt2
+_symmetry_space_group_name_H-M   'Imma'
+_cell_length_a   5.03239221
+_cell_length_b   5.03239221
+_cell_length_c   5.03239221
+_cell_angle_alpha   137.40867574
+_cell_angle_beta   136.04212707
+_cell_angle_gamma   62.86749112
+_chemical_formula_structural   Al2Pt2
+_chemical_formula_sum   'Al2 Pt2'
+_cell_volume   59.12339446
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.00135714  0.00135714  1.00000000  1
+  Al  Al1  1  0.74864286  0.24864286  0.50000000  1
+  Pt  Pt0  1  0.50155086  0.50155086  0.00000000  1
+  Pt  Pt1  1  0.24844914  0.74844914  0.50000000  1

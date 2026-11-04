@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_3689_GaK3
+_symmetry_space_group_name_H-M   'Pmm2'
+_cell_length_a   4.59771877
+_cell_length_b   6.17402815
+_cell_length_c   6.87745636
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   GaK3
+_chemical_formula_sum   'Ga1 K3'
+_cell_volume   195.22653747
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ga
+  K
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ga  Ga0  1  0.00000000  0.00000000  0.99847378  1
+  K  K0  1  0.50000000  0.00000000  0.49739007  1
+  K  K1  1  0.50000000  0.50000000  0.86355445  1
+  K  K2  1  0.00000000  0.50000000  0.30724837  1

@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2411_Mn4Sn2
+_symmetry_space_group_name_H-M   'P6_3/mmc'
+_cell_length_a   4.47800900
+_cell_length_b   4.47771469
+_cell_length_c   5.47537400
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   120.00216688
+_chemical_formula_structural   Mn4Sn2
+_chemical_formula_sum   'Mn4 Sn2'
+_cell_volume   95.07718570
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mn
+  Sn
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mn  Mn0  1  0.00000000  0.00000000  0.00000000  1
+  Mn  Mn1  1  0.66667512  0.33335220  0.24999937  1
+  Mn  Mn2  1  0.00000000  0.00000000  0.50000056  1
+  Mn  Mn3  1  0.33332384  0.66664767  0.74999993  1
+  Sn  Sn0  1  0.33333415  0.66666830  0.24999937  1
+  Sn  Sn1  1  0.66666481  0.33333157  0.74999993  1

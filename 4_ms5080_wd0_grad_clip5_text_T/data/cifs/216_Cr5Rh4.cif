@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_216_Cr5Rh4
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   7.89855521
+_cell_length_b   7.89855521
+_cell_length_c   5.88621261
+_cell_angle_alpha   47.86057887
+_cell_angle_beta   47.86057887
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Cr5Rh4
+_chemical_formula_sum   'Cr5 Rh4'
+_cell_volume   115.94470949
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cr
+  Rh
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cr  Cr0  1  0.00000000  0.00000000  0.00000000  1
+  Cr  Cr1  1  0.33456531  0.33456531  0.00000000  1
+  Cr  Cr2  1  0.33456531  0.66543469  0.00000000  1
+  Cr  Cr3  1  0.66543469  0.33456531  0.00000000  1
+  Cr  Cr4  1  0.66543469  0.66543469  0.00000000  1
+  Rh  Rh0  1  0.00000000  0.32084461  0.00000000  1
+  Rh  Rh1  1  0.00000000  0.67915539  0.00000000  1
+  Rh  Rh2  1  0.32084461  0.00000000  0.00000000  1
+  Rh  Rh3  1  0.67915539  0.00000000  0.00000000  1

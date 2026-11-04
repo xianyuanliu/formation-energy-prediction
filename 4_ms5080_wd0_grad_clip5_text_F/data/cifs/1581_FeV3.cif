@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_1581_FeV3
+_symmetry_space_group_name_H-M   'Immm'
+_cell_length_a   2.91063759
+_cell_length_b   4.86831076
+_cell_length_c   4.08990973
+_cell_angle_alpha   114.79389920
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   107.39377527
+_chemical_formula_structural   FeV3
+_chemical_formula_sum   'Fe1 V3'
+_cell_volume   49.67731478
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.00000000  0.00000000  0.00000000  1
+  V  V0  1  0.74687240  0.49374479  0.24702107  1
+  V  V1  1  0.50000000  1.00000000  0.50000000  1
+  V  V2  1  0.25312760  0.50625521  0.75297893  1

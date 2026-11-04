@@ -1,0 +1,39 @@
+# generated using pymatgen
+data_4584_Ag4Pt7
+_symmetry_space_group_name_H-M   'P1'
+_cell_length_a   7.51400973
+_cell_length_b   4.94271309
+_cell_length_c   4.93733680
+_cell_angle_alpha   99.91842328
+_cell_angle_beta   96.23689067
+_cell_angle_gamma   89.81738162
+_chemical_formula_structural   Ag4Pt7
+_chemical_formula_sum   'Ag4 Pt7'
+_cell_volume   179.53834668
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ag
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ag  Ag0  1  0.99930145  0.00140373  0.99916641  1
+  Ag  Ag1  1  0.90853430  0.45056782  0.72777353  1
+  Ag  Ag2  1  0.72759529  0.36351217  0.17885649  1
+  Ag  Ag3  1  0.27341479  0.63740125  0.82451357  1
+  Pt  Pt0  1  0.81697771  0.90268463  0.44881001  1
+  Pt  Pt1  1  0.63344223  0.81798594  0.90118432  1
+  Pt  Pt2  1  0.53824876  0.26249134  0.63132477  1
+  Pt  Pt3  1  0.46152455  0.73399238  0.36860375  1
+  Pt  Pt4  1  0.36244314  0.19026974  0.09526973  1
+  Pt  Pt5  1  0.18049956  0.08661157  0.53877721  1
+  Pt  Pt6  1  0.09801822  0.55307942  0.28572021  1

@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_1352_Fe4Pt8
+_symmetry_space_group_name_H-M   'I4_1/amd'
+_cell_length_a   3.88243702
+_cell_length_b   3.88243702
+_cell_length_c   11.98773320
+_cell_angle_alpha   99.31915545
+_cell_angle_beta   99.31915545
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Fe4Pt8
+_chemical_formula_sum   'Fe4 Pt8'
+_cell_volume   175.89281691
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.08486163  0.08486163  0.16972326  1
+  Fe  Fe1  1  0.91513837  0.91513837  0.83027674  1
+  Fe  Fe2  1  0.33486163  0.83486163  0.66972326  1
+  Fe  Fe3  1  0.16513837  0.66513837  0.33027674  1
+  Pt  Pt0  1  0.25130342  0.25130342  0.50260684  1
+  Pt  Pt1  1  0.74869658  0.74869658  0.49739316  1
+  Pt  Pt2  1  0.50130342  0.00130342  0.00260684  1
+  Pt  Pt3  1  0.99869658  0.49869658  0.99739316  1
+  Pt  Pt4  1  0.41512996  0.41512996  0.83025992  1
+  Pt  Pt5  1  0.58487004  0.58487004  0.16974008  1
+  Pt  Pt6  1  0.66512996  0.16512996  0.33025992  1
+  Pt  Pt7  1  0.83487004  0.33487004  0.66974008  1

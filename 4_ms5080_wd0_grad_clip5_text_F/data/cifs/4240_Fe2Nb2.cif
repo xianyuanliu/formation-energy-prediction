@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_4240_Fe2Nb2
+_symmetry_space_group_name_H-M   'Imma'
+_cell_length_a   3.07146562
+_cell_length_b   5.13633586
+_cell_length_c   4.31802500
+_cell_angle_alpha   114.50008730
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   107.39718118
+_chemical_formula_structural   Fe2Nb2
+_chemical_formula_sum   'Fe2 Nb2'
+_cell_volume   58.54610458
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  Nb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.99397602  0.98795205  0.99379945  1
+  Fe  Fe1  1  0.25602398  0.51204795  0.75620055  1
+  Nb  Nb0  1  0.74344269  0.48688538  0.24252292  1
+  Nb  Nb1  1  0.50655731  0.01311462  0.50747708  1

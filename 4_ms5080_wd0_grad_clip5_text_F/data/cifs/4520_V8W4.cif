@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_4520_V8W4
+_symmetry_space_group_name_H-M   'Pnma'
+_cell_length_a   5.16666372
+_cell_length_b   4.40733820
+_cell_length_c   7.62626121
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   V8W4
+_chemical_formula_sum   'V8 W4'
+_cell_volume   173.65938145
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  V
+  W
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  V  V0  1  0.02040558  0.25000000  0.24572565  1
+  V  V1  1  0.17048029  0.25000000  0.56767304  1
+  V  V2  1  0.32951971  0.75000000  0.06767304  1
+  V  V3  1  0.47959442  0.75000000  0.74572565  1
+  V  V4  1  0.52040558  0.25000000  0.25427435  1
+  V  V5  1  0.67048029  0.25000000  0.93232696  1
+  V  V6  1  0.82951971  0.75000000  0.43232696  1
+  V  V7  1  0.97959442  0.75000000  0.75427435  1
+  W  W0  1  0.17094828  0.25000000  0.90974808  1
+  W  W1  1  0.32905172  0.75000000  0.40974808  1
+  W  W2  1  0.67094828  0.25000000  0.59025192  1
+  W  W3  1  0.82905172  0.75000000  0.09025192  1

@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_87_AuMn3
+_symmetry_space_group_name_H-M   'Pmmm'
+_cell_length_a   2.99252046
+_cell_length_b   3.63912238
+_cell_length_c   5.64628573
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   AuMn3
+_chemical_formula_sum   'Au1 Mn3'
+_cell_volume   61.48888828
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Au
+  Mn
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Au  Au0  1  0.00000000  0.00000000  0.00000000  1
+  Mn  Mn0  1  0.00000000  0.00000000  0.50000000  1
+  Mn  Mn1  1  0.50000000  0.50000000  0.26375999  1
+  Mn  Mn2  1  0.50000000  0.50000000  0.73624001  1

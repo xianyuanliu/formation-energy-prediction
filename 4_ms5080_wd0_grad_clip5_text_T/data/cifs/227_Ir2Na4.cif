@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_227_Ir2Na4
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   13.84088963
+_cell_length_b   13.84088963
+_cell_length_c   3.99329161
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   168.20829153
+_chemical_formula_structural   Ir2Na4
+_chemical_formula_sum   'Ir2 Na4'
+_cell_volume   156.33024774
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ir
+  Na
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ir  Ir0  1  0.98550010  0.01449990  0.00000000  1
+  Ir  Ir1  1  0.45894434  0.54105566  0.50000000  1
+  Na  Na0  1  0.37922161  0.62077839  0.00000000  1
+  Na  Na1  1  0.67141720  0.32858280  0.00000000  1
+  Na  Na2  1  0.77302724  0.22697276  0.50000000  1
+  Na  Na3  1  0.06522283  0.93477717  0.50000000  1

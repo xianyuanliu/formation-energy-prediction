@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_1640_Ag2Ca4
+_symmetry_space_group_name_H-M   'I4/mcm'
+_cell_length_a   6.27850664
+_cell_length_b   6.27850664
+_cell_length_c   6.27850664
+_cell_angle_alpha   106.43268482
+_cell_angle_beta   106.43268482
+_cell_angle_gamma   115.73584225
+_chemical_formula_structural   Ag2Ca4
+_chemical_formula_sum   'Ag2 Ca4'
+_cell_volume   188.79627832
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ag
+  Ca
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ag  Ag0  1  0.75000000  0.75000000  0.00000000  1
+  Ag  Ag1  1  0.25000000  0.25000000  0.00000000  1
+  Ca  Ca0  1  0.32504682  0.17495318  0.50000000  1
+  Ca  Ca1  1  0.67495318  0.82504682  0.50000000  1
+  Ca  Ca2  1  0.17495318  0.67495318  0.84990637  1
+  Ca  Ca3  1  0.82504682  0.32504682  0.15009363  1

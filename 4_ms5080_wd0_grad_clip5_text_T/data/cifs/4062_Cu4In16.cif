@@ -1,0 +1,48 @@
+# generated using pymatgen
+data_4062_Cu4In16
+_symmetry_space_group_name_H-M   'I-43m'
+_cell_length_a   8.79586722
+_cell_length_b   8.79586722
+_cell_length_c   8.79586722
+_cell_angle_alpha   109.47122063
+_cell_angle_beta   109.47122063
+_cell_angle_gamma   109.47122063
+_chemical_formula_structural   Cu4In16
+_chemical_formula_sum   'Cu4 In16'
+_cell_volume   523.85863165
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  In
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.69482571  0.00000000  0.00000000  1
+  Cu  Cu1  1  0.30517429  0.30517429  0.30517429  1
+  Cu  Cu2  1  1.00000000  0.00000000  0.69482571  1
+  Cu  Cu3  1  1.00000000  0.69482571  0.00000000  1
+  In  In0  1  0.40116957  0.00000000  0.00000000  1
+  In  In1  1  0.59883043  0.59883043  0.59883043  1
+  In  In2  1  0.00000000  0.00000000  0.40116957  1
+  In  In3  1  0.00000000  0.40116957  0.00000000  1
+  In  In4  1  0.30159092  0.30159092  0.00000000  1
+  In  In5  1  0.69840908  0.69840908  0.00000000  1
+  In  In6  1  0.30159092  0.00000000  0.30159092  1
+  In  In7  1  0.69840908  0.00000000  0.69840908  1
+  In  In8  1  0.00000000  0.69840908  0.69840908  1
+  In  In9  1  1.00000000  0.30159092  0.30159092  1
+  In  In10  1  0.75018330  0.25018330  0.50000000  1
+  In  In11  1  0.24981670  0.74981670  0.50000000  1
+  In  In12  1  0.25018330  0.50000000  0.75018330  1
+  In  In13  1  0.74981670  0.50000000  0.24981670  1
+  In  In14  1  0.50000000  0.24981670  0.74981670  1
+  In  In15  1  0.50000000  0.75018330  0.25018330  1

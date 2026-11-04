@@ -1,0 +1,52 @@
+# generated using pymatgen
+data_768_Mo8Nb16
+_symmetry_space_group_name_H-M   'Fd -3 m'
+_cell_length_a   8.51217706
+_cell_length_b   8.51217706
+_cell_length_c   8.51217706
+_cell_angle_alpha   60.00000000
+_cell_angle_beta   60.00000000
+_cell_angle_gamma   60.00000000
+_chemical_formula_structural   Mo8Nb16
+_chemical_formula_sum   'Mo8 Nb16'
+_cell_volume   436.12094848
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mo
+  Nb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mo  Mo0  1  0.71269436  0.86191693  0.71269436  1
+  Mo  Mo1  1  0.36191693  0.21269436  0.71269436  1
+  Mo  Mo2  1  0.71269436  0.21269436  0.36191693  1
+  Mo  Mo3  1  0.71269436  0.21269436  0.71269436  1
+  Mo  Mo4  1  0.28730564  0.13808307  0.28730564  1
+  Mo  Mo5  1  0.63808307  0.78730564  0.28730564  1
+  Mo  Mo6  1  0.28730564  0.78730564  0.63808307  1
+  Mo  Mo7  1  0.28730564  0.78730564  0.28730564  1
+  Nb  Nb0  1  0.50000000  0.00000000  0.50000000  1
+  Nb  Nb1  1  0.50000000  0.00000000  0.00000000  1
+  Nb  Nb2  1  0.00000000  0.00000000  0.50000000  1
+  Nb  Nb3  1  0.50000000  0.50000000  0.50000000  1
+  Nb  Nb4  1  0.31255495  0.81255495  0.93744505  1
+  Nb  Nb5  1  0.93744505  0.81255495  0.31255495  1
+  Nb  Nb6  1  0.93744505  0.81255495  0.93744505  1
+  Nb  Nb7  1  0.31255495  0.43744505  0.31255495  1
+  Nb  Nb8  1  0.31255495  0.43744505  0.93744505  1
+  Nb  Nb9  1  0.93744505  0.43744505  0.31255495  1
+  Nb  Nb10  1  0.68744505  0.18744505  0.06255495  1
+  Nb  Nb11  1  0.06255495  0.18744505  0.68744505  1
+  Nb  Nb12  1  0.06255495  0.18744505  0.06255495  1
+  Nb  Nb13  1  0.68744505  0.56255495  0.68744505  1
+  Nb  Nb14  1  0.68744505  0.56255495  0.06255495  1
+  Nb  Nb15  1  0.06255495  0.56255495  0.68744505  1

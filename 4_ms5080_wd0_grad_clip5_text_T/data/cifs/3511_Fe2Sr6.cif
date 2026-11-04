@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_3511_Fe2Sr6
+_symmetry_space_group_name_H-M   'P6_3/mmc'
+_cell_length_a   7.62897500
+_cell_length_b   7.62897462
+_cell_length_c   5.89065700
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   119.99999733
+_chemical_formula_structural   Fe2Sr6
+_chemical_formula_sum   'Fe2 Sr6'
+_cell_volume   296.91130951
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  Sr
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.66666655  0.33333252  0.25000098  1
+  Fe  Fe1  1  0.33333323  0.66666655  0.74999953  1
+  Sr  Sr0  1  0.17654381  0.35308767  0.25000098  1
+  Sr  Sr1  1  0.17654301  0.82345600  0.25000098  1
+  Sr  Sr2  1  0.64691287  0.82345600  0.25000098  1
+  Sr  Sr3  1  0.35308691  0.17654308  0.74999953  1
+  Sr  Sr4  1  0.82345677  0.17654308  0.74999953  1
+  Sr  Sr5  1  0.82345673  0.64691292  0.74999953  1

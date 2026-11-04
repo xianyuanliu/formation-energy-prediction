@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2877_W5Sb
+_symmetry_space_group_name_H-M   'Cmmm'
+_cell_length_a   7.11702334
+_cell_length_b   7.11702334
+_cell_length_c   4.48551834
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   153.69087090
+_chemical_formula_structural   W5Sb
+_chemical_formula_sum   'Sb1 W5'
+_cell_volume   100.69847915
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Sb
+  W
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Sb  Sb0  1  0.97246791  0.02753209  0.00000000  1
+  W  W0  1  0.29991755  0.70008245  0.00000000  1
+  W  W1  1  0.64487381  0.35512619  0.00000000  1
+  W  W2  1  0.47188839  0.52811161  0.50000000  1
+  W  W3  1  0.80371985  0.19628015  0.50000000  1
+  W  W4  1  0.14046582  0.85953418  0.50000000  1

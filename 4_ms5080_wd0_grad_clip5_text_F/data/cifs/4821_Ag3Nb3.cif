@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_4821_Ag3Nb3
+_symmetry_space_group_name_H-M   'Cm'
+_cell_length_a   5.67707757
+_cell_length_b   5.67707757
+_cell_length_c   11.64447449
+_cell_angle_alpha   140.09935573
+_cell_angle_beta   140.09935573
+_cell_angle_gamma   27.94418491
+_chemical_formula_structural   Ag3Nb3
+_chemical_formula_sum   'Ag3 Nb3'
+_cell_volume   107.70054681
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ag
+  Nb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ag  Ag0  1  0.00212869  0.00212869  0.00540264  1
+  Ag  Ag1  1  0.10901583  0.10901583  0.71628006  1
+  Ag  Ag2  1  0.33647840  0.33647840  0.67425678  1
+  Nb  Nb0  1  0.43474435  0.43474435  0.37219447  1
+  Nb  Nb1  1  0.67117926  0.67117926  0.34369181  1
+  Nb  Nb2  1  0.77978681  0.77978681  0.05484090  1

@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_1053_Cr2Ta6
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   5.59547065
+_cell_length_b   5.59547065
+_cell_length_c   4.52422588
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   70.50497488
+_chemical_formula_structural   Cr2Ta6
+_chemical_formula_sum   'Cr2 Ta6'
+_cell_volume   133.52956293
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cr
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cr  Cr0  1  0.37413908  0.37413908  0.25000000  1
+  Cr  Cr1  1  0.62586092  0.62586092  0.75000000  1
+  Ta  Ta0  1  0.13806433  0.61418516  0.75000000  1
+  Ta  Ta1  1  0.12128950  0.12128950  0.75000000  1
+  Ta  Ta2  1  0.38581484  0.86193567  0.25000000  1
+  Ta  Ta3  1  0.61418516  0.13806433  0.75000000  1
+  Ta  Ta4  1  0.87871050  0.87871050  0.25000000  1
+  Ta  Ta5  1  0.86193567  0.38581484  0.25000000  1

@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_1543_Cu5Pb4
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   7.11856892
+_cell_length_b   7.11856892
+_cell_length_c   7.11856892
+_cell_angle_alpha   94.73462122
+_cell_angle_beta   94.73462122
+_cell_angle_gamma   146.60735989
+_chemical_formula_structural   Cu5Pb4
+_chemical_formula_sum   'Cu5 Pb4'
+_cell_volume   190.16430216
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Pb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.00000000  0.00000000  0.00000000  1
+  Cu  Cu1  1  0.37026741  0.37026741  0.74053483  1
+  Cu  Cu2  1  0.62973259  0.62973259  0.25946517  1
+  Cu  Cu3  1  0.62973259  0.37026741  0.00000000  1
+  Cu  Cu4  1  0.37026741  0.62973259  0.00000000  1
+  Pb  Pb0  1  0.29494641  1.00000000  0.29494641  1
+  Pb  Pb1  1  0.70505359  0.00000000  0.70505359  1
+  Pb  Pb2  1  1.00000000  0.29494641  0.29494641  1
+  Pb  Pb3  1  0.00000000  0.70505359  0.70505359  1

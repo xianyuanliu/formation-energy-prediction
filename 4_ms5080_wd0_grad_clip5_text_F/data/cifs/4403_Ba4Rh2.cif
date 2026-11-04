@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_4403_Ba4Rh2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   10.75767700
+_cell_length_b   10.75767700
+_cell_length_c   5.76158645
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   158.84535209
+_chemical_formula_structural   Ba4Rh2
+_chemical_formula_sum   'Ba4 Rh2'
+_cell_volume   240.62995988
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ba
+  Rh
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.89843025  0.10156975  0.00000000  1
+  Ba  Ba1  1  0.66764077  0.33235923  0.00000000  1
+  Ba  Ba2  1  0.54601420  0.45398580  0.50000000  1
+  Ba  Ba3  1  0.77680368  0.22319632  0.50000000  1
+  Rh  Rh0  1  0.29217920  0.70782080  0.00000000  1
+  Rh  Rh1  1  0.15226524  0.84773476  0.50000000  1

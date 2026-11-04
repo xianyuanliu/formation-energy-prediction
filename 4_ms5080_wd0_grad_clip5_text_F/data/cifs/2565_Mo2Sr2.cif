@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_2565_Mo2Sr2
+_symmetry_space_group_name_H-M   'P4/nmm'
+_cell_length_a   3.49086072
+_cell_length_b   3.50005346
+_cell_length_c   9.51303767
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Mo2Sr2
+_chemical_formula_sum   'Mo2 Sr2'
+_cell_volume   116.23218869
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mo
+  Sr
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mo  Mo0  1  0.00000000  0.00000000  0.92071353  1
+  Mo  Mo1  1  0.50000000  0.50000000  0.82928647  1
+  Sr  Sr0  1  0.00000000  0.00000000  0.57029751  1
+  Sr  Sr1  1  0.50000000  0.50000000  0.17970249  1

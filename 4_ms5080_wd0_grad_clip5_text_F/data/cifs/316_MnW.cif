@@ -1,0 +1,30 @@
+# generated using pymatgen
+data_316_MnW
+_symmetry_space_group_name_H-M   'F-43m'
+_cell_length_a   3.83905084
+_cell_length_b   3.83905084
+_cell_length_c   3.83905084
+_cell_angle_alpha   60.00000000
+_cell_angle_beta   60.00000000
+_cell_angle_gamma   60.00000000
+_chemical_formula_structural   MnW
+_chemical_formula_sum   'Mn1 W1'
+_cell_volume   40.00889819
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Mn
+  W
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mn  Mn0  1  0.00000000  0.00000000  0.00000000  1
+  W  W0  1  0.75000000  0.75000000  0.75000000  1

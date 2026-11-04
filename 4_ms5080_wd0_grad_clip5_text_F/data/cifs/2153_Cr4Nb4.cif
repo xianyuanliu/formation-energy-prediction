@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_2153_Cr4Nb4
+_symmetry_space_group_name_H-M   'P2_13'
+_cell_length_a   4.96279174
+_cell_length_b   4.96279174
+_cell_length_c   4.96279174
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Cr4Nb4
+_chemical_formula_sum   'Cr4 Nb4'
+_cell_volume   122.23009581
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cr
+  Nb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cr  Cr0  1  0.41332404  0.41332404  0.41332404  1
+  Cr  Cr1  1  0.08667596  0.58667596  0.91332404  1
+  Cr  Cr2  1  0.58667596  0.91332404  0.08667596  1
+  Cr  Cr3  1  0.91332404  0.08667596  0.58667596  1
+  Nb  Nb0  1  0.08761498  0.08761498  0.08761498  1
+  Nb  Nb1  1  0.41238502  0.91238502  0.58761498  1
+  Nb  Nb2  1  0.91238502  0.58761498  0.41238502  1
+  Nb  Nb3  1  0.58761498  0.41238502  0.91238502  1

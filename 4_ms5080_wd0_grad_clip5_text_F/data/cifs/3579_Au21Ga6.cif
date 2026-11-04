@@ -1,0 +1,55 @@
+# generated using pymatgen
+data_3579_Au21Ga6
+_symmetry_space_group_name_H-M   'P-62m'
+_cell_length_a   7.83437300
+_cell_length_b   7.83437301
+_cell_length_c   9.01589400
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   119.99973011
+_chemical_formula_structural   Au21Ga6
+_chemical_formula_sum   'Au21 Ga6'
+_cell_volume   479.23563062
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Au
+  Ga
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Au  Au0  1  0.00000000  0.00000000  0.00000000  1
+  Au  Au1  1  0.36926691  1.00000000  0.00000000  1
+  Au  Au2  1  1.00000000  0.36926646  0.00000000  1
+  Au  Au3  1  0.63074387  0.63074426  0.00000000  1
+  Au  Au4  1  0.68506734  1.00000000  0.16858339  1
+  Au  Au5  1  0.00000000  0.68506911  0.16858339  1
+  Au  Au6  1  0.31494955  0.31494986  0.16859115  1
+  Au  Au7  1  0.64054948  0.64055001  0.33095219  1
+  Au  Au8  1  0.35947713  1.00000000  0.33095774  1
+  Au  Au9  1  1.00000000  0.35947690  0.33095774  1
+  Au  Au10  1  0.72327231  1.00000000  0.49999920  1
+  Au  Au11  1  0.27674637  0.27674679  0.49999920  1
+  Au  Au12  1  0.66665730  0.33332533  0.49999920  1
+  Au  Au13  1  0.33332629  0.66665785  0.49999920  1
+  Au  Au14  1  1.00000000  0.72327376  0.49999920  1
+  Au  Au15  1  0.35947713  1.00000000  0.66904178  1
+  Au  Au16  1  1.00000000  0.35947690  0.66904178  1
+  Au  Au17  1  0.64054948  0.64055001  0.66904732  1
+  Au  Au18  1  0.31494955  0.31494986  0.83140947  1
+  Au  Au19  1  0.68506734  1.00000000  0.83141613  1
+  Au  Au20  1  0.00000000  0.68506911  0.83141613  1
+  Ga  Ga0  1  0.66666462  0.33332975  0.18180670  1
+  Ga  Ga1  1  0.33332924  0.66666374  0.18180670  1
+  Ga  Ga2  1  0.00000000  0.00000000  0.30892665  1
+  Ga  Ga3  1  0.00000000  0.00000000  0.69107398  1
+  Ga  Ga4  1  0.66666462  0.33332975  0.81819392  1
+  Ga  Ga5  1  0.33332924  0.66666374  0.81819392  1

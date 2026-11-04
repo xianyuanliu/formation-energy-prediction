@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_1694_Ba4P8
+_symmetry_space_group_name_H-M   'I4_1/amd'
+_cell_length_a   19.72310147
+_cell_length_b   19.72310147
+_cell_length_c   19.72310147
+_cell_angle_alpha   168.48818015
+_cell_angle_beta   168.48818015
+_cell_angle_gamma   16.30779268
+_chemical_formula_structural   Ba4P8
+_chemical_formula_sum   'Ba4 P8'
+_cell_volume   305.55830285
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ba
+  P
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.93354150  0.93354151  0.00000000  1
+  Ba  Ba1  1  0.06645850  0.06645849  0.00000000  1
+  Ba  Ba2  1  0.18354150  0.68354151  0.50000000  1
+  Ba  Ba3  1  0.31645850  0.81645849  0.50000000  1
+  P  P0  1  0.74952562  0.74952562  0.00000000  1
+  P  P1  1  0.25047438  0.25047438  0.00000000  1
+  P  P2  1  0.99952562  0.49952562  0.50000000  1
+  P  P3  1  0.50047438  0.00047438  0.50000000  1
+  P  P4  1  0.61124107  0.61124108  0.00000000  1
+  P  P5  1  0.38875893  0.38875892  0.00000000  1
+  P  P6  1  0.86124107  0.36124108  0.50000000  1
+  P  P7  1  0.63875893  0.13875892  0.50000000  1

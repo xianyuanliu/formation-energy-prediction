@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2795_Al4Br2
+_symmetry_space_group_name_H-M   'P4_2/mnm'
+_cell_length_a   7.63060758
+_cell_length_b   7.63060758
+_cell_length_c   3.15321024
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Al4Br2
+_chemical_formula_sum   'Al4 Br2'
+_cell_volume   183.59936191
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Br
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.26054802  0.26054802  0.00000000  1
+  Al  Al1  1  0.73945141  0.73945141  0.00000000  1
+  Al  Al2  1  0.76054909  0.23945169  0.50000158  1
+  Al  Al3  1  0.23945169  0.76054909  0.50000158  1
+  Br  Br0  1  0.00000000  0.00000000  0.00000000  1
+  Br  Br1  1  0.49999972  0.49999972  0.50000158  1

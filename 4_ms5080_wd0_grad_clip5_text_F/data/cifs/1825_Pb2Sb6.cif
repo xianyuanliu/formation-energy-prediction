@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_1825_Pb2Sb6
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   8.58988870
+_cell_length_b   8.58988870
+_cell_length_c   4.28926980
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   121.32485688
+_chemical_formula_structural   Pb2Sb6
+_chemical_formula_sum   'Pb2 Sb6'
+_cell_volume   270.35535024
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Pb
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pb  Pb0  1  0.42496030  0.57503970  0.25000000  1
+  Pb  Pb1  1  0.57503970  0.42496030  0.75000000  1
+  Sb  Sb0  1  0.92643658  0.07356342  0.75000000  1
+  Sb  Sb1  1  0.07356342  0.92643658  0.25000000  1
+  Sb  Sb2  1  0.99049961  0.62032787  0.75000000  1
+  Sb  Sb3  1  0.00950039  0.37967213  0.25000000  1
+  Sb  Sb4  1  0.37967213  0.00950039  0.75000000  1
+  Sb  Sb5  1  0.62032787  0.99049961  0.25000000  1

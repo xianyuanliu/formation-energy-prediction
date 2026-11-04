@@ -1,0 +1,44 @@
+# generated using pymatgen
+data_2555_Cu10Ge6
+_symmetry_space_group_name_H-M   'I4/mcm'
+_cell_length_a   7.18245653
+_cell_length_b   7.18245653
+_cell_length_c   7.18121245
+_cell_angle_alpha   97.06961209
+_cell_angle_beta   97.06961209
+_cell_angle_gamma   138.93362545
+_chemical_formula_structural   Cu10Ge6
+_chemical_formula_sum   'Cu10 Ge6'
+_cell_volume   227.89440731
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Ge
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.74937765  0.24937765  0.49945407  1
+  Cu  Cu1  1  0.24938543  0.74938543  0.49946297  1
+  Cu  Cu2  1  0.93522790  0.75198800  0.68751618  1
+  Cu  Cu3  1  0.06403761  0.24763939  0.31198754  1
+  Cu  Cu4  1  0.43528380  0.74759425  0.18289672  1
+  Cu  Cu5  1  0.56413343  0.25190074  0.81607932  1
+  Cu  Cu6  1  0.74763939  0.56403761  0.31198754  1
+  Cu  Cu7  1  0.25198800  0.43522790  0.68751618  1
+  Cu  Cu8  1  0.75190074  0.06413343  0.81607932  1
+  Cu  Cu9  1  0.24759425  0.93528380  0.18289672  1
+  Ge  Ge0  1  0.74989347  0.74989627  0.99983683  1
+  Ge  Ge1  1  0.24989627  0.24989347  0.99983683  1
+  Ge  Ge2  1  0.82190326  0.32190326  0.14445751  1
+  Ge  Ge3  1  0.17683078  0.67683078  0.85436664  1
+  Ge  Ge4  1  0.32162462  0.17661672  0.49947948  1
+  Ge  Ge5  1  0.67661672  0.82162462  0.49947948  1

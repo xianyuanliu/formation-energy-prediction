@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_1097_Pb2Sb2
+_symmetry_space_group_name_H-M   'Imma'
+_cell_length_a   6.46236134
+_cell_length_b   6.46236134
+_cell_length_c   6.46236134
+_cell_angle_alpha   144.20836917
+_cell_angle_beta   129.61568624
+_cell_angle_gamma   63.33429577
+_chemical_formula_structural   Pb2Sb2
+_chemical_formula_sum   'Pb2 Sb2'
+_cell_volume   120.17747707
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Pb
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pb  Pb0  1  0.36007741  0.61007741  0.25000000  1
+  Pb  Pb1  1  0.63992259  0.38992259  0.75000000  1
+  Sb  Sb0  1  0.89528624  0.14528624  0.25000000  1
+  Sb  Sb1  1  0.10471376  0.85471376  0.75000000  1

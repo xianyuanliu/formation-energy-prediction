@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3674_Cu4V2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   2.49413636
+_cell_length_b   7.04996138
+_cell_length_c   4.33162321
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   79.81133255
+_chemical_formula_structural   Cu4V2
+_chemical_formula_sum   'Cu4 V2'
+_cell_volume   74.96429711
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.99735009  0.00529981  0.00000000  1
+  Cu  Cu1  1  0.33172464  0.33655072  0.00000000  1
+  Cu  Cu2  1  0.55820546  0.88358907  0.50000000  1
+  Cu  Cu3  1  0.22383091  0.55233817  0.50000000  1
+  V  V0  1  0.66665844  0.66668313  0.00000000  1
+  V  V1  1  0.88889712  0.22220576  0.50000000  1

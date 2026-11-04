@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_3069_Fe2Na2
+_symmetry_space_group_name_H-M   'P4/nmm'
+_cell_length_a   3.05971106
+_cell_length_b   3.06462282
+_cell_length_c   8.68419171
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Fe2Na2
+_chemical_formula_sum   'Fe2 Na2'
+_cell_volume   81.43045281
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  Na
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.00000000  0.00000000  0.93153784  1
+  Fe  Fe1  1  0.50000000  0.50000000  0.81846216  1
+  Na  Na0  1  0.00000000  0.00000000  0.55842874  1
+  Na  Na1  1  0.50000000  0.50000000  0.19157126  1

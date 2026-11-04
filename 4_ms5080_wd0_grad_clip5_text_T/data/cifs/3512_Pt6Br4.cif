@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_3512_Pt6Br4
+_symmetry_space_group_name_H-M   'R -3 c'
+_cell_length_a   6.41547475
+_cell_length_b   6.41547501
+_cell_length_c   7.06603132
+_cell_angle_alpha   116.99841664
+_cell_angle_beta   63.00158544
+_cell_angle_gamma   119.99999404
+_chemical_formula_structural   Pt6Br4
+_chemical_formula_sum   'Br4 Pt6'
+_cell_volume   214.48588351
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Br
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Br  Br0  1  0.60066668  0.39933332  0.19799997  1
+  Br  Br1  1  0.89933332  0.10066668  0.30200003  1
+  Br  Br2  1  0.10066668  0.89933332  0.69799997  1
+  Br  Br3  1  0.39933332  0.60066668  0.80200003  1
+  Pt  Pt0  1  0.25000000  0.98143179  0.25000000  1
+  Pt  Pt1  1  0.01856821  0.51856821  0.25000000  1
+  Pt  Pt2  1  0.48143179  0.75000000  0.25000000  1
+  Pt  Pt3  1  0.51856821  0.25000000  0.75000000  1
+  Pt  Pt4  1  0.98143179  0.48143179  0.75000000  1
+  Pt  Pt5  1  0.75000000  0.01856821  0.75000000  1

@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_989_Cr5Sr4
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   7.97433187
+_cell_length_b   7.97433187
+_cell_length_c   7.97433187
+_cell_angle_alpha   95.12473795
+_cell_angle_beta   95.12473795
+_cell_angle_gamma   145.22029615
+_chemical_formula_structural   Cr5Sr4
+_chemical_formula_sum   'Cr5 Sr4'
+_cell_volume   276.03334336
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cr
+  Sr
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cr  Cr0  1  0.00000000  0.00000000  0.00000000  1
+  Cr  Cr1  1  0.63411231  0.36588769  0.00000000  1
+  Cr  Cr2  1  0.36588769  0.63411231  0.00000000  1
+  Cr  Cr3  1  0.36588769  0.36588769  0.73177537  1
+  Cr  Cr4  1  0.63411231  0.63411231  0.26822463  1
+  Sr  Sr0  1  0.70046747  1.00000000  0.70046747  1
+  Sr  Sr1  1  0.29953253  0.00000000  0.29953253  1
+  Sr  Sr2  1  0.00000000  0.29953253  0.29953253  1
+  Sr  Sr3  1  1.00000000  0.70046747  0.70046747  1

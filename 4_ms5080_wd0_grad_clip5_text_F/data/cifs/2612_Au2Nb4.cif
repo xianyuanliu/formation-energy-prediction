@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2612_Au2Nb4
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   5.18095136
+_cell_length_b   5.18095136
+_cell_length_c   4.90877995
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   124.21003351
+_chemical_formula_structural   Au2Nb4
+_chemical_formula_sum   'Au2 Nb4'
+_cell_volume   108.96542581
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Au
+  Nb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Au  Au0  1  0.21726091  0.21726091  0.25000000  1
+  Au  Au1  1  0.78273909  0.78273909  0.75000000  1
+  Nb  Nb0  1  0.55619735  0.89754827  0.25000000  1
+  Nb  Nb1  1  0.44380265  0.10245173  0.75000000  1
+  Nb  Nb2  1  0.89754827  0.55619735  0.25000000  1
+  Nb  Nb3  1  0.10245173  0.44380265  0.75000000  1

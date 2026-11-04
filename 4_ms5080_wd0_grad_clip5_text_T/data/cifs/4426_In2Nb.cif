@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_4426_In2Nb
+_symmetry_space_group_name_H-M   'Fm -3 m'
+_cell_length_a   6.71603769
+_cell_length_b   6.71603769
+_cell_length_c   6.71603769
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   In2Nb
+_chemical_formula_sum   'In8 Nb4'
+_cell_volume   302.92796971
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  In
+  Nb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  In  In0  1  0.74936036  0.74936036  0.25063964  1
+  In  In1  1  0.25063964  0.25063964  0.74936036  1
+  In  In2  1  0.24936036  0.75063964  0.74936036  1
+  In  In3  1  0.75063964  0.24936036  0.25063964  1
+  In  In4  1  0.25063964  0.24936036  0.24936036  1
+  In  In5  1  0.74936036  0.75063964  0.75063964  1
+  In  In6  1  0.75063964  0.25063964  0.75063964  1
+  In  In7  1  0.24936036  0.74936036  0.24936036  1
+  Nb  Nb0  1  0.00000000  0.00000000  0.00000000  1
+  Nb  Nb1  1  0.50000000  0.50000000  0.00000000  1
+  Nb  Nb2  1  0.50000000  0.00000000  0.50000000  1
+  Nb  Nb3  1  0.00000000  0.50000000  0.50000000  1

@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_4063_Fe2Ta2
+_symmetry_space_group_name_H-M   'Imma'
+_cell_length_a   4.26404696
+_cell_length_b   5.17879271
+_cell_length_c   3.08701958
+_cell_angle_alpha   72.65982132
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   114.31063313
+_chemical_formula_structural   Fe2Ta2
+_chemical_formula_sum   'Fe2 Ta2'
+_cell_volume   58.70836887
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Fe
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Fe  Fe0  1  0.00482866  0.00965732  0.99517134  1
+  Fe  Fe1  1  0.24517134  0.49034268  0.25482866  1
+  Ta  Ta0  1  0.49292553  0.98585105  0.50707447  1
+  Ta  Ta1  1  0.75707447  0.51414895  0.74292553  1

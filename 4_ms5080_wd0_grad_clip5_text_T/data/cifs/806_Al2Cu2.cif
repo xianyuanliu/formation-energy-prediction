@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_806_Al2Cu2
+_symmetry_space_group_name_H-M   'Pmma'
+_cell_length_a   4.34422952
+_cell_length_b   2.73098175
+_cell_length_c   4.51397535
+_cell_angle_alpha   89.85540295
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Al2Cu2
+_chemical_formula_sum   'Al2 Cu2'
+_cell_volume   53.55368504
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Cu
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.00000000  0.87559576  0.06870052  1
+  Al  Al1  1  0.50000000  0.87440424  0.68129948  1
+  Cu  Cu0  1  0.00000000  0.37472406  0.55774004  1
+  Cu  Cu1  1  0.50000000  0.37527594  0.19225996  1

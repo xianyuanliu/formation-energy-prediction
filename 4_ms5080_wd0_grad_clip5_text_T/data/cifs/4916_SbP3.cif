@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_4916_SbP3
+_symmetry_space_group_name_H-M   'Im -3 m'
+_cell_length_a   4.60551382
+_cell_length_b   4.60551382
+_cell_length_c   4.60551382
+_cell_angle_alpha   109.46496962
+_cell_angle_beta   109.46496962
+_cell_angle_gamma   109.46496957
+_chemical_formula_structural   SbP3
+_chemical_formula_sum   'P3 Sb1'
+_cell_volume   75.21645315
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  P
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  P  P0  1  0.00000000  0.00000000  0.00000000  1
+  P  P1  1  0.50000000  0.50000000  1.00000000  1
+  P  P2  1  0.00000000  0.50000000  0.50000000  1
+  Sb  Sb0  1  0.50000000  0.00000000  0.50000000  1

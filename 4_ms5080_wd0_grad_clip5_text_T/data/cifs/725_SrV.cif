@@ -1,0 +1,30 @@
+# generated using pymatgen
+data_725_SrV
+_symmetry_space_group_name_H-M   'P-6m2'
+_cell_length_a   3.67037455
+_cell_length_b   3.67039308
+_cell_length_c   5.32726438
+_cell_angle_alpha   89.99996189
+_cell_angle_beta   89.99994626
+_cell_angle_gamma   119.99953755
+_chemical_formula_structural   SrV
+_chemical_formula_sum   'Sr1 V1'
+_cell_volume   62.15268123
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Sr
+  V
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Sr  Sr0  1  0.66666568  0.33333376  0.74999957  1
+  V  V0  1  0.33333258  0.66666414  0.25000028  1

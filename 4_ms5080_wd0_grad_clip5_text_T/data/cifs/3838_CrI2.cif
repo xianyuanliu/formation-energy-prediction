@@ -1,0 +1,31 @@
+# generated using pymatgen
+data_3838_CrI2
+_symmetry_space_group_name_H-M   'C2/m'
+_cell_length_a   3.93511111
+_cell_length_b   4.31462363
+_cell_length_c   7.14596394
+_cell_angle_alpha   100.89205054
+_cell_angle_beta   105.98215886
+_cell_angle_gamma   62.86940477
+_chemical_formula_structural   CrI2
+_chemical_formula_sum   'Cr1 I2'
+_cell_volume   103.51911425
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cr
+  I
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cr  Cr0  1  0.50000000  0.00000000  0.00000000  1
+  I  I0  1  0.23126349  0.77588512  0.23841209  1
+  I  I1  1  0.76873651  0.22411488  0.76158791  1

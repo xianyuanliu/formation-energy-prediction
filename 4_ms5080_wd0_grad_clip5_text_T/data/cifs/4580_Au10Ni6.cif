@@ -1,0 +1,44 @@
+# generated using pymatgen
+data_4580_Au10Ni6
+_symmetry_space_group_name_H-M   'I4/mcm'
+_cell_length_a   7.49472900
+_cell_length_b   7.49472900
+_cell_length_c   7.49848525
+_cell_angle_alpha   96.54963504
+_cell_angle_beta   96.54963504
+_cell_angle_gamma   140.52861092
+_chemical_formula_structural   Au10Ni6
+_chemical_formula_sum   'Au10 Ni6'
+_cell_volume   252.01439542
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Au
+  Ni
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Au  Au0  1  0.07511310  0.77722304  0.85239003  1
+  Au  Au1  1  0.22287304  0.07499456  0.29772672  1
+  Au  Au2  1  0.25066926  0.75066926  0.50091089  1
+  Au  Au3  1  0.27722304  0.57511310  0.85239003  1
+  Au  Au4  1  0.42552612  0.27715623  0.70244509  1
+  Au  Au5  1  0.57499456  0.72287304  0.29772672  1
+  Au  Au6  1  0.72299106  0.42564838  0.14872896  1
+  Au  Au7  1  0.75067653  0.25067653  0.50095465  1
+  Au  Au8  1  0.77715623  0.92552612  0.70244509  1
+  Au  Au9  1  0.92564838  0.22299106  0.14872896  1
+  Ni  Ni0  1  0.17012506  0.33286754  0.50034992  1
+  Ni  Ni1  1  0.24996689  0.24996980  0.99991079  1
+  Ni  Ni2  1  0.33182313  0.83182313  0.16352036  1
+  Ni  Ni3  1  0.66904293  0.16904293  0.83817777  1
+  Ni  Ni4  1  0.74996980  0.74996689  0.99991079  1
+  Ni  Ni5  1  0.83286754  0.67012506  0.50034992  1

@@ -1,0 +1,39 @@
+# generated using pymatgen
+data_597_Cu6Pt5
+_symmetry_space_group_name_H-M   'P-1'
+_cell_length_a   4.66561065
+_cell_length_b   7.09648648
+_cell_length_c   4.66909078
+_cell_angle_alpha   96.46246193
+_cell_angle_beta   99.45415104
+_cell_angle_gamma   89.89056966
+_chemical_formula_structural   Cu6Pt5
+_chemical_formula_sum   'Cu6 Pt5'
+_cell_volume   151.50060789
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Pt
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.99567657  0.00218434  0.00258302  1
+  Cu  Cu1  1  0.55475167  0.09392879  0.27641641  1
+  Cu  Cu2  1  0.08161197  0.17879849  0.54176541  1
+  Cu  Cu3  1  0.64068706  0.27054293  0.81559879  1
+  Cu  Cu4  1  0.72703286  0.44575240  0.36208496  1
+  Cu  Cu5  1  0.90933078  0.82697487  0.45609686  1
+  Pt  Pt0  1  0.18193334  0.34729785  0.09043066  1
+  Pt  Pt1  1  0.27018143  0.53927865  0.63259961  1
+  Pt  Pt2  1  0.81818182  0.63636364  0.90909091  1
+  Pt  Pt3  1  0.36618220  0.73344862  0.18558220  1
+  Pt  Pt4  1  0.45443030  0.92542943  0.72775116  1

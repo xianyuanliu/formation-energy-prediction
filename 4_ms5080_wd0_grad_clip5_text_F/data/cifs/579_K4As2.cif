@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_579_K4As2
+_symmetry_space_group_name_H-M   'I4_1/amd'
+_cell_length_a   14.12823982
+_cell_length_b   14.12823982
+_cell_length_c   14.12823982
+_cell_angle_alpha   163.19862450
+_cell_angle_beta   163.05553264
+_cell_angle_gamma   23.94997382
+_chemical_formula_structural   K4As2
+_chemical_formula_sum   'As2 K4'
+_cell_volume   237.51736947
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  As
+  K
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  As  As0  1  0.12527933  0.37527933  0.75000000  1
+  As  As1  1  0.87472067  0.62472067  0.25000000  1
+  K  K0  1  0.68586753  0.93586753  0.75000000  1
+  K  K1  1  0.31413247  0.06413247  0.25000000  1
+  K  K2  1  0.56466013  0.81466013  0.75000000  1
+  K  K3  1  0.43533987  0.18533987  0.25000000  1

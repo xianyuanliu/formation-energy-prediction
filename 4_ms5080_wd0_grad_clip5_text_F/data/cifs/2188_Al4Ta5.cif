@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_2188_Al4Ta5
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   6.77925952
+_cell_length_b   6.77925952
+_cell_length_c   6.77925952
+_cell_angle_alpha   94.17581439
+_cell_angle_beta   94.17581439
+_cell_angle_gamma   148.68971827
+_chemical_formula_structural   Al4Ta5
+_chemical_formula_sum   'Al4 Ta5'
+_cell_volume   155.90467674
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Ta
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.67343484  0.00000000  0.67343484  1
+  Al  Al1  1  0.32656516  0.00000000  0.32656516  1
+  Al  Al2  1  1.00000000  0.32656516  0.32656516  1
+  Al  Al3  1  0.00000000  0.67343484  0.67343484  1
+  Ta  Ta0  1  0.00000000  0.00000000  0.00000000  1
+  Ta  Ta1  1  0.66993035  0.33006965  0.00000000  1
+  Ta  Ta2  1  0.33006965  0.66993035  0.00000000  1
+  Ta  Ta3  1  0.33006965  0.33006965  0.66013930  1
+  Ta  Ta4  1  0.66993035  0.66993035  0.33986070  1

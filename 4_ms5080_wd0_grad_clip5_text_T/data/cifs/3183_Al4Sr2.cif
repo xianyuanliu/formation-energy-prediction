@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3183_Al4Sr2
+_symmetry_space_group_name_H-M   'Pnnm'
+_cell_length_a   5.79648834
+_cell_length_b   3.34960950
+_cell_length_c   8.46932769
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Al4Sr2
+_chemical_formula_sum   'Al4 Sr2'
+_cell_volume   164.44023276
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Sr
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.00000000  0.22451186  0.63187553  1
+  Al  Al1  1  0.00000000  0.77548814  0.36812447  1
+  Al  Al2  1  0.50000000  0.72451186  0.86812447  1
+  Al  Al3  1  0.50000000  0.27548814  0.13187553  1
+  Sr  Sr0  1  0.00000000  0.00000000  0.00000000  1
+  Sr  Sr1  1  0.50000000  0.50000000  0.50000000  1

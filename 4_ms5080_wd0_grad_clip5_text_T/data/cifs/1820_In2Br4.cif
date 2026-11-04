@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_1820_In2Br4
+_symmetry_space_group_name_H-M   'C2/m'
+_cell_length_a   6.04002033
+_cell_length_b   6.04002033
+_cell_length_c   9.99029585
+_cell_angle_alpha   63.89404617
+_cell_angle_beta   63.89404617
+_cell_angle_gamma   38.87479957
+_chemical_formula_structural   In2Br4
+_chemical_formula_sum   'Br4 In2'
+_cell_volume   202.31477461
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Br
+  In
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Br  Br0  1  0.93915817  0.93915817  0.09493713  1
+  Br  Br1  1  0.71301257  0.71301257  0.57203223  1
+  Br  Br2  1  0.34254298  0.34254298  0.81685666  1
+  Br  Br3  1  0.11639739  0.11639739  0.29395176  1
+  In  In0  1  0.34068049  0.34068049  0.36127202  1
+  In  In1  1  0.71487506  0.71487506  0.02761687  1

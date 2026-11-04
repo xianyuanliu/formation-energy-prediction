@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_2780_Nb6Rh2
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   3.86047900
+_cell_length_b   3.86047900
+_cell_length_c   9.63165760
+_cell_angle_alpha   78.43931321
+_cell_angle_beta   78.43931321
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Nb6Rh2
+_chemical_formula_sum   'Nb6 Rh2'
+_cell_volume   137.65773911
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Nb
+  Rh
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Nb  Nb0  1  0.00000000  0.50000000  0.00000000  1
+  Nb  Nb1  1  0.87665372  0.87665372  0.24669255  1
+  Nb  Nb2  1  0.12334628  0.12334628  0.75330745  1
+  Nb  Nb3  1  0.75000000  0.25000000  0.50000000  1
+  Nb  Nb4  1  0.25000000  0.75000000  0.50000000  1
+  Nb  Nb5  1  0.50000000  0.00000000  0.00000000  1
+  Rh  Rh0  1  0.62675263  0.62675263  0.74649474  1
+  Rh  Rh1  1  0.37324737  0.37324737  0.25350526  1

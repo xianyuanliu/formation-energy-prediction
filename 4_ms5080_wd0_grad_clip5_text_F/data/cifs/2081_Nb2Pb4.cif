@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_2081_Nb2Pb4
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   8.80477216
+_cell_length_b   8.80477216
+_cell_length_c   5.30092410
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   159.14645038
+_chemical_formula_structural   Nb2Pb4
+_chemical_formula_sum   'Nb2 Pb4'
+_cell_volume   146.28980219
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Nb
+  Pb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Nb  Nb0  1  0.32986036  0.67013964  0.00000000  1
+  Nb  Nb1  1  0.55902853  0.44097147  0.50000000  1
+  Pb  Pb0  1  0.99892479  0.00107521  0.00000000  1
+  Pb  Pb1  1  0.67257594  0.32742406  0.00000000  1
+  Pb  Pb2  1  0.21631295  0.78368705  0.50000000  1
+  Pb  Pb3  1  0.88996410  0.11003590  0.50000000  1

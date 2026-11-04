@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_2057_BaFe3
+_symmetry_space_group_name_H-M   'P4mm'
+_cell_length_a   3.59689397
+_cell_length_b   3.61955170
+_cell_length_c   6.18635616
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   BaFe3
+_chemical_formula_sum   'Ba1 Fe3'
+_cell_volume   80.54105973
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ba
+  Fe
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.00000000  0.00000000  0.02284699  1
+  Fe  Fe0  1  0.50000000  0.00000000  0.48611624  1
+  Fe  Fe1  1  0.50000000  0.50000000  0.67289846  1
+  Fe  Fe2  1  0.00000000  0.50000000  0.48480498  1

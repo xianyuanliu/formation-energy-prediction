@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_1595_Ag7Al5
+_symmetry_space_group_name_H-M   'P1'
+_cell_length_a   6.50019898
+_cell_length_b   6.37846419
+_cell_length_c   5.63914308
+_cell_angle_alpha   114.33944039
+_cell_angle_beta   101.53773979
+_cell_angle_gamma   74.10651704
+_chemical_formula_structural   Ag7Al5
+_chemical_formula_sum   'Ag7 Al5'
+_cell_volume   203.86623056
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ag
+  Al
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ag  Ag0  1  0.00607755  0.98600535  0.99110522  1
+  Ag  Ag1  1  0.32235035  0.15689963  0.42710992  1
+  Ag  Ag2  1  0.66648725  0.31887450  0.82707652  1
+  Ag  Ag3  1  0.01101085  0.51033026  0.24633222  1
+  Ag  Ag4  1  0.33201706  0.67858010  0.66512577  1
+  Ag  Ag5  1  0.66117158  0.83693206  0.08724437  1
+  Ag  Ag6  1  0.66799133  0.34710927  0.34023216  1
+  Al  Al0  1  0.99281285  0.00437932  0.49831629  1
+  Al  Al1  1  0.33170257  0.17058331  0.92938472  1
+  Al  Al2  1  0.00100971  0.49670071  0.74597626  1
+  Al  Al3  1  0.33920028  0.66112091  0.15735100  1
+  Al  Al4  1  0.66816862  0.83248458  0.58474554  1

@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_2979_Ir3Pb
+_symmetry_space_group_name_H-M   'Immm'
+_cell_length_a   5.71337765
+_cell_length_b   5.71337765
+_cell_length_c   5.71337765
+_cell_angle_alpha   151.19518748
+_cell_angle_beta   129.79803107
+_cell_angle_gamma   58.91229916
+_chemical_formula_structural   Ir3Pb
+_chemical_formula_sum   'Ir3 Pb1'
+_cell_volume   68.53913279
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ir
+  Pb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ir  Ir0  1  0.23306589  0.23306589  1.00000000  1
+  Ir  Ir1  1  0.76693411  0.76693411  1.00000000  1
+  Ir  Ir2  1  0.00000000  0.50000000  0.50000000  1
+  Pb  Pb0  1  0.50000000  0.00000000  0.50000000  1

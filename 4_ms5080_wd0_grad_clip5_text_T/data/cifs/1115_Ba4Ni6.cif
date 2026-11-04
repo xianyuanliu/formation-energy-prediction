@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_1115_Ba4Ni6
+_symmetry_space_group_name_H-M   'R -3 c'
+_cell_length_a   7.10143000
+_cell_length_b   7.10143105
+_cell_length_c   7.60117594
+_cell_angle_alpha   117.84797302
+_cell_angle_beta   62.15203094
+_cell_angle_gamma   119.99999509
+_chemical_formula_structural   Ba4Ni6
+_chemical_formula_sum   'Ba4 Ni6'
+_cell_volume   279.53970386
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ba
+  Ni
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.60241448  0.39758558  0.19275515  1
+  Ba  Ba1  1  0.89758570  0.10241424  0.30724273  1
+  Ba  Ba2  1  0.10241514  0.89758644  0.69275616  1
+  Ba  Ba3  1  0.39758495  0.60241510  0.80724374  1
+  Ni  Ni0  1  0.06279096  0.56279182  0.24999972  1
+  Ni  Ni1  1  0.43720938  0.75000096  0.24999972  1
+  Ni  Ni2  1  0.24999929  0.93720847  0.24999972  1
+  Ni  Ni3  1  0.75000014  0.06279221  0.74999917  1
+  Ni  Ni4  1  0.56279146  0.24999972  0.74999917  1
+  Ni  Ni5  1  0.93720906  0.43720724  0.74999917  1

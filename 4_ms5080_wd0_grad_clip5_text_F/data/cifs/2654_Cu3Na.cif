@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_2654_Cu3Na
+_symmetry_space_group_name_H-M   'Pmmm'
+_cell_length_a   3.61569280
+_cell_length_b   2.61025197
+_cell_length_c   6.90565019
+_cell_angle_alpha   68.27954397
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Cu3Na
+_chemical_formula_sum   'Cu3 Na1'
+_cell_volume   60.54725824
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Na
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.00000000  0.04857521  0.94114537  1
+  Cu  Cu1  1  0.50000000  0.75000000  0.75000000  1
+  Cu  Cu2  1  0.00000000  0.45142479  0.55885463  1
+  Na  Na0  1  0.50000000  0.25000000  0.25000000  1

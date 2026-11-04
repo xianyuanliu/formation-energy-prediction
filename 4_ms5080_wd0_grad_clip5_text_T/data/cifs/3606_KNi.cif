@@ -1,0 +1,30 @@
+# generated using pymatgen
+data_3606_KNi
+_symmetry_space_group_name_H-M   'R -3 m'
+_cell_length_a   5.43941461
+_cell_length_b   5.43941461
+_cell_length_c   5.43941475
+_cell_angle_alpha   32.18772830
+_cell_angle_beta   32.18772830
+_cell_angle_gamma   32.18772996
+_chemical_formula_structural   KNi
+_chemical_formula_sum   'K1 Ni1'
+_cell_volume   40.58793069
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  K
+  Ni
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  K  K0  1  0.00000000  0.00000000  0.00000000  1
+  Ni  Ni0  1  0.50000000  0.50000000  0.50000000  1

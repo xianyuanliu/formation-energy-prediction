@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_3133_Au4As2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   6.58079318
+_cell_length_b   6.58079318
+_cell_length_c   5.30484889
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   148.95433402
+_chemical_formula_structural   Au4As2
+_chemical_formula_sum   'As2 Au4'
+_cell_volume   118.47982251
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  As
+  Au
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  As  As0  1  0.04024616  0.95975384  0.00000000  1
+  As  As1  1  0.40419829  0.59580171  0.50000000  1
+  Au  Au0  1  0.37224755  0.62775245  0.00000000  1
+  Au  Au1  1  0.69505457  0.30494543  0.00000000  1
+  Au  Au2  1  0.74938987  0.25061013  0.50000000  1
+  Au  Au3  1  0.07219689  0.92780311  0.50000000  1

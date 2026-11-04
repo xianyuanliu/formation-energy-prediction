@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_4702_AlPb8
+_symmetry_space_group_name_H-M   'I4/mmm'
+_cell_length_a   7.84893163
+_cell_length_b   7.84893163
+_cell_length_c   7.84893163
+_cell_angle_alpha   95.67841556
+_cell_angle_beta   95.67841556
+_cell_angle_gamma   143.33208947
+_chemical_formula_structural   AlPb8
+_chemical_formula_sum   'Al1 Pb8'
+_cell_volume   274.10039782
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Pb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.00000000  0.00000000  0.00000000  1
+  Pb  Pb0  1  0.33859471  0.66140529  0.00000000  1
+  Pb  Pb1  1  0.66140529  0.33859471  0.00000000  1
+  Pb  Pb2  1  0.00000000  0.32774001  0.32774001  1
+  Pb  Pb3  1  0.66140529  0.66140529  0.32281057  1
+  Pb  Pb4  1  0.32774001  0.00000000  0.32774001  1
+  Pb  Pb5  1  0.33859471  0.33859471  0.67718943  1
+  Pb  Pb6  1  0.00000000  0.67225999  0.67225999  1
+  Pb  Pb7  1  0.67225999  1.00000000  0.67225999  1

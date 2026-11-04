@@ -1,0 +1,33 @@
+# generated using pymatgen
+data_3305_Cu4Fe
+_symmetry_space_group_name_H-M   'I4/m'
+_cell_length_a   3.62110853
+_cell_length_b   4.45674184
+_cell_length_c   4.45674184
+_cell_angle_alpha   99.49953427
+_cell_angle_beta   113.96952293
+_cell_angle_gamma   66.03047707
+_chemical_formula_structural   Cu4Fe
+_chemical_formula_sum   'Cu4 Fe1'
+_cell_volume   60.05406120
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Cu
+  Fe
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cu  Cu0  1  0.79909183  0.80199366  0.40017731  1
+  Cu  Cu1  1  0.20090817  0.19800634  0.59982269  1
+  Cu  Cu2  1  0.60108549  0.59982269  0.80199366  1
+  Cu  Cu3  1  0.39891451  0.40017731  0.19800634  1
+  Fe  Fe0  1  0.00000000  0.00000000  0.00000000  1

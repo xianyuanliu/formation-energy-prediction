@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_2919_Ag8Au4
+_symmetry_space_group_name_H-M   'I4_1/amd'
+_cell_length_a   4.15537092
+_cell_length_b   4.15537092
+_cell_length_c   12.80044926
+_cell_angle_alpha   99.34120444
+_cell_angle_beta   99.34120444
+_cell_angle_gamma   90.00000000
+_chemical_formula_structural   Ag8Au4
+_chemical_formula_sum   'Ag8 Au4'
+_cell_volume   215.12484018
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ag
+  Au
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ag  Ag0  1  0.24993435  0.24993435  0.49986869  1
+  Ag  Ag1  1  0.75006565  0.75006565  0.50013131  1
+  Ag  Ag2  1  0.49993435  0.99993435  0.99986869  1
+  Ag  Ag3  1  0.00006565  0.50006565  0.00013131  1
+  Ag  Ag4  1  0.41661415  0.41661415  0.83322829  1
+  Ag  Ag5  1  0.58338585  0.58338585  0.16677171  1
+  Ag  Ag6  1  0.66661415  0.16661415  0.33322829  1
+  Ag  Ag7  1  0.83338585  0.33338585  0.66677171  1
+  Au  Au0  1  0.08293863  0.08293863  0.16587724  1
+  Au  Au1  1  0.91706137  0.91706137  0.83412276  1
+  Au  Au2  1  0.33293863  0.83293863  0.66587724  1
+  Au  Au3  1  0.16706137  0.66706137  0.33412276  1

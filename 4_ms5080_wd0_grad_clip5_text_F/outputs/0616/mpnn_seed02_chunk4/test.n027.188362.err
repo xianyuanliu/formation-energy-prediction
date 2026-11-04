@@ -1,0 +1,34 @@
+wandb: Tracking run with wandb version 0.25.1
+wandb: W&B syncing is set to `offline` in this directory. Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+wandb: Run data is saved locally in /home/guswl/6_multimodal/after_mdf_Loss/0_text_False/4_ms5080_wd0_grad_clip5/wandb/offline-run-20260616_162853-k7dwsyii
+/home/guswl/6_multimodal/after_mdf_Loss/0_text_False/4_ms5080_wd0_grad_clip5/data.py:537: UserWarning: 4473_Ba4In not find enough neighbors to build graph. If it happens frequently, consider increase radius.
+  warnings.warn('{} not find enough neighbors to build graph. '
+/home/guswl/6_multimodal/after_mdf_Loss/0_text_False/4_ms5080_wd0_grad_clip5/main.py:464: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  best_checkpoint = torch.load('model_best.pth.tar')
+wandb: 
+wandb: Run history:
+wandb:         epoch ▁▁▁▁▁▂▂▂▂▂▃▃▃▃▃▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇▇███
+wandb: learning_rate ███████████████████▂▂▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁
+wandb:    train/loss █▅▃▃▃▃▃▃▃▂▂▃▂▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:     train/mae █▆▄▃▃▃▃▃▃▃▃▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:      val/loss █▂▃▂▂▃▂▁▁▁▃▂▁▁▆▁▃▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:       val/mae ▄█▅▃▂▂▇▂▂▂▂▄▃▂▆▂▁▁▄▆▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:          best_mae_error 0.1907
+wandb:                   epoch 99
+wandb:           learning_rate 1e-05
+wandb:                test/mae 0.13992
+wandb:                 test/r2 0.56654
+wandb:               test/rmse 0.44054
+wandb:           total_flops_g 1.79762
+wandb:          total_params_m 0.10483
+wandb: total_training_time_sec 50.77475
+wandb:              train/loss 0.1524
+wandb:                      +3 ...
+wandb: 
+wandb: You can sync this run to the cloud by running:
+wandb: wandb sync /home/guswl/6_multimodal/after_mdf_Loss/0_text_False/4_ms5080_wd0_grad_clip5/wandb/offline-run-20260616_162853-k7dwsyii
+wandb: Find logs at: ./wandb/offline-run-20260616_162853-k7dwsyii/logs
+/home/guswl/anaconda3/envs/matgl/lib/python3.10/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(

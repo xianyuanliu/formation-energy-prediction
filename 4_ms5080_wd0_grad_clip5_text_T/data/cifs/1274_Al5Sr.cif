@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_1274_Al5Sr
+_symmetry_space_group_name_H-M   'Cmmm'
+_cell_length_a   6.71236185
+_cell_length_b   6.71236185
+_cell_length_c   4.44655198
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   141.76513243
+_chemical_formula_structural   Al5Sr
+_chemical_formula_sum   'Al5 Sr1'
+_cell_volume   123.98955915
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Al
+  Sr
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Al  Al0  1  0.79472881  0.20527119  0.50000000  1
+  Al  Al1  1  0.65688076  0.34311924  0.00000000  1
+  Al  Al2  1  0.47195144  0.52804856  0.50000000  1
+  Al  Al3  1  0.28767797  0.71232203  0.00000000  1
+  Al  Al4  1  0.14975760  0.85024240  0.50000000  1
+  Sr  Sr0  1  0.97233676  0.02766324  0.00000000  1

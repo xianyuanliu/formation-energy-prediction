@@ -1,0 +1,34 @@
+# generated using pymatgen
+data_794_Sb5Ge
+_symmetry_space_group_name_H-M   'Amm2'
+_cell_length_a   6.99448169
+_cell_length_b   6.99448169
+_cell_length_c   5.81745492
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   142.90990109
+_chemical_formula_structural   Sb5Ge
+_chemical_formula_sum   'Ge1 Sb5'
+_cell_volume   171.63740332
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ge
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ge  Ge0  1  0.03061947  0.96938053  0.00000000  1
+  Sb  Sb0  1  0.35033555  0.64966445  0.00000000  1
+  Sb  Sb1  1  0.69701398  0.30298602  0.00000000  1
+  Sb  Sb2  1  0.42129254  0.57870746  0.50000000  1
+  Sb  Sb3  1  0.74246949  0.25753051  0.50000000  1
+  Sb  Sb4  1  0.09160231  0.90839769  0.50000000  1

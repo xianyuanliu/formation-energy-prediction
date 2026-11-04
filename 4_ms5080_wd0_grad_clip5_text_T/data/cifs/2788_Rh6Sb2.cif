@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_2788_Rh6Sb2
+_symmetry_space_group_name_H-M   'Cmcm'
+_cell_length_a   5.69074890
+_cell_length_b   5.69074890
+_cell_length_c   4.28518316
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   114.00155300
+_chemical_formula_structural   Rh6Sb2
+_chemical_formula_sum   'Rh6 Sb2'
+_cell_volume   126.77486530
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Rh
+  Sb
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Rh  Rh0  1  0.17550298  0.82449702  0.75000000  1
+  Rh  Rh1  1  0.82449702  0.17550298  0.25000000  1
+  Rh  Rh2  1  0.69244503  0.88011169  0.75000000  1
+  Rh  Rh3  1  0.30755497  0.11988831  0.25000000  1
+  Rh  Rh4  1  0.88011169  0.69244503  0.25000000  1
+  Rh  Rh5  1  0.11988831  0.30755497  0.75000000  1
+  Sb  Sb0  1  0.63347435  0.36652565  0.75000000  1
+  Sb  Sb1  1  0.36652565  0.63347435  0.25000000  1

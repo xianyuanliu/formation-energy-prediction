@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_1832_Ni4U6
+_symmetry_space_group_name_H-M   'R -3 c'
+_cell_length_a   5.65403800
+_cell_length_b   5.65403790
+_cell_length_c   7.60980857
+_cell_angle_alpha   111.80795330
+_cell_angle_beta   68.19205395
+_cell_angle_gamma   119.99998890
+_chemical_formula_structural   Ni4U6
+_chemical_formula_sum   'Ni4 U6'
+_cell_volume   190.31081038
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_type_symbol
+  Ni
+  U
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ni  Ni0  1  0.30787048  0.69212935  0.07638827  1
+  Ni  Ni1  1  0.19212869  0.80787120  0.42361376  1
+  Ni  Ni2  1  0.80787135  0.19212917  0.57638739  1
+  Ni  Ni3  1  0.69212956  0.30787102  0.92361288  1
+  U  U0  1  0.24999903  0.18472160  0.25000102  1
+  U  U1  1  0.81527797  0.31527908  0.25000102  1
+  U  U2  1  0.68472255  0.75000027  0.25000102  1
+  U  U3  1  0.75000101  0.81527877  0.75000014  1
+  U  U4  1  0.31527700  0.25000058  0.75000159  1
+  U  U5  1  0.18472159  0.68472178  0.75000159  1
